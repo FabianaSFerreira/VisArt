@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
+body {      
+    font-size: auto;
+    color: #073763;
+    background-color: #ffffdc;  
+    font-family: 'Nunito', sans-serif;    
+}
+
+a {
+    padding: 5px;    
+    color: #073763;
+    font-weight: bold; 
+    text-align: center;
+    margin: 0px 4px 0px;
+    border-radius: 15px;   
+    text-decoration: none;
+    background-color: #ffffee;
+    box-shadow: 1px 2px 2px #f0a963;
+}
+
+#buscar {
+    padding: 5px;
+    text-align: left;
+    min-width: 150px;
+    border-radius: 15px;
+    background-color: #ffffee;
+    border: 0.5px solid #f0a963;
+    box-shadow: 1px 2px 2px #f0a963;
+}
+
+#text_busca{   
+    margin: 0px; 
+    border: 0px;
+    width: 100px; 
+    box-shadow: 0px 0px 0px;
+    padding: 0px 0px 0px 10px;
+    background-color: #ffffee; 
+}
+
+#header, #titulo, #perfil{
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
+}
+
+h4 {
+    color: #073763;
+    font-weight: bold;  
+    text-align: center;
+}
+
+label {
+    font-weight: bold;     
+    text-align: center;
+    padding: 15px 10px 10px 15px;
+}
+
+#img_perfil {
+    width: 200px;    
+    height: 150px;
+    padding: 15px;
+    border-radius: 15px;
+    background-color: #ffffee;
+    border: 0.5px solid #f0a963;
+    box-shadow: 1px 2px 2px #f0a963;
+}
+
+
+section {
+    margin: 30px;
+    min-height: 250px;
+    vertical-align: middle;  
+}
+
+#imagem, button, select, textarea, input[type=text], input[type=password], input[type=email], input[type=submit] {
+    margin: 10px; 
+    width: 220px; 
+    font-weight: bold; 
+    border-radius: 15px;
+    padding: 5px 5px 5px 10px;
+    background-color: #ffffee;
+    border: 0.5px solid #f0a963;
+    box-shadow: 1px 2px 2px #f0a963;
+}
+
+input[type=submit], .modal-header, .modal-footer {
+    background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
+}
+
+/* input[type=file] {
+    display: none;
+} */
+
+::-webkit-input-placeholder {
+    color: #073763;
+    font-weight: lighter; 
+}
+
+#alert, #campo {
+    margin: 20px;
+    padding: 10px; 
+    border-radius: 5px;  
+    text-shadow: 0 0 0.1em #f0a963;
+    background-image: linear-gradient(to bottom right, #f9cb9c, #ffffee);
+}
+
+
+.carousel-control.left, .carousel-control.right {
+    padding: 0;
+    opacity: .8;
+    box-shadow: 0 0 0;
+    background-image: linear-gradient(to right, #f9cb9c, rgba(0,0,0,.0001));
+}
+
+.carousel-control.right {
+    background-image: linear-gradient(to left, #f9cb9c, rgba(0,0,0,.0001));
+}
+
+
+.close {
+    width: 0px;   
+    opacity: 1;
+    color: #073763; 
+    text-shadow: 0 0 0;
+}
+
+.modal-body {
+    padding: 20px;
+    background-color: #ffffee;
+}
+
+.alt_nome, .alt_email, .alt_senha, .alt_foto, .sair, .buscar {   
+    border: 0;  
+    float: right;
+    width: initial;
+    box-shadow: 0 0 0; 
+    background-color: initial;
+}
+
+
+#footer {
+    padding: 20px; 
+    text-align: justify;
+    background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900); 
+}
