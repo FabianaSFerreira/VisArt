@@ -69,6 +69,7 @@
         <div class="row" id="filtro">
             <?php
                 $select = $_POST['tipo'];
+                echo $select;
                 
                 if ($select == 0) {
                     $cont_artes = mysqli_fetch_assoc(mySqli_query($conexao, "select count(*) as cont from artes"));
@@ -76,8 +77,8 @@
 
                     for ($i=1; $i <= $conA; $i++) { 
                         $nome = mysqli_fetch_assoc(mySqli_query($conexao, "select nome_arte from artes where IdArte='$i'"));
-                        $imagem = mysqli_fetch_assoc(mySqli_query($conexao, "select imagem from artes where IdArte='$i'"));
-                        echo "<div class='col-sm-4'> <h4>". $nome['nome_arte'] ."</h4> <img src='".$imagem['imagem']."' style='width:100%;'> </div>";                 
+                        $imagem = mysqli_fetch_object(mySqli_query($conexao, "select imagem from artes where IdArte='$i'"));
+                        echo "<div class='col-sm-4'> <h4>". $nome['nome_arte'] ."</h4> <img src='galeria.php?id=".$i."' style='width:100%;'> </div>";                   
                     }
                 }
                 else {
@@ -88,22 +89,12 @@
         
                             for ($l=1; $l <= $conA; $l++) { 
                                 $nome = mysqli_fetch_assoc(mySqli_query($conexao, "select nome_arte from artes where IdArte='$l'"));
-                                $imagem = mysqli_fetch_assoc(mySqli_query($conexao, "select imagem from artes where IdArte='$l'"));
-                                echo "<div class='col-sm-4'> <h4>". $nome['nome_arte'] ."</h4> <img src='".$imagem['imagem']."' style='width:100%;'> </div>";                 
+                                $imagem = mysqli_fetch_object(mySqli_query($conexao, "select imagem from artes where IdArte='$l'"));
+                                echo "<div class='col-sm-4'> <h4>". $nome['nome_arte'] ."</h4> <img src='galeria.php?id=".$l."' style='width:100%;'> </div>";                  
                             }
                         }
                     }
                 }
-                
-                    $cont_artes = mysqli_fetch_assoc(mySqli_query($conexao, "select count(*) as cont from artes"));
-                    $cont = (int) $cont_artes['cont'];
-
-                    for ($i=1; $i <= $cont; $i++) { 
-                        $nome = mysqli_fetch_assoc(mySqli_query($conexao, "select nome_arte from artes where IdArte='$i'"));
-                        $img = mysqli_fetch_assoc(mySqli_query($conexao, "select imagem from artes where IdArte='$i'"));
-                        echo "<div class='col-sm-4'> <h4>". $nome['nome_arte'] ."</h4> <img src='".$img['imagem']."' style='width:100%;'> </div>";                 
-                    }
- 
             ?>
         </div><br><br> 
 
@@ -131,7 +122,7 @@
             
             $(".pesquisar").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
-                $("#filtro h3").filter(function() {
+                $("#filtro *").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
