@@ -221,7 +221,7 @@
                 $tipo_imagem = $imagem['type'];
                 $tamanho_imagem = $imagem['size'];
                 
-                if ($imagem != "none" ) {
+                if ($imagem != "none") {
                     if(!preg_match('/^image\/(pjpeg|jpeg|png|gif|bmp)$/', $tipo_imagem)) {
                         echo "<div id='alert'>
                                 <button type='button' class='close'>&times;</button>
@@ -250,38 +250,6 @@
                             <strong>Erro ao selecionar a imagem!</strong> Por favor, tente novamente.
                         </div>";  
                 }
-                
-                /*else {
-                    if ( $imagem != "none" )
-                    {
-                        $fp = fopen($imagem, "rb");
-                        $conteudo = fread($fp, $tamanho);
-                        $conteudo = addslashes($conteudo);
-                        fclose($fp);
-                    
-                    $queryInsercao = "INSERT INTO tabela_imagens (nome_evento, 
-                    descrição_evento, nome_imagem, 
-                    tamanho_imagem, tipo_imagem, imagem) VALUES ('$nomeEvento', 
-                    '$descricaoEvento','$nome','$tamanho', '$tipo','$conteudo')";
-                    
-                    mysql_query($queryInsercao) or die("Algo deu errado ao inserir 
-                    o registro. Tente novamente.");
-                    echo 'Registro inserido com sucesso!'; 
-                    header('Location: index.php');
-                    if(mysql_affected_rows($conexao) > 0)
-                        print "A imagem foi salva na base de dados.";
-                    else
-                        print "Não foi possível salvar a imagem na base de dados.";
-                    }
-                    
-                        
-                    $conteudo = file_get_contents($imagem['tmp_name']);
-                
-                   
-                    
-                    echo "'$nome_imagem', '$tipo_imagem', '$tamanho_imagem', '$nome_arte', '$tipo_arte', '$descricao', '$usuario'";
-                    //echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
-                } */
             }
 
             if(isset($_POST['alt_nome'])){
