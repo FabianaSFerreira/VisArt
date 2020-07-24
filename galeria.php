@@ -1,9 +1,12 @@
 <?php 
-    include_once("conexao.php"); 
+    include_once("Conexao/conexao.php");
     session_start(); 
 
-    $cont_tipo = mysqli_fetch_assoc(mySqli_query($conexao, "select count(*) as cont from tipoarte"));
-    $conT = (int) $cont_tipo['cont'];
+    $maxTipos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdTipo) AS max FROM tipo_arte"));
+    $maxT = (int) $maxTipos['max'];
+    
+    $maxArtes = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdArte) AS max FROM artes"));
+    $maxA = (int) $maxArtes['max'];
 ?>
 
 <!DOCTYPE html>
@@ -17,21 +20,21 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-    <link rel="icon" href="img/logo.png" type="image/x-icon">
-    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="icon" href="Arquivos/logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="CSS/estilos.css">
 </head>
 
 <body>
     <header class="container-fluid"><br>
         <div class="row" id="header">     
-            <div class="col-sm-2" style="padding: 10px;" align="center"> <img src="img/marca.png" class="img-responsive" width="150"> </div>
+            <div class="col-sm-2" style="padding: 10px;" align="center"> <img src="Arquivos/marca.png" class="img-responsive" width="150"> </div>
             
             <div class="col-sm-7" style="padding: 1.5% 1.5% 10px;" align="center">
                 <a class="col-sm-2" href="home.php">Home</a>
                 <a class="col-sm-2" href="galeria.php">Galeria</a>
                 <a class="col-sm-2" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['usuario'] == "usuario") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
+                    if ($_SESSION['usuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
                     else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
                 ?>
             </div>
@@ -39,7 +42,7 @@
             <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
                 <form id="buscar" action="galeria.php">
                     <input id="text_busca" type="text" name="nome" placeholder="Buscar ..." style="width: 80%">
-                    <button class="buscar" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
+                    <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
                 </form>
             </div>
         </div><br>
@@ -57,46 +60,89 @@
             
             <div class="col-sm-7">
                 <?php
-                    echo "<form action='galeria.php' method='post'> <select name='tipo'> <option value='0'> Tipos </option>";      
-                    for ($i=1; $i <= $conT; $i++) { 
-                        $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "select nome from tipoarte where IdTipo='$i'"));  
+                    echo "<form action='galeria.php' method='post'> <select name='tipo' onchange='this.form.submit()'> <option> Tipos </option> <option value='0'> Todos </option>";      
+                    for ($i=1; $i <= $maxT; $i++) { 
+                        $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome from tipo_arte where IdTipo='$i'"));  
                         echo "<option value='$i'>". $tipo['nome'] ."</option>";
                     } echo "</select></form>";
                 ?>
             </div>    
-        </div><br><br>
+        </div><br>
         
-        <div class="row" id="filtro">
+        <div class="row" id="filtro" style="padding: 10px;">
             <?php
-                $select = $_POST['tipo'];
-                echo $select;
-                
-                if ($select == 0) {
-                    $cont_artes = mysqli_fetch_assoc(mySqli_query($conexao, "select count(*) as cont from artes"));
-                    $conA = (int) $cont_artes['cont'];
+                if(isset($_POST['tipo'])) {
+                    $select = $_POST['tipo'];
 
-                    for ($i=1; $i <= $conA; $i++) { 
-                        $nome = mysqli_fetch_assoc(mySqli_query($conexao, "select nome_arte from artes where IdArte='$i'"));
-                        $imagem = mysqli_fetch_object(mySqli_query($conexao, "select imagem from artes where IdArte='$i'"));
-                        echo "<div class='col-sm-4'> <h4>". $nome['nome_arte'] ."</h4> <img src='galeria.php?id=".$i."' style='width:100%;'> </div>";                   
+                    if ($select == 0) {
+                        for ($i=1; $i <= $maxA; $i++) { 
+                            $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, arquivo FROM artes WHERE IdArte='$i'"));
+                            echo "<div class='col-sm-4'> 
+                                    <h5>".$arte['nome']." <button type='button' class='descricao' data-toggle='modal' data-target='#descricao_arte'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                    <div id='arte'> <img src='".$arte['arquivo']."'> </div>
+                                </div>";                                    
+                        }
                     }
+                    else {
+                        for ($j=1; $j <= $maxT; $j++) { 
+                            if ($select == $j) {
+                                for ($l=1; $l <= $maxA; $l++) { 
+                                    $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, arquivo FROM artes WHERE IdArte='$l' AND tipo='$j'"));
+                                    
+                                    if ($arte != "") {
+                                        echo "<div class='col-sm-4'> 
+                                            <h5>".$arte['nome']." <button type='button' class='descricao' data-toggle='modal' data-target='#descricao_arte'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                            <div id='arte'> <img src='".$arte['arquivo']."'> </div>
+                                        </div>";
+                                    }                   
+                                }
+                            }
+                        } 
+                    } 
                 }
                 else {
-                    for ($j=1; $j <= $conT; $j++) { 
-                        if ($select == $j) {
-                            $cont_artes = mysqli_fetch_assoc(mySqli_query($conexao, "select count(*) as cont from artes where tipo_arte='$j'"));
-                            $conA = (int) $cont_artes['cont'];
-        
-                            for ($l=1; $l <= $conA; $l++) { 
-                                $nome = mysqli_fetch_assoc(mySqli_query($conexao, "select nome_arte from artes where IdArte='$l'"));
-                                $imagem = mysqli_fetch_object(mySqli_query($conexao, "select imagem from artes where IdArte='$l'"));
-                                echo "<div class='col-sm-4'> <h4>". $nome['nome_arte'] ."</h4> <img src='galeria.php?id=".$l."' style='width:100%;'> </div>";                  
-                            }
-                        }
+                    for ($i=1; $i <= $maxA; $i++) { 
+                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, arquivo FROM artes WHERE IdArte='$i'"));
+                        echo "<div class='col-sm-4'> 
+                                <h5>".$arte['nome']." <button type='button' class='descricao' data-toggle='modal' data-target='#descricao_arte'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                <div id='arte'> <img src='".$arte['arquivo']."'> </div>
+                            </div>";                                    
                     }
                 }
             ?>
         </div><br><br> 
+
+        <div class="modal fade" id="descricao_arte" role="dialog">
+            <div class="modal-dialog">  
+                <div class="modal-content">
+                    <?php $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT FROM artes WHERE IdArte='$IdArte'")); ?> 
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <?php echo "<h4 class='modal-title'>".$DadosArte['nome']."</h4>" ?>  
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row"> 
+                            <button class="icon" type="button" data-toggle="modal" data-target="#editar_arte"> <span class="glyphicon glyphicon-pencil"></span> </button>
+                            <button class="icon" type="button" data-toggle="modal" data-target="#excluir_arte"> <span class="glyphicon glyphicon-lixo"></span> </button>
+                        </div>
+
+                        <div class="row"> 
+                            <div class="col-sm-6">
+                                <?php echo "<div id='arte'> <img src='".$DadosArte['arquivo']."'> </div>"; ?>
+                            </div>
+
+                            <div class="col-sm-6">
+                                
+                            </div>
+                        </div>    
+                    </div>
+
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
 
         <?php
             if(isset($_POST['anterior'])){
@@ -123,16 +169,19 @@
             $(".pesquisar").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
                 $("#filtro *").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
                 });
             });
         });
+
+
+        document.getElementById('tipo').addEventListener('change', function() { this.form.submit(); });
     </script>
 
     <footer class="container-fluid">
         <div class="row" id="footer">
             <div class="col-sm-10"> <p>Instituto Federal Sul-rio-grandense - Campus Gravataí, Curso Técnico em Informética para a Internet. Trabalho de Conclusão de Curso - Fabiana da Silveira Ferreira </p> </div>
-            <div class="col-sm-2" style="padding-top: 10px;"> <img src="img/marca.png" class="img-responsive" width="100" align="right"> </div>
+            <div class="col-sm-2" style="padding-top: 10px;"> <img src="Arquivos/marca.png" class="img-responsive" width="100" align="right"> </div>
         </div>
     </footer>
 </body>
