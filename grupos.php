@@ -54,7 +54,7 @@
     <section class="container-fluid">
         <div class="row" style="padding: 10px;" align="right">
             <div class="col-sm-5" style="padding: 10px;">
-                <form id="buscar" action='grupo.php' method='post'>
+                <form id="buscar" action='grupos.php' method='post'>
                     <label style="padding: 0px 0px 0px 10px; margin: 0px;"> Pesquisar: </label>
                     <input class="pesquisar" id="text_busca" type='text' style="width: 70%;">      
                 </form>
@@ -67,33 +67,41 @@
                     $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, imagem FROM grupos WHERE IdGrupo='$i'"));
 
                     if ($grupo != "") {
-                        echo "<div class='col-sm-3'> 
-                                <h5>".$grupo['nome']." 
-                                    <button type='button' class='descricao' data-toggle='modal' data-target='#descricao_grupo".$i."'> 
-                                        <span class='glyphicon glyphicon-option-vertical'></span> 
-                                    </button>
-                                </h5> 
-                                <div id='grupo'> <img src='".$grupo['imagem']."'> </div>
-                            </div>"; 
+                        echo "<form action='grupos.php' method='post'>
+                                <div class='col-sm-3'> 
+                                    <h5>".$grupo['nome']." <button type='submit' name='bot".$i."' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                    <div id='grupo'> <img src='".$grupo['imagem']."'> </div>
+                                </div>
+                            </form>"; 
                     } 
                 }
             ?>
         </div> 
         
-        
         <?php 
             for ($i=1; $i <= $maxG; $i++) { 
-                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "Select IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo='$i'")); 
-                
+                if (isset($_POST["bot$i"])) {
+                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo='$i'")); 
+                    $_SESSION['IdGrupo'] = $DadosGrupo['IdGrupo'];
+                    
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";     
+                }
+            } 
 
-                if ($DadosGrupo != "") {
-                    $IdGrupo = $DadosGrupo['IdGrupo'];
-                
-                    echo "";
-            }}     
+            if(isset($_POST['solicitar'])) {
+                mySqli_query($conexao, "INSERT INTO membros_grupo(grupo, usuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '1')");
+                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=grupos.php">'; 
+            }  
+            
+            if(isset($_POST['entrar'])) {
+                mySqli_query($conexao, "INSERT INTO membros_grupo(grupo, usuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '0')");
+
+                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";    
+            }
         ?>
         
-        <div class='modal fade' id='descricao_grupo$i' role='dialog'>
+        <div class='modal fade' id='descricao_grupo' role='dialog'>
             <div class='modal-dialog'>  
                 <div class='modal-content'>   
 
@@ -104,11 +112,11 @@
 
                     <div class='modal-body'>
                         <div class='row'> 
-                            <div class='col-sm-6'>
-                                <?php echo "<div id='arte'> <img src='".$DadosGrupo['imagem']."'> </div>"; ?>
+                            <div class='col-sm-6' align='center'>
+                                <?php echo "<div id='descricao'> <img src='".$DadosGrupo['imagem']."'> </div>"; ?>
                             </div>
 
-                            <div class='col-sm-6'>
+                            <div class='col-sm-6' align='center'>
                                 <?php
                                     echo "<button type='text'> Descrição: ".$DadosGrupo['descricao']." </button><br>";
                                     echo "<button type='text'> Administrador: ".$DadosGrupo['administrador']." </button><br>";
@@ -118,7 +126,7 @@
 
                                     echo "<select> <option> Membros </option>";      
                                     for ($i=1; $i <= $maxM; $i++) { 
-                                        $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND Grupo='$IdGrupo' AND Solicitacao='1'"));  
+                                        $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND Grupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
                                         if ($membros != "") { echo "<option>". $membros['usuario'] ."</option>"; }
                                     } echo "</select>";
                                 ?>
@@ -127,7 +135,7 @@
 
                         <div class='row'> 
                             <form action='grupos.php' method='post'>
-                                <div class='form-group' align='center'>";
+                                <div class='form-group' align='center'>
                                     <?php
                                         if ($usuario != "") {
                                             if ($DadosGrupo['status'] == 1) { echo "<input type='submit' name='entrar' value='Participar do grupo'>"; }
@@ -143,21 +151,11 @@
                 </div>
             </div>
         </div>
-
-        <?php 
-            if(isset($_POST['solicitar'])) {
-                $inserir = mySqli_query($conexao, "INSERT INTO membros_grupo(grupo, usuario, solicitacao) VALUES('$IdGrupo', '$usuario', '1')");
-            }  
-            
-            if(isset($_POST['entrar'])) {
-                $inserir = mySqli_query($conexao, "INSERT INTO membros_grupo(grupo, usuario, solicitacao) VALUES('$IdGrupo', '$usuario', '0')");
-            }    
-        ?>
     </section>
     
     <script>
         $(document).ready(function(){
-            $(".close").click(function(){ $("#alert").hide(); });
+            $(".close").click(function(){ $("#alert").hide(); }); 
             
             $(".pesquisar").on("keyup", function() {
                 var value = $(this).val().toLowerCase();

@@ -18,7 +18,7 @@ a {
     box-shadow: 1px 2px 2px #f0a963;
 }
 
-#buscar {
+#buscar, #comentario {
     padding: 5px;
     text-align: left;
     min-width: 150px;
@@ -65,10 +65,10 @@ label {
     padding: 15px 10px 10px 15px;
 }
 
-#img_perfil{
-    max-width: 250px;    
+#img_perfil{       
     height: 180px;
     padding: 10px;
+    max-width: 250px;
     background-color: #ffffee;
 }
 
@@ -77,7 +77,7 @@ img {
     max-height:100%;
 }
 
-#arte, #grupo {  
+#arte, #grupo, #descricao {  
     height: 220px;
     display: flex;
     align-items: center;
@@ -87,8 +87,24 @@ img {
     border: 0.5px solid #f0a963;
 }
 
-#grupo {  
-    height: 150px;
+#grupo { 
+    height: 150px; 
+}
+
+#descricao { 
+    width: 250px; 
+    margin: 10px;
+}
+
+#alert, #campo {
+    margin: 20px;
+    padding: 5px;  
+    text-shadow: 0 0 0.1em #f0a963;
+    background-image: linear-gradient(to bottom right, #f9cb9c, #ffffee);
+}
+
+#alert {
+    padding: 20px;
 }
 
 section {
@@ -97,7 +113,7 @@ section {
 
 #imagem, button, select, textarea, input[type=text], input[type=password], input[type=email], input[type=submit] {
     margin: 10px; 
-    width: 220px; 
+    width: 250px; 
     font-weight: bold; 
     padding: 5px 5px 5px 10px;
     background-color: #ffffee;
@@ -109,9 +125,9 @@ button[type=text] {
     text-align: justify;
 }
 
-input[type=file] {
+/* input[type=file] {
     display: none;
-}
+} */
 
 input[type=submit], .modal-header, .modal-footer {
     background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
@@ -133,21 +149,15 @@ input[type=submit], .modal-header, .modal-footer {
     background-color: initial;
 }
 
-.descricao {   
-    margin: 0px;
+.close, .descricao {  
+    margin: 0px; 
     padding: 0px;
+    margin-left: 15px;
 }
 
 ::-webkit-input-placeholder {
     color: #073763;
     font-weight: lighter; 
-}
-
-#alert, #campo {
-    margin: 20px;
-    padding: 5px;  
-    text-shadow: 0 0 0.1em #f0a963;
-    background-image: linear-gradient(to bottom right, #f9cb9c, #ffffee);
 }
 
 
