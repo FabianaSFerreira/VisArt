@@ -7,6 +7,9 @@
 
     $maxTipos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdTipo) AS max FROM tipo_arte"));
     $maxT = (int) $maxTipos['max'];
+
+    $maxGrupos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdGrupo) AS max FROM grupos"));
+    $maxG = (int) $maxGrupos['max'];
 ?>
 
 <!DOCTYPE html>
@@ -87,7 +90,7 @@
                             <form action='perfil.php' method='post' enctype="multipart/form-data">                                 
                                 <div class='form-group' align="center">
                                     <div class="col-sm-2" align="left"><label> Imagem: </label></div>
-                                    <div class="col-sm-10" align="left"><label id='imagem' style='width:-webkit-fill-available;'> <input type="file" name="arquivo"> <span class="glyphicon glyphicon-cloud-download"></span> Escolher Arquivo </label></div>
+                                    <div class="col-sm-10" align="left"><input type="file" name="arquivo" style='width:-webkit-fill-available;'></div>
                                     
                                     <div class="col-sm-2" align="left"><label> Nome: </label></div>
                                     <div class="col-sm-10" align="left"><input type='text' name='nome' placeholder='Título' style='width:-webkit-fill-available;' required></div>
@@ -130,7 +133,7 @@
                             <form action='perfil.php' method='post' enctype="multipart/form-data">                                 
                                 <div class='form-group' align="center"> 
                                     <div class="col-sm-2" align="left"><label> Imagem: </label></div>
-                                    <div class="col-sm-10" align="left"><label id='imagem' style='width:-webkit-fill-available;'> <input type="file" name="arquivo"> <span class="glyphicon glyphicon-cloud-download"></span> Escolher Imagem </label></div>
+                                    <div class="col-sm-10" align="left"><input type="file" name="imagem" style='width:-webkit-fill-available;'></div>
                                     
                                     <div class="col-sm-2" align="left"><label> Nome: </label></div>
                                     <div class="col-sm-10" align="left"><input type='text' name='nome' placeholder='Título' style='width:-webkit-fill-available;' required></div>
@@ -175,7 +178,7 @@
                                         <div class="col-sm-10" align="left"><?php echo "<input type='email' name='email' value='".$select['email']."' style='width:-webkit-fill-available;'>";?></div>
 
                                         <div class="col-sm-2" align="left"><label> Imagem: </label></div>
-                                        <div class="col-sm-10" align="left"><label id='imagem' style='width:-webkit-fill-available;'> <input type='file' name='new_imagem'><span class='glyphicon glyphicon-cloud-download'></span> Escolher Imagem </label></div>
+                                        <div class="col-sm-10" align="left"><input type="file" name="new_imagem" style='width:-webkit-fill-available;'></div>
                                         
                                         <div align="center"> <input type='submit' name='alt_perfil' value='Alterar' style='width: 120px;'> </div>
                                     </div>
@@ -278,8 +281,6 @@
 
                     if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
                         $inserir = mySqli_query($conexao, "INSERT INTO artes(arquivo, nome, tipo, descricao, usuario) values('$pasta$novoNome', '$nome', '$tipo', '$descricao', '$usuario')");
-                        
-                        echo $inserir; die;
 
                         if ($inserir != "") {
                             $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Arte adicionada com sucesso </strong> </div>";
@@ -307,11 +308,11 @@
                 $descricao = $_POST["descricao"];
 
                 $formatosPermitidos = array('png', 'jpeg', 'jpg', 'gif');
-                $extensao = pathinfo($_FILES["arquivo"]["name"], PATHINFO_EXTENSION);
+                $extensao = pathinfo($_FILES["imagem"]["name"], PATHINFO_EXTENSION);
 
                 if ($extensao != "") {
                     if(in_array($extensao, $formatosPermitidos)) {
-                        $arquivo = $_FILES["arquivo"]["tmp_name"];
+                        $arquivo = $_FILES["imagem"]["tmp_name"];
                         $novoNome = uniqid().".$extensao";
                         $pasta = "Arquivos/Grupos/";               
 
@@ -339,8 +340,11 @@
                 }
                 else {
                     $inserir = mySqli_query($conexao, "INSERT INTO grupos(nome, administrador, status, descricao) values('$nome', '$usuario', '$status', '$descricao')");
-                    
+
                     if ($inserir != "") {
+                        $maxG ++;
+                        mySqli_query($conexao, "INSERT INTO membros_grupo(grupo, usuario, solicitacao) VALUES('$maxG', '$usuario', '0')");
+                        
                         $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Grupo adicionado com sucesso </strong> </div>";
                         echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
                     } 

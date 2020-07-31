@@ -101,7 +101,7 @@
             }
 
             for ($i=1; $i <= $maxG; $i++) { 
-                $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, imagem FROM grupos WHERE IdGrupo='$i'"));
+                $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.nome, G.imagem FROM grupos G JOIN membros_grupo M ON G.IdGrupo = M.Grupo WHERE G.IdGrupo = '$i' AND M.Usuario = '$usuario'"));
 
                 if ($grupo != "") {
                     echo "<form action='meus_grupos.php' method='post'>
@@ -178,9 +178,14 @@
                 <div class='modal-content'>   
 
                     <div class='modal-header'>
-                        <?php ?>
-                        <button class="descricao" type="button" data-toggle="modal" data-target="#editar_grupo" style='float:left;'> <span class="glyphicon glyphicon-pencil"></span> </button>
-                        <button class="descricao" type="button" data-toggle="modal" data-target="#excluir_grupo" style='float:left;'> <span class="glyphicon glyphicon-trash"></span> </button>
+                        <?php 
+                            $admin = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT administrador FROM grupos WHERE IdGrupo=".$DadosGrupo['IdGrupo']." AND administrador='$usuario'"));
+
+                            if ($admin != "") {
+                                echo "<button class='descricao' type='button' data-toggle='modal' data-target='#editar_grupo' style='float:left;'> <span class='glyphicon glyphicon-pencil'></span> </button>
+                                    <button class='descricao' type='button' data-toggle='modal' data-target='#excluir_grupo' style='float:left;'> <span class='glyphicon glyphicon-trash'></span> </button>";
+                            }
+                        ?>
                         
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
                         <?php echo "<h4 class='modal-title'>".$DadosGrupo['nome']."</h4>"; ?>
@@ -227,7 +232,7 @@
                         <form action='meus_grupos.php' method='post' enctype="multipart/form-data">
                             <div class='form-group' align="center">
                                 <div class="col-sm-2" align="left"><label> Imagem: </label></div>
-                                <div class="col-sm-10" align="left"><label id='imagem' style='width:-webkit-fill-available;'> <input type="file" name='new_imagem'> <span class="glyphicon glyphicon-cloud-download"></span> Escolher Imagem </label></div>
+                                <div class="col-sm-10" align="left"><input type="file" name="new_imagem" style='width:-webkit-fill-available;'></div>
 
                                 <div class="col-sm-2" align="left"><label> Nome: </label></div>
                                 <div class="col-sm-10" align="left"><?php echo "<input type='text' name='nome' value='".$DadosGrupo['nome']."' style='width:-webkit-fill-available;'>";?></div>

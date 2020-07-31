@@ -279,7 +279,7 @@
                             <form action='minhas_artes.php' method='post' enctype="multipart/form-data">                                 
                                 <div class='form-group' align="center">
                                     <div class="col-sm-2" align="left"><label> Imagem: </label></div>
-                                    <div class="col-sm-10" align="left"><label id='imagem' style='width:-webkit-fill-available;'> <input type="file" name='new_arquivo'> <span class="glyphicon glyphicon-cloud-download"></span> Escolher Arquivo </label></div>
+                                    <div class="col-sm-10" align="left"><input type="file" name="new_arquivo" style='width:-webkit-fill-available;'></div>
                                     
                                     <div class="col-sm-2" align="left"><label> Nome: </label></div>
                                     <div class="col-sm-10" align="left"><?php echo "<input type='text' name='nome' value='".$DadosArte['nome']."' style='width:-webkit-fill-available;'>";?></div>

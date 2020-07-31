@@ -7,6 +7,8 @@
 
     $maxMembros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdMembro) AS max FROM membros_grupo"));
     $maxM = (int) $maxMembros['max'];
+
+    $cont = 0;
 ?>
 
 <!DOCTYPE html>
@@ -91,14 +93,44 @@
     </header>
     
     <section class="container-fluid">
+        <?php
+            for ($i=1; $i <= $maxM; $i++) {
+                $solicitacao = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT M.IdMembro, G.nome, M.usuario FROM membros_grupo M JOIN grupos G ON M.Grupo = G.IdGrupo WHERE M.IdMembro='$i' AND M.solicitacao='1' AND G.Administrador='$usuario'")); 
+                
+                if ($solicitacao != "") {
+                    echo "<div class='row' id='notificacao'>
+                            <form action='notificacao.php' method='post'>
+                                <div class='col-sm-7'>
+                                    <p> O usuário <strong>'".$solicitacao['usuario']."'</strong> enviou uma solicitação para participar do grupo <strong>'".$solicitacao['nome']."'</strong>.</p>
+                                </div>
+                                
+                                <div class='col-sm-5' align='center'>
+                                    <input type='submit' name='aceitar$i' value='Aceitar' style='width: 100px; background: none;'>
+                                    <input type='submit' name='recusar$i' value='Recusar' style='width: 100px; background: none;'>
+                                </div>
+                            </form>    
+                        </div>"; 
+                } 
+                else {
+                    $cont ++;
+                }
+                
+                if(isset($_POST["aceitar$i"])) { 
+                    $update = mySqli_query($conexao, "UPDATE membros_grupo SET solicitacao='0' WHERE IdMembro='$i'");
+                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=notificacao.php">';
+                }
+    
+                if(isset($_POST["recusar$i"])) { 
+                    mySqli_query($conexao, "DELETE FROM membros_grupo WHERE IdMembro='$i'");
+                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=notificacao.php">';
+                }
+            } 
 
+            if ($cont == $maxM) {
+                echo "<div class='row' id='notificacao'> <strong> Você não possue nenhuma notificação </strong> </div>";
+            }
+        ?>
     </section>
-
-    <script>
-        $(document).ready(function(){
-            $(".close").click(function(){ $("#alert").hide(); });
-        });
-    </script>
     
     <footer class="container-fluid">
         <div class="row" id="footer">
