@@ -42,8 +42,8 @@
             </div>
 
             <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
-                <form id="buscar" action="galeria.php">
-                    <input id="text_busca" type="text" name="nome" placeholder="Buscar ..." style="width: 80%">
+                <form id="buscar" action="galeria.php" method='post'>
+                    <input id="text_busca" type="text" name="texto" placeholder="Buscar ..." style="width: 80%">
                     <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
                 </form>
             </div>
@@ -52,8 +52,8 @@
     </header>
     
     <section class="container-fluid">
-        <div class="row" style="padding: 10px;" align="right">
-            <div class="col-sm-5" style="padding: 10px;">
+        <div class="row" align="right">
+            <div class="col-sm-5" style="padding: 20px 25px;">
                 <form id="buscar" action='grupos.php' method='post'>
                     <label style="padding: 0px 0px 0px 10px; margin: 0px;"> Pesquisar: </label>
                     <input class="pesquisar" id="text_busca" type='text' style="width: 70%;">      
@@ -67,9 +67,9 @@
                     $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, imagem FROM grupos WHERE IdGrupo='$i'"));
 
                     if ($grupo != "") {
-                        echo "<form action='grupos.php' method='post'>
+                        echo "<form action='grupos.php' method='post' class='bloco'>
                                 <div class='col-sm-3'> 
-                                    <h5>".$grupo['nome']." <button type='submit' name='bot".$i."' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                    <h5>".$grupo['nome']." <button type='submit' name='bot".$i."' data-title='Descrição' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
                                     <div id='grupo'> <img src='".$grupo['imagem']."'> </div>
                                 </div>
                             </form>"; 
@@ -89,12 +89,12 @@
             } 
 
             if(isset($_POST['solicitar'])) {
-                mySqli_query($conexao, "INSERT INTO membros_grupo(grupo, usuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '1')");
+                mySqli_query($conexao, "INSERT INTO membros_grupo(IdGrupo, usuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '1')");
                 echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=grupos.php">'; 
             }  
             
             if(isset($_POST['entrar'])) {
-                mySqli_query($conexao, "INSERT INTO membros_grupo(grupo, usuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '0')");
+                mySqli_query($conexao, "INSERT INTO membros_grupo(IdGrupo, usuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '0')");
 
                 $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";    
@@ -126,7 +126,7 @@
 
                                     echo "<select> <option> Membros </option>";      
                                     for ($i=1; $i <= $maxM; $i++) { 
-                                        $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND Grupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
+                                        $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
                                         if ($membros != "") { echo "<option>". $membros['usuario'] ."</option>"; }
                                     } echo "</select>";
                                 ?>
@@ -157,11 +157,15 @@
         $(document).ready(function(){
             $(".close").click(function(){ $("#alert").hide(); }); 
             
-            $(".pesquisar").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $("#filtro *").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
+            $(".pesquisar").keyup(function(){
+                var texto = $(this).val();
+                
+                $(".bloco").each(function(){
+                    var resultado = $(this).text().toUpperCase().indexOf(' '+texto.toUpperCase());
+                     
+                    if(resultado < 0) { $(this).fadeOut(); }
+                    else { $(this).fadeIn(); }
+                }); 
             });
         });
     </script>

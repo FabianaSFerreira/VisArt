@@ -46,8 +46,8 @@
             </div>
 
             <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
-                <form id="buscar" action="galeria.php">
-                    <input id="text_busca" type="text" name="nome" placeholder="Buscar ..." style="width: 80%">
+                <form id="buscar" action="galeria.php" method='post'>
+                    <input id="text_busca" type="text" name="texto" placeholder="Buscar ..." style="width: 80%">
                     <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
                 </form>
             </div>
@@ -109,7 +109,7 @@
                 if ($arte != "") {
                     echo "<form action='minhas_artes.php' method='post'>
                         <div class='col-sm-4'> 
-                            <h5>".$arte['nome']." <button type='submit' name='botA".$i."' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                            <h5>".$arte['nome']." <button type='submit' name='botA".$i."' class='descricao' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
                             <div id='arte'> <img src='".$arte['arquivo']."'> </div>
                         </div>
                     </form>";
@@ -156,9 +156,7 @@
                 }
                 else {
                     mySqli_query($conexao, "UPDATE artes SET nome='$nome', tipo='$tipo', descricao='$descricao' WHERE IdArte=".$_SESSION['IdArte']."");
-                    
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte']."")); 
-                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
+                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=minhas_artes.php">';
                 }     
             }
 
@@ -205,8 +203,8 @@
                 <div class="modal-content">
                     
                     <div class='modal-header'>
-                        <button class="descricao" type="button" data-toggle="modal" data-target="#editar_arte" style='float:left;'> <span class="glyphicon glyphicon-pencil"></span> </button>
-                        <button class="descricao" type="button" data-toggle="modal" data-target="#excluir_arte" style='float:left;'> <span class="glyphicon glyphicon-trash"></span> </button>
+                        <button class="descricao" type="button" data-toggle="modal" data-target="#editar_arte" data-title='Editar' style='float:left;'> <span class="glyphicon glyphicon-pencil"></span> </button>
+                        <button class="descricao" type="button" data-toggle="modal" data-target="#excluir_arte" data-title='Excluir' style='float:left;'> <span class="glyphicon glyphicon-trash"></span> </button>
                         
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
                         <?php echo "<h4 class='modal-title'>".$DadosArte['nome']."</h4>"; ?>
@@ -237,7 +235,7 @@
                                                     echo "<form action='minhas_artes.php' method='post'>
                                                             <div id='comentario'>
                                                                 <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$comentario['texto']." </button>
-                                                                <button type='submit' class='icon' name='coment".$i."' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
+                                                                <button type='submit' class='icon' name='coment".$i."' data-title='Excluir' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
                                                             </div>
                                                         </form>"; 
                                                 }
@@ -254,7 +252,7 @@
                         <div class='row'>
                             <form action='minhas_artes.php' method='post'>
                                 <div class='form-group' align='center' id='comentario' style='margin: 20px;'>
-                                    <textarea name="comentario" rows="1" placeholder='Escrevar Comentario' class='icon' style='width:70%; float: left;'></textarea>
+                                    <textarea name="comentario" rows="1" placeholder='Escrever Comentario' class='icon' style='width:70%; float: left;'></textarea>
                                     <input type='submit' name='add_coment' value='Enviar' style='width: 100px;'>
                                 </div>
                             </form>

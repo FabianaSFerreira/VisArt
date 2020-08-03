@@ -10,6 +10,9 @@
 
     $maxMembros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdMembro) AS max FROM membros_grupo"));
     $maxM = (int) $maxMembros['max'];
+
+    $maxMensagens = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdMensagem) AS max FROM mensagens"));
+    $maxMsg = (int) $maxMensagens['max'];
 ?>
 
 <!DOCTYPE html>
@@ -43,8 +46,8 @@
             </div>
 
             <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
-                <form id="buscar" action="galeria.php">
-                    <input id="text_busca" type="text" name="nome" placeholder="Buscar ..." style="width: 80%">
+                <form id="buscar" action="galeria.php" method='post'>
+                    <input id="text_busca" type="text" name="texto" placeholder="Buscar ..." style="width: 80%">
                     <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
                 </form>
             </div>
@@ -101,12 +104,15 @@
             }
 
             for ($i=1; $i <= $maxG; $i++) { 
-                $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.nome, G.imagem FROM grupos G JOIN membros_grupo M ON G.IdGrupo = M.Grupo WHERE G.IdGrupo = '$i' AND M.Usuario = '$usuario'"));
+                $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.nome, G.imagem FROM grupos G JOIN membros_grupo M ON G.IdGrupo = M.IdGrupo WHERE G.IdGrupo='$i' AND M.Usuario='$usuario' AND M.solicitacao='0'"));
 
                 if ($grupo != "") {
                     echo "<form action='meus_grupos.php' method='post'>
                             <div class='col-sm-3'> 
-                                <h5>".$grupo['nome']." <button type='submit' name='botG".$i."' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                <h5>".$grupo['nome']." 
+                                    <button class='descricao' type='submit' name='botG".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
+                                    <button class='descricao' type='submit' name='bp".$i."' data-title='Bate-Papo' style='float:left;'> <span class='glyphicon glyphicon-comment'></span> </button>
+                                </h5> 
                                 <div id='grupo'> <img src='".$grupo['imagem']."'> </div>
                             </div>
                         </form>"; 
@@ -119,6 +125,13 @@
                     $_SESSION['IdGrupo'] = $DadosGrupo['IdGrupo'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";     
+                }
+
+                if (isset($_POST["bp$j"])) {
+                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome FROM grupos WHERE IdGrupo='$j'")); 
+                    $_SESSION['IdGrupo'] = $DadosGrupo['IdGrupo'];
+                    
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>";     
                 }
             } 
 
@@ -173,6 +186,39 @@
             } 
         ?>  
 
+        <?php
+            for ($l=1; $l <= $maxMsg; $l++) { 
+                if(isset($_POST["msg$l"])) { 
+                    $_SESSION['IdMensagem'] = $l;
+                    echo 'botao';
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#excluir_mensagem').modal('show'); }); </script>";
+                }
+            }
+
+            if(isset($_POST['add_mensagem'])){
+                $mensagem = $_POST['mensagem'];
+
+                if ($mensagem != "") {
+                    mySqli_query($conexao, "INSERT INTO mensagens(IdGrupo, texto, usuario) VALUES(".$_SESSION['IdGrupo'].", '$mensagem', '$usuario')");
+
+                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>"; 
+                }
+            }
+
+            if(isset($_POST['excluir_msg'])) { 
+                mySqli_query($conexao, "DELETE FROM mensagens WHERE IdMensagem=".$_SESSION['IdMensagem']."");
+                
+                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>";
+            }
+
+            if(isset($_POST['voltar_bp'])){
+                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>"; 
+            }
+        ?>  
+
         <div class='modal fade' id='descricao_grupo' role='dialog'>
             <div class='modal-dialog'>  
                 <div class='modal-content'>   
@@ -182,11 +228,10 @@
                             $admin = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT administrador FROM grupos WHERE IdGrupo=".$DadosGrupo['IdGrupo']." AND administrador='$usuario'"));
 
                             if ($admin != "") {
-                                echo "<button class='descricao' type='button' data-toggle='modal' data-target='#editar_grupo' style='float:left;'> <span class='glyphicon glyphicon-pencil'></span> </button>
-                                    <button class='descricao' type='button' data-toggle='modal' data-target='#excluir_grupo' style='float:left;'> <span class='glyphicon glyphicon-trash'></span> </button>";
+                                echo "<button class='descricao' type='button' data-toggle='modal' data-target='#editar_grupo' data-title='Editar' style='float:left;'> <span class='glyphicon glyphicon-pencil'></span> </button>
+                                    <button class='descricao' type='button' data-toggle='modal' data-target='#excluir_grupo' data-title='Excluir' style='float:left;'> <span class='glyphicon glyphicon-trash'></span> </button>";
                             }
                         ?>
-                        
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
                         <?php echo "<h4 class='modal-title'>".$DadosGrupo['nome']."</h4>"; ?>
                     </div>
@@ -207,7 +252,7 @@
 
                                     echo "<select> <option> Membros </option>";      
                                     for ($i=1; $i <= $maxM; $i++) { 
-                                        $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND Grupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
+                                        $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
                                         if ($membros != "") { echo "<option>". $membros['usuario'] ."</option>"; }
                                     } echo "</select>";
                                 ?>
@@ -273,6 +318,82 @@
                                 <label> Tem certeza que deseja excluir esse grupo? </label> <br>
                                 <input type='submit' name='excluir_grupo' value='Excluir' style='width: 120px;'>
                                 <input type='submit' name='voltar_grupo' value='Voltar' style='width: 120px;'>
+                            </div>  
+                        </form>       
+                    </div>
+
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class='modal fade' id='bate_papo' role='dialog'>
+            <div class='modal-dialog'>  
+                <div class='modal-content'>   
+
+                    <div class='modal-header'>                     
+                        <button type='button' class='close' data-dismiss='modal'>&times;</button>
+                        <?php echo "<h4 class='modal-title'> Bate-Papo - ".$DadosGrupo['nome']."</h4>"; ?>
+                    </div>
+
+                    <div class='modal-body'>
+                        <div class='row' id="sala_BP">
+                            <?php 
+                                for ($l=$maxMsg; $l > 0; $l--) { 
+                                    $mensagem = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem, texto, usuario FROM mensagens WHERE IdMensagem='$l' AND IdGrupo=".$DadosGrupo['IdGrupo'].""));                                               
+                                    
+                                    if ($mensagem != "") {
+                                        $meu_msg = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem FROM mensagens WHERE IdMensagem='$l' AND usuario='$usuario'")); 
+
+                                        if ($meu_msg['IdMensagem'] != "") {
+                                            echo "<form action='meus_grupos.php' method='post'>
+                                                    <div id='mensagem' style='width:50%; float:right; margin:10px;'>
+                                                        <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$mensagem['texto']." </button>
+                                                        <button type='submit' class='icon' name='msg".$l."' data-title='Excluir' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
+                                                    </div>
+                                                    <p style='width:50%;float:right;margin: 0px 15px;text-align: right;'>".$mensagem['usuario']."</p>
+                                                </form>"; 
+                                        }
+                                        else {
+                                            echo "<div>
+                                                    <div id='mensagem' style='width:50%; float:left; margin:10px;'> <button type='text' class='icon' style='width:70%; float:none; margin:5px;'> ".$mensagem['texto']." </button> </div>
+                                                    <p style='width:50%;float:left;margin: 0px 15px;'>".$mensagem['usuario']."</p>
+                                                </div>"; 
+                                        }  
+                                    } 
+                                } 
+                            ?>
+                        </div> 
+
+                        <div class='row'>
+                            <form action='meus_grupos.php' method='post'>
+                                <div class='form-group' align='center' id='mensagem' style='margin: 20px;'>
+                                    <textarea name="mensagem" rows="1" placeholder='Escrever Mensagem' class='icon' style='width:70%; float:left;'></textarea>
+                                    <input type='submit' name='add_mensagem' value='Enviar' style='width: 100px;'>
+                                </div>
+                            </form>
+                        </div>    
+                    </div>
+
+                    <div class='modal-footer'></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="excluir_mensagem" role="dialog">
+            <div class="modal-dialog">  
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Excluir Mensagem</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <form action='meus_grupos.php' method='post'>
+                            <div class='form-group' align="center">
+                                <label> Tem certeza que deseja excluir essa mensagem?</label> <br>
+                                <input type='submit' name='excluir_msg' value='Excluir' style='width: 120px;'>
+                                <input type='submit' name='voltar_bp' value='Voltar' style='width: 120px;'>
                             </div>  
                         </form>       
                     </div>

@@ -34,8 +34,8 @@
             </div>
 
             <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
-                <form id="buscar" action="galeria.php">
-                    <input id="text_busca" type="text" name="nome" placeholder="Buscar ..." style="width: 80%">
+                <form id="buscar" action="galeria.php" method='post'>
+                    <input id="text_busca" type="text" name="texto" placeholder="Buscar ..." style="width: 80%">
                     <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
                 </form>
             </div>

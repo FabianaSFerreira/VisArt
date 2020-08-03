@@ -3,12 +3,14 @@
 	
 	$_SESSION['Alert'] = "";
 	
-	$_SESSION['usuario'] = "";
-	
 	$_SESSION['IdArte'] = "";
 	
 	$_SESSION['IdGrupo'] = "";
+
+	$_SESSION['usuario'] = "";
 	
+	$_SESSION['IdMensagem'] = ""; 
+
 	$_SESSION['IdComentario'] = "";
 
 	echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">'; 

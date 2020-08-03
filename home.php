@@ -34,8 +34,8 @@
             </div>
 
             <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
-                <form id="buscar" action="galeria.php">
-                    <input id="text_busca" type="text" name="nome" placeholder="Buscar ..." style="width: 80%">
+                <form id="buscar" action="galeria.php" method='post'>
+                    <input id="text_busca" type="text" name="texto" placeholder="Buscar ..." style="width: 80%">
                     <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
                 </form>
             </div>
@@ -44,7 +44,7 @@
     </header>
     
     <section class="container-fluid" align="center">
-        <div style="padding-left: 10%; padding-right: 10%;" align="center">
+        <div style="padding-left: 10%; padding-right: 10%; margin:10px;" align="center">
             <div id="Carousel" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
                     <li data-target="#Carousel" data-slide-to="0" class="active"></li>
@@ -78,14 +78,8 @@
                     ?>
                 </div>
 
-                <a class="left carousel-control" href="#Carousel" data-slide="prev">
-                    <span class="glyphicon glyphicon-chevron-left"></span>
-                    <span class="sr-only">Anterior</span>
-                </a>
-                <a class="right carousel-control" href="#Carousel" data-slide="next">
-                    <span class="glyphicon glyphicon-chevron-right"></span>
-                    <span class="sr-only">Próximo</span>
-                </a>
+                <a class="left carousel-control" href="#Carousel" data-slide="prev"> <span class="glyphicon glyphicon-chevron-left"></span> </a>
+                <a class="right carousel-control" href="#Carousel" data-slide="next"> <span class="glyphicon glyphicon-chevron-right"></span> </a>
             </div>
         </div>
 

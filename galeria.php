@@ -45,8 +45,8 @@
             </div>
 
             <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
-                <form id="buscar" action="galeria.php">
-                    <input id="text_busca" type="text" name="nome" placeholder="Buscar ..." style="width: 80%">
+                <form id="buscar" action="galeria.php" method='post'>
+                    <input id="text_busca" type="text" name="texto" placeholder="Buscar ..." style="width: 80%">
                     <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
                 </form>
             </div>
@@ -55,15 +55,15 @@
     </header>
     
     <section class="container-fluid">
-        <div class="row" style="padding: 10px;" align="right">     
-            <div class="col-sm-5" style="padding: 10px;">
+        <div class="row" align="right">     
+            <div class="col-sm-5" style="padding: 20px 25px 0px 25px;">
                 <form id="buscar" action='galeria.php' method='post'>
                     <label style="padding: 0px 0px 0px 10px; margin: 0px;"> Pesquisar: </label>
                     <input class="pesquisar" id="text_busca" type='text' style="width: 70%;">      
                 </form>
             </div>
             
-            <div class="col-sm-7">
+            <div class="col-sm-7" style="padding-top: 10px;">
                 <?php
                     echo "<form action='galeria.php' method='post'> <select name='tipo' onchange='this.form.submit()'> 
                             <option> Tipos </option> <option value='0'> Todos </option>";      
@@ -74,7 +74,7 @@
                     echo "</select></form>";
                 ?>
             </div>    
-        </div><br>
+        </div>
         
         <div class="row" id="filtro" style="padding: 10px;">
             <?php
@@ -86,9 +86,12 @@
                             $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, arquivo FROM artes WHERE IdArte='$i'"));
                             
                             if ($arte != "") {
-                                echo "<form action='galeria.php' method='post'>
+                                echo "<form action='galeria.php' method='post' class='bloco'>
                                         <div class='col-sm-4'> 
-                                            <h5>".$arte['nome']." <button type='submit' name='bot".$i."' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                            <h5>".$arte['nome']." 
+                                                <button class='descricao' type='submit' name='desc".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
+                                                <button class='descricao' type='submit' name='curt".$i."' data-title='Curtir' style='float:left;'> <span class='glyphicon glyphicon-heart'></span> </button>
+                                            </h5> 
                                             <div id='arte'> <img src='".$arte['arquivo']."'> </div>
                                         </div>
                                     </form>";  
@@ -102,9 +105,12 @@
                                     $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, arquivo FROM artes WHERE IdArte='$l' AND tipo='$j'"));
                                     
                                     if ($arte != "") {
-                                        echo "<form action='galeria.php' method='post'>
+                                        echo "<form action='galeria.php' method='post' class='bloco'>
                                                 <div class='col-sm-4'> 
-                                                    <h5>".$arte['nome']." <button type='submit' name='bot".$i."' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                                    <h5>".$arte['nome']." 
+                                                        <button class='descricao' type='submit' name='desc".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
+                                                        <button class='descricao' type='submit' name='curt".$i."' data-title='Curtir' style='float:left;'> <span class='glyphicon glyphicon-heart'></span> </button>
+                                                    </h5> 
                                                     <div id='arte'> <img src='".$arte['arquivo']."'> </div>
                                                 </div>
                                             </form>";
@@ -114,30 +120,61 @@
                         } 
                     } 
                 }
-                else {
+                else if(isset($_POST['buscar'])){
+                    $texto = $_POST['texto'];
+
                     for ($i=1; $i <= $maxA; $i++) { 
-                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, arquivo FROM artes WHERE IdArte='$i'"));
+                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, arquivo FROM artes WHERE IdArte='$i' AND nome LIKE '%$texto%'"));
                         
                         if ($arte != "") {
-                            echo "<form action='galeria.php' method='post'>
+                            echo "<form action='galeria.php' method='post' class='bloco'>
                                     <div class='col-sm-4'> 
-                                        <h5>".$arte['nome']." <button type='submit' name='bot".$i."' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                        <h5>".$arte['nome']." 
+                                            <button class='descricao' type='submit' name='desc".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
+                                            <button class='descricao' type='submit' name='curt".$i."' data-title='Curtir' style='float:left;'> <span class='glyphicon glyphicon-heart'></span> </button>
+                                        </h5>     
                                         <div id='arte'> <img src='".$arte['arquivo']."'> </div>
                                     </div>
                                 </form>"; 
                         }                                   
                     }
                 }
+                else {
+                    for ($i=1; $i <= $maxA; $i++) { 
+                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, arquivo FROM artes WHERE IdArte='$i'"));
+                        
+                        if ($arte != "") {
+                            echo "<form action='galeria.php' method='post' class='bloco'>
+                                    <div class='col-sm-4'> 
+                                        <h5>".$arte['nome']." 
+                                            <button class='descricao' type='submit' name='desc".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
+                                            <button class='descricao' type='submit' name='curt".$i."' data-title='Curtir' style='float:left;'> <span class='glyphicon glyphicon-heart'></span> </button>
+                                        </h5>     
+                                        <div id='arte'> <img src='".$arte['arquivo']."'> </div>
+                                    </div>
+                                </form>"; 
+                        }                                   
+                    }
+                }   
             ?>
         </div>
         
         <?php 
             for ($i=1; $i <= $maxA; $i++) { 
-                if (isset($_POST["bot$i"])) {
+                if (isset($_POST["desc$i"])) {
                     $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte='$i'")); 
                     $_SESSION['IdArte'] = $DadosArte['IdArte'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
+                }
+
+                if (isset($_POST["curt$i"])){
+                    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT curtidas FROM artes WHERE IdArte='$i'"));
+                    $curtidas = (int) $curtidas['curtidas'];
+    
+                    $curt = $curtidas + 1;
+                    $update = mySqli_query($conexao, "UPDATE artes SET curtidas='$curt' WHERE IdArte='$i'");
+                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=galeria.php">';
                 }
             } 
 
@@ -170,6 +207,15 @@
                 $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
             }
+
+            if(isset($_POST['curtir'])){
+                $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $curtidas = (int) $curtidas['curtidas'];
+
+                $curt = $curtidas + 1;
+                $update = mySqli_query($conexao, "UPDATE artes SET curtidas='$curt' WHERE IdArte=".$_SESSION['IdArte']."");
+                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=galeria.php">';
+            }  
         ?>      
 
         <div class="modal fade" id="descricao_arte" role="dialog">
@@ -177,6 +223,10 @@
                 <div class="modal-content">
                     
                     <div class='modal-header'>
+                        <form action="galeria.php" method="post">
+                            <button class='descricao' type='submit' name='curtir' title='curtir' style='float:left;'> 
+                            <span class='glyphicon glyphicon-heart'> <?php echo $DadosArte['curtidas']; ?></span> </button>
+                        </form> 
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
                         <?php echo "<h4 class='modal-title'>".$DadosArte['nome']."</h4>"; ?>
                     </div>
@@ -206,7 +256,7 @@
                                                     echo "<form action='galeria.php' method='post'>
                                                             <div id='comentario'>
                                                                 <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$comentario['texto']." </button>
-                                                                <button type='submit' class='icon' name='coment".$i."' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
+                                                                <button type='submit' class='icon' name='coment".$i."' data-title='Excluir' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
                                                             </div>
                                                         </form>"; 
                                                 }
@@ -218,14 +268,18 @@
                                     ?>
                                 </div>
                             </div>
-                        </div><br>
+                        </div>
                         
                         <div class='row'>
                             <form action='galeria.php' method='post'>
-                                <div class='form-group' align='center' id='comentario' style='margin: 20px;'>
-                                    <textarea name="comentario" rows="1" placeholder='Escrevar Comentario' class='icon' style='width:70%; float: left;'></textarea>
-                                    <input type='submit' name='add_coment' value='Enviar' style='width: 100px;'>
-                                </div>
+                                <?php 
+                                    if ($usuario != "") {
+                                        echo "<div class='form-group' align='center' id='comentario' style='margin: 25px;'>
+                                                <textarea name='comentario' rows='1' placeholder='Escrever Comentario' class='icon' style='width:70%; float: left;'></textarea>
+                                                <input type='submit' name='add_coment' value='Enviar' style='width: 100px;'>
+                                            </div>";
+                                    }
+                                ?>
                             </form>
                         </div>
                     </div>
@@ -263,11 +317,15 @@
         $(document).ready(function(){
             $(".close").click(function(){ $("#alert").hide(); });
             
-            $(".pesquisar").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $("#filtro *").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-                });
+            $(".pesquisar").keyup(function(){
+                var texto = $(this).val();
+                
+                $(".bloco").each(function(){
+                    var resultado = $(this).text().toUpperCase().indexOf(' '+texto.toUpperCase());
+                     
+                    if(resultado < 0) { $(this).fadeOut(); }
+                    else { $(this).fadeIn(); }
+                }); 
             });
         });
 
