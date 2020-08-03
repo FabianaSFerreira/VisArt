@@ -3,7 +3,7 @@
 body {      
     font-size: auto;
     color: #073763;
-    background-color: #ffffdc;  
+    background-color: #ffffee;  
     font-family: 'Nunito', sans-serif;    
 }
 
@@ -18,7 +18,7 @@ a {
     box-shadow: 1px 2px 2px #f0a963;
 }
 
-#buscar, #comentario {
+#buscar, #comentario, #mensagem {
     padding: 5px;
     text-align: left;
     min-width: 150px;
@@ -27,7 +27,7 @@ a {
     box-shadow: 1px 2px 2px #f0a963;
 }
 
-#text_busca{   
+#text_busca {   
     margin: 0px; 
     border: 0px;
     width: 100px; 
@@ -36,14 +36,14 @@ a {
     background-color: #ffffee; 
 }
 
-#header, #titulo, #perfil{
+#header, #titulo, #perfil {
     padding: 10px;
     font-weight: bold;
     text-align: center;
     background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
 }
 
-h4 {
+h4, h5 {
     color: #073763;
     font-weight: bold;  
     text-align: center;
@@ -51,9 +51,6 @@ h4 {
 
 h5 {
     padding: 5px;
-    color: #073763;
-    font-weight: bold;  
-    text-align: center;
     background-color: #ffffee;
     border: 0.5px solid #f0a963;
     box-shadow: 1px 2px 2px #f0a963;
@@ -96,22 +93,29 @@ img {
     margin: 10px;
 }
 
-#alert, #campo {
+#alert, #campo, #notificacao {
     margin: 20px;
     padding: 5px;  
     text-shadow: 0 0 0.1em #f0a963;
     background-image: linear-gradient(to bottom right, #f9cb9c, #ffffee);
 }
 
-#alert {
+section, #alert, #notificacao, #footer {
     padding: 20px;
 }
 
-section {
-    margin: 30px;
+#sala_BP {
+    margin: 5px;
+    height: 350px;
+    padding: 20px;
+    display: flex;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    flex-direction: column-reverse;
+    background-image: linear-gradient(to bottom right, #f9cb9c, #ffffee);
 }
 
-#imagem, button, select, textarea, input[type=text], input[type=password], input[type=email], input[type=submit] {
+#imagem, button, select, textarea, input {
     margin: 10px; 
     width: 250px; 
     font-weight: bold; 
@@ -121,15 +125,12 @@ section {
     box-shadow: 1px 2px 2px #f0a963;
 }
 
-button[type=text] {
+button[type=text], #footer {
     text-align: justify;
+    font-weight: lighter; 
 }
 
-/* input[type=file] {
-    display: none;
-} */
-
-input[type=submit], .modal-header, .modal-footer {
+input[type=submit], .modal-header, .modal-footer, #footer {
     background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
 }
 
@@ -160,20 +161,40 @@ input[type=submit], .modal-header, .modal-footer {
     font-weight: lighter; 
 }
 
-
-.carousel-control.left, .carousel-control.right {
-    padding: 0;
-    opacity: .8;
+::-webkit-file-upload-button {
+    border: 0px;
+    color: #073763;
+    background: none;
     box-shadow: 0 0 0;
-    background-image: linear-gradient(to right, #f9cb9c, rgba(0,0,0,.0001));
+    border-left: 0.5px solid #f0a963;
+    border-right: 0.5px solid #f0a963;
 }
 
-.carousel-control.right {
-    background-image: linear-gradient(to left, #f9cb9c, rgba(0,0,0,.0001));
+[data-title] {
+    position: relative;
 }
 
-#footer {
-    padding: 20px; 
-    text-align: justify;
-    background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900); 
+[data-title]:hover:after {
+    opacity: 1;
+    visibility: visible;
+}
+
+[data-title]:after {
+    z-index: 99999;
+    padding: 2px 5px;
+    position: absolute;
+    visibility: hidden;
+    font-weight: lighter;
+    content: attr(data-title);
+    background-color: #ffffee;
+    border: 0.5px solid #f0a963;
+    box-shadow: 1px 2px 2px #f0a963; 
+}
+
+.carousel-control.left, .carousel-control.right, .data-slide-to {
+    width: 10%;
+    padding: 0;
+    opacity: 1;
+    background: 0;
+    box-shadow: 0 0 0;
 }
