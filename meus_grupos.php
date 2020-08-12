@@ -26,14 +26,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-    <link rel="icon" href="Arquivos/logo.png" type="image/x-icon">
+    <link rel="icon" href="Arquivos/VisArt/logo.png" type="image/x-icon">
     <link rel="stylesheet" href="CSS/estilos.css">
 </head>
 
 <body>
     <header class="container-fluid"><br>
         <div class="row" id="header">     
-            <div class="col-sm-2" style="padding: 10px;" align="center"> <img src="Arquivos/marca.png" class="img-responsive" width="150"> </div>
+            <div class="col-sm-2" style="padding: 10px;" align="center"> <img src="Arquivos/VisArt/marca.png" class="img-responsive" width="150"> </div>
             
             <div class="col-sm-7" style="padding: 1.5% 1.5% 10px;" align="center">
                 <a class="col-sm-2" href="home.php">Home</a>
@@ -47,7 +47,7 @@
 
             <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
                 <form id="buscar" action="galeria.php" method='post'>
-                    <input id="text_busca" type="text" name="texto" placeholder="Buscar ..." style="width: 80%">
+                    <input id="text_busca" type="text" name="texto" placeholder="Buscar artes" style="width: 80%">
                     <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
                 </form>
             </div>
@@ -59,11 +59,11 @@
                     <?php echo "<img src='".$select['imagem']."' style='width:100%; height:100%;'>"; ?>
                 </div>
 
-                <div class="col-sm-5" style="padding: 0px; margin: 3% 0px 3%;"> 
+                <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
                     <?php
-                        echo "<label>".$select['nome']."</label><br>";
-                        echo "<label> $usuario </label><br>";
-                        echo "<label>".$select['curtidas']."</label>";
+                        echo "<label>Nome: ".$select['nome']."</label><br>";
+                        echo "<label>Usuário: $usuario </label><br>";
+                        echo "<label>Curtidas ".$select['curtidas']."</label>";
                     ?> 
                 </div>
             </div>
@@ -73,7 +73,7 @@
                 
                 <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
                     <form action="perfil.php" method="post">
-                        <input type="submit" name="modalArte" value="Adicionar Arte" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px;">
+                        <input type="submit" name="modalArte" value="Adicionar Arte" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
                     </form>
                 </div>
                 
@@ -81,7 +81,7 @@
                 
                 <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
                     <form action="perfil.php" method="post">
-                        <input type="submit" name="modalGrupo" value="Adicionar Grupo" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px;">
+                        <input type="submit" name="modalGrupo" value="Adicionar Grupo" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
                     </form>
                 </div>
                 
@@ -89,7 +89,7 @@
                 
                 <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
                     <form action="perfil.php" method="post">
-                        <input type="submit" name="configuracoes" value="Configurações" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px;">
+                        <input type="submit" name="configuracoes" value="Configurações" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
                     </form>
                 </div>
             </div>
@@ -132,6 +132,13 @@
                     $_SESSION['IdGrupo'] = $DadosGrupo['IdGrupo'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>";     
+                }
+            } 
+
+            for ($l=1; $l <= $maxM; $l++) { 
+                if (isset($_POST["membro$l"])) {
+                    $_SESSION['IdMembro'] = $l;
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#excluir_membro').modal('show'); }); </script>";      
                 }
             } 
 
@@ -181,6 +188,18 @@
             }
 
             if(isset($_POST['voltar_grupo'])) { 
+                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";
+            } 
+
+            if(isset($_POST['sair_grupo'])) { 
+                $delete = mySqli_query($conexao, "DELETE FROM membros_grupo WHERE IdGrupo=".$_SESSION['IdGrupo']." AND usuario='$usuario'");
+                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_grupos.php">';
+            }
+
+            if(isset($_POST['excluir_membro'])) {
+                $delete = mySqli_query($conexao, "DELETE FROM membros_grupo WHERE IdMembro=".$_SESSION['IdMembro']."");
+
                 $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";
             } 
@@ -250,11 +269,36 @@
                                     if ($DadosGrupo['status'] == 1) { echo "<button type='text'> Status: Aberto </button>"; }
                                     else if ($DadosGrupo['status'] == 2) { echo "<button type='text'> Status: Fechado </button>"; }
 
-                                    echo "<select> <option> Membros </option>";      
-                                    for ($i=1; $i <= $maxM; $i++) { 
-                                        $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
-                                        if ($membros != "") { echo "<option>". $membros['usuario'] ."</option>"; }
-                                    } echo "</select>";
+                                    if ($admin != "") {
+                                        echo "<div id='membros' style='width: 250px; margin: 10px 10px 0px;'> <label style='padding: inherit;'> Membros do grupo: </label>";
+                                        
+                                        for ($i=1; $i <= $maxM; $i++) { 
+                                            $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
+                                            
+                                            if ($membros != "") {
+                                                if ($membros['usuario'] == $admin['administrador']) {
+                                                    echo "<button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$membros['usuario']." </button>";
+                                                }
+                                                else {
+                                                    echo "<form action='meus_grupos.php' method='post'>                                 
+                                                            <button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$membros['usuario']." </button>
+                                                            <button type='submit' class='icon' name='membro".$i."' data-title='Excluir' style='margin: 0px;'> <span class='glyphicon glyphicon-trash'></span> </button>                                                   
+                                                        </form>"; 
+                                                } 
+                                            }
+                                        }
+
+                                        echo "</div>";
+                                    }
+                                    else {
+                                        echo "<select> <option> Membros </option>";      
+                                        for ($i=1; $i <= $maxM; $i++) { 
+                                            $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
+                                            if ($membros != "") { echo "<option>". $membros['usuario'] ."</option>"; }
+                                        } echo "</select>";
+
+                                        echo "<button type='button' data-toggle='modal' data-target='#sair_grupo' style='background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);'> Sair do Grupo </button>";
+                                    }
                                 ?>
                             </div>
                         </div>     
@@ -317,6 +361,52 @@
                             <div class='form-group' align="center">
                                 <label> Tem certeza que deseja excluir esse grupo? </label> <br>
                                 <input type='submit' name='excluir_grupo' value='Excluir' style='width: 120px;'>
+                                <input type='submit' name='voltar_grupo' value='Voltar' style='width: 120px;'>
+                            </div>  
+                        </form>       
+                    </div>
+
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="sair_grupo" role="dialog">
+            <div class="modal-dialog">  
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Sair do Grupo</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <form action='meus_grupos.php' method='post'>
+                            <div class='form-group' align="center">
+                                <label> Tem certeza que deseja sair do grupo? </label> <br>
+                                <input type='submit' name='sair_grupo' value='Sair' style='width: 120px;'>
+                                <input type='submit' name='voltar_grupo' value='Voltar' style='width: 120px;'>
+                            </div>  
+                        </form>       
+                    </div>
+
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="excluir_membro" role="dialog">
+            <div class="modal-dialog">  
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Excluir Membro</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <form action='meus_grupos.php' method='post'>
+                            <div class='form-group' align="center">
+                                <label> Tem certeza que deseja excluir esse membro do grupo? </label> <br>
+                                <input type='submit' name='excluir_membro' value='Excluir' style='width: 120px;'>
                                 <input type='submit' name='voltar_grupo' value='Voltar' style='width: 120px;'>
                             </div>  
                         </form>       
@@ -411,9 +501,30 @@
     </script>
     
     <footer class="container-fluid">
-        <div class="row" id="footer">
-            <div class="col-sm-10"> <p>Instituto Federal Sul-rio-grandense - Campus Gravataí, Curso Técnico em Informética para a Internet. Trabalho de Conclusão de Curso - Fabiana da Silveira Ferreira </p> </div>
-            <div class="col-sm-2" style="padding-top: 10px;"> <img src="Arquivos/marca.png" class="img-responsive" width="100" align="right"> </div>
+        <div class="row">
+            <div class="col-sm-4" style="padding: 10px 30px;"> 
+                <label>Instituição</label>
+                <p> Instituto Federal Sul-rio-grandense, Campus Gravataí - Curso Técnico em Informática para Internet.
+                <br>Trabalho de Conclusão de Curso - Fabiana da Silveira Ferreira.</p>
+            </div>
+
+            <div class="col-sm-6" style="padding: 10px 30px;">
+                <label>Conteúdo</label> 
+                <p> Sistema voltado para a exposição de trabalhos de diferentes artistas com o intuito de proporcionar um espaço de integração e colaboração entre os usuários. 
+                    Assim sendo um espaço onde possam aprimorar e compartilhar suas habilidades artísticas, tornando-se, não somente um espaço para visibilidade, mas também para aprendizado.
+                </p>
+            </div>
+
+            <div class="col-sm-2" style="padding: 10px 30px;"> 
+                <div class="row">
+                    <label>Redes Sociais</label><br>
+                    <img src="Arquivos/VisArt/redes1.png" class="img-responsive col-xs-6" style="width: 45px; height: 45px; padding: 5px;">
+                    <img src="Arquivos/VisArt/redes2.png" class="img-responsive col-xs-6" style="width: 45px; height: 45px; padding: 5px;">
+                    <img src="Arquivos/VisArt/redes3.png" class="img-responsive col-xs-6" style="width: 45px; height: 45px; padding: 5px;">
+                    <img src="Arquivos/VisArt/redes4.png" class="img-responsive col-xs-6" style="width: 45px; height: 45px; padding: 5px;">
+                    <p class="col-xs-12" style="font-size: 10px; padding: 5px;"> 2020 VisArt - Fabiana Ferreira</p>
+                </div>
+            </div>
         </div>
     </footer>
 </body>

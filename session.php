@@ -8,6 +8,8 @@
 	$_SESSION['IdGrupo'] = "";
 
 	$_SESSION['usuario'] = "";
+
+	$_SESSION['IdMembro'] = ""; 
 	
 	$_SESSION['IdMensagem'] = ""; 
 

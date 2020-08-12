@@ -23,14 +23,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-    <link rel="icon" href="Arquivos/logo.png" type="image/x-icon">
+    <link rel="icon" href="Arquivos/VisArt/logo.png" type="image/x-icon">
     <link rel="stylesheet" href="CSS/estilos.css">
 </head>
 
 <body>
     <header class="container-fluid"><br>
         <div class="row" id="header">     
-            <div class="col-sm-2" style="padding: 10px;" align="center"> <img src="Arquivos/marca.png" class="img-responsive" width="150"> </div>
+            <div class="col-sm-2" style="padding: 10px;" align="center"> <img src="Arquivos/VisArt/marca.png" class="img-responsive" width="150"> </div>
             
             <div class="col-sm-7" style="padding: 1.5% 1.5% 10px;" align="center">
                 <a class="col-sm-2" href="home.php">Home</a>
@@ -44,7 +44,7 @@
 
             <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
                 <form id="buscar" action="galeria.php" method='post'>
-                    <input id="text_busca" type="text" name="texto" placeholder="Buscar ..." style="width: 80%">
+                    <input id="text_busca" type="text" name="texto" placeholder="Buscar artes" style="width: 80%">
                     <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
                 </form>
             </div>
@@ -56,22 +56,22 @@
                     <?php echo "<img src='".$select['imagem']."' style='width:100%; height:100%;'>"; ?>
                 </div>
 
-                <div class="col-sm-5" style="padding: 0px; margin: 3% 0px 3%;"> 
+                <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
                     <?php
-                        echo "<label>".$select['nome']."</label><br>";
-                        echo "<label> $usuario </label><br>";
-                        echo "<label>".$select['curtidas']."</label>";
+                        echo "<label>Nome: ".$select['nome']."</label><br>";
+                        echo "<label>Usuário: $usuario </label><br>";
+                        echo "<label>Curtidas ".$select['curtidas']."</label>";
                     ?> 
                 </div>
             </div>
 
             <div class="col-sm-6" style="padding: 15px; margin: 1% 0px;" align="right"> 
                 <a class="col-sm-5 col-xs-5" href="minhas_artes.php" style="margin: 10px;"> Minhas Artes </a>
-                <button class="col-sm-5 col-xs-5" type="button" data-toggle="modal" data-target="#add_arte"> Adicionar Arte </button>
+                <button class="col-sm-5 col-xs-5" type="button" data-toggle="modal" data-target="#add_arte" style="border: 0px; padding: 5px;"> Adicionar Arte </button>
                 <a class="col-sm-5 col-xs-5" href="meus_grupos.php" style="margin: 10px;"> Meus Grupos </a>
-                <button class="col-sm-5 col-xs-5" type="button" data-toggle="modal" data-target="#add_grupo"> Adicionar Grupo </button>
+                <button class="col-sm-5 col-xs-5" type="button" data-toggle="modal" data-target="#add_grupo" style="border: 0px; padding: 5px;"> Adicionar Grupo </button>
                 <a class="col-sm-5 col-xs-5" href="notificacao.php" style="margin: 10px;"> Notificações </a>
-                <button class="col-sm-5 col-xs-5" type="button" data-toggle="modal" data-target="#configuracoes"> Configurações </button>
+                <button class="col-sm-5 col-xs-5" type="button" data-toggle="modal" data-target="#configuracoes" style="border: 0px; padding: 5px;"> Configurações </button>
             </div>
         </div>
     </header>
@@ -320,6 +320,9 @@
                             $inserir = mySqli_query($conexao, "INSERT INTO grupos(imagem, nome, administrador, status, descricao) values('$pasta$novoNome', '$nome', '$usuario', '$status', '$descricao')");
                             
                             if ($inserir != "") {
+                                $maxG ++;
+                                mySqli_query($conexao, "INSERT INTO membros_grupo(IdGrupo, usuario, solicitacao) VALUES('$maxG', '$usuario', '0')");
+
                                 $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Grupo adicionado com sucesso </strong> </div>";
                                 echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
                             }
@@ -343,7 +346,7 @@
 
                     if ($inserir != "") {
                         $maxG ++;
-                        mySqli_query($conexao, "INSERT INTO membros_grupo(grupo, usuario, solicitacao) VALUES('$maxG', '$usuario', '0')");
+                        mySqli_query($conexao, "INSERT INTO membros_grupo(IdGrupo, usuario, solicitacao) VALUES('$maxG', '$usuario', '0')");
                         
                         $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Grupo adicionado com sucesso </strong> </div>";
                         echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
@@ -442,9 +445,30 @@
     </script>
     
     <footer class="container-fluid">
-        <div class="row" id="footer">
-            <div class="col-sm-10"> <p>Instituto Federal Sul-rio-grandense - Campus Gravataí, Curso Técnico em Informética para a Internet. Trabalho de Conclusão de Curso - Fabiana da Silveira Ferreira </p> </div>
-            <div class="col-sm-2" style="padding-top: 10px;"> <img src="Arquivos/marca.png" class="img-responsive" width="100" align="right"> </div>
+        <div class="row">
+            <div class="col-sm-4" style="padding: 10px 30px;"> 
+                <label>Instituição</label>
+                <p> Instituto Federal Sul-rio-grandense, Campus Gravataí - Curso Técnico em Informática para Internet.
+                <br>Trabalho de Conclusão de Curso - Fabiana da Silveira Ferreira.</p>
+            </div>
+
+            <div class="col-sm-6" style="padding: 10px 30px;">
+                <label>Conteúdo</label> 
+                <p> Sistema voltado para a exposição de trabalhos de diferentes artistas com o intuito de proporcionar um espaço de integração e colaboração entre os usuários. 
+                    Assim sendo um espaço onde possam aprimorar e compartilhar suas habilidades artísticas, tornando-se, não somente um espaço para visibilidade, mas também para aprendizado.
+                </p>
+            </div>
+
+            <div class="col-sm-2" style="padding: 10px 30px;"> 
+                <div class="row">
+                    <label>Redes Sociais</label><br>
+                    <img src="Arquivos/VisArt/redes1.png" class="img-responsive col-xs-6" style="width: 45px; height: 45px; padding: 5px;">
+                    <img src="Arquivos/VisArt/redes2.png" class="img-responsive col-xs-6" style="width: 45px; height: 45px; padding: 5px;">
+                    <img src="Arquivos/VisArt/redes3.png" class="img-responsive col-xs-6" style="width: 45px; height: 45px; padding: 5px;">
+                    <img src="Arquivos/VisArt/redes4.png" class="img-responsive col-xs-6" style="width: 45px; height: 45px; padding: 5px;">
+                    <p class="col-xs-12" style="font-size: 10px; padding: 5px;"> 2020 VisArt - Fabiana Ferreira</p>
+                </div>
+            </div>
         </div>
     </footer>
 </body>

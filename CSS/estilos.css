@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
 
-body {      
+body { 
+    height: 100%;     
     font-size: auto;
     color: #073763;
     background-color: #ffffee;  
@@ -18,7 +19,7 @@ a {
     box-shadow: 1px 2px 2px #f0a963;
 }
 
-#buscar, #comentario, #mensagem {
+#buscar, #comentario, #mensagem, #membros {
     padding: 5px;
     text-align: left;
     min-width: 150px;
@@ -41,6 +42,11 @@ a {
     font-weight: bold;
     text-align: center;
     background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
+}
+
+#perfil {
+    margin: 20px;
+    background-image: linear-gradient(to bottom right, #f9cb9c, #ffffee);
 }
 
 h4, h5 {
@@ -100,8 +106,17 @@ img {
     background-image: linear-gradient(to bottom right, #f9cb9c, #ffffee);
 }
 
-section, #alert, #notificacao, #footer {
+section, #alert, #notificacao {
     padding: 20px;
+    min-height: 100%;
+    position: relative;
+}
+
+footer {
+    font-size: 13px;
+    text-align: justify;
+    font-family: 'Nunito', sans-serif;    
+    background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
 }
 
 #sala_BP {
@@ -125,12 +140,12 @@ section, #alert, #notificacao, #footer {
     box-shadow: 1px 2px 2px #f0a963;
 }
 
-button[type=text], #footer {
+button[type=text] {
     text-align: justify;
     font-weight: lighter; 
 }
 
-input[type=submit], .modal-header, .modal-footer, #footer {
+input[type=submit], .modal-header, .modal-footer {
     background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
 }
 
@@ -153,7 +168,7 @@ input[type=submit], .modal-header, .modal-footer, #footer {
 .close, .descricao {  
     margin: 0px; 
     padding: 0px;
-    margin-left: 15px;
+    margin-left: 5px;
 }
 
 ::-webkit-input-placeholder {
@@ -192,7 +207,7 @@ input[type=submit], .modal-header, .modal-footer, #footer {
 }
 
 .carousel-control.left, .carousel-control.right, .data-slide-to {
-    width: 10%;
+    width: 5%;
     padding: 0;
     opacity: 1;
     background: 0;
