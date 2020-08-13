@@ -67,31 +67,34 @@
                     <li data-target="#Carousel" data-slide-to="9"></li>
                 </ol>
 
-                <div class="carousel-inner">           
+                <div id='hanking' class="carousel-inner">           
                     <?php
-                        $art = mySqli_query($conexao, "SELECT nome, arquivo FROM artes ORDER BY curtidas DESC LIMIT 10");
-                        
-                        echo "<div class='item active'>
-                            <img src='Arquivos/Audiovisual/5f27717148cae.jpg' style='width:100%;'>
-                            <div class='carousel-caption'> 
-                                <h3>Top </h3> 
-                                
-                            </div>
-                        </div>";
-                        $select = mySqli_query($conexao, "SELECT nome, arquivo FROM artes ORDER BY curtidas DESC LIMIT 10");
+                        $art = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, nome, arquivo FROM artes ORDER BY curtidas DESC LIMIT 1"));
+                        $select = mySqli_query($conexao, "SELECT IdArte, nome, arquivo FROM artes ORDER BY curtidas DESC LIMIT 10");
 
                         $cont = 2;
 
                         while($arte = mysqli_fetch_array($select)){
-                            echo "<div class='item'>
-                                    <img src='".$arte['arquivo']."' style='width:100%;'>
-                                    <div class='carousel-caption'> 
-                                        <h3>Top $cont</h3> 
-                                        <p>".$arte['nome']."</p>
-                                    </div>
-                                </div>";
+                            if ($art['IdArte'] == $arte['IdArte']) {
+                                echo "<div class='item active'>
+                                        <img src='".$arte['arquivo']."' style='width:100%;'>
+                                        <div class='carousel-caption'> 
+                                            <h3>Top 1</h3> 
+                                            <p>".$arte['nome']."</p>
+                                        </div>
+                                    </div>";
+                            }
+                            else {
+                                echo "<div class='item'>
+                                        <img src='".$arte['arquivo']."' style='width:100%;'>
+                                        <div class='carousel-caption'> 
+                                            <h3>Top $cont</h3> 
+                                            <p>".$arte['nome']."</p>
+                                        </div>
+                                    </div>";
 
-                            $cont ++;
+                                $cont ++;
+                            }
                         }
                     ?>
                     
@@ -109,15 +112,6 @@
                     $_SESSION['IdArte'] = $DadosArte['IdArte'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
-                }
-
-                if (isset($_POST["curt$i"])){
-                    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT curtidas FROM artes WHERE IdArte='$i'"));
-                    $curtidas = (int) $curtidas['curtidas'];
-    
-                    $curt = $curtidas + 1;
-                    $update = mySqli_query($conexao, "UPDATE artes SET curtidas='$curt' WHERE IdArte='$i'");
-                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=galeria.php">';
                 }
             } 
 

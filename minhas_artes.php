@@ -110,7 +110,7 @@
                     echo "<form action='minhas_artes.php' method='post'>
                         <div class='col-sm-4'> 
                             <h5>".$arte['nome']." <button type='submit' name='botA".$i."' class='descricao' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
-                            <div id='arte'> <img src='".$arte['arquivo']."'> </div>
+                            <div id='arte'> <img id='img_arte' src='".$arte['arquivo']."'> </div>
                         </div>
                     </form>";
                 }                                      

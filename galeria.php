@@ -95,7 +95,7 @@
                                             <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label></button>";
                                 } 
 
-                                echo "</h5> <div id='arte'><img src='".$arte['arquivo']."'></div> </div></form>";  
+                                echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['arquivo']."'></div> </div></form>";  
                             }                                  
                         }
                     }
@@ -114,7 +114,7 @@
                                                     <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label></button>";
                                         } 
         
-                                        echo "</h5> <div id='arte'><img src='".$arte['arquivo']."'></div> </div></form>";  
+                                        echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['arquivo']."'></div> </div></form>";  
                                     }                    
                                 }
                             }
@@ -136,7 +136,7 @@
                                         <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label></button>";
                             } 
 
-                            echo "</h5> <div id='arte'><img src='".$arte['arquivo']."'></div> </div></form>";  
+                            echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['arquivo']."'></div> </div></form>";  
                         }                                    
                     }
                 }
@@ -153,7 +153,7 @@
                                         <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label> </button>";
                             } 
 
-                            echo "</h5> <div id='arte'><img src='".$arte['arquivo']."'></div> </div></form>";  
+                            echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['arquivo']."'></div> </div></form>";  
                         }                                    
                     }
                 }   

@@ -113,7 +113,7 @@
                                     <button class='descricao' type='submit' name='botG".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
                                     <button class='descricao' type='submit' name='bp".$i."' data-title='Bate-Papo' style='float:left;'> <span class='glyphicon glyphicon-comment'></span> </button>
                                 </h5> 
-                                <div id='grupo'> <img src='".$grupo['imagem']."'> </div>
+                                <div id='grupo'> <img id='img_grupo' src='".$grupo['imagem']."'> </div>
                             </div>
                         </form>"; 
                 } 

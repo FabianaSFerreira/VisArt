@@ -70,7 +70,7 @@
                         echo "<form action='grupos.php' method='post' class='bloco'>
                                 <div class='col-sm-3'> 
                                     <h5>".$grupo['nome']." <button type='submit' name='bot".$i."' data-title='Descrição' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
-                                    <div id='grupo'> <img src='".$grupo['imagem']."'> </div>
+                                    <div id='grupo'> <img id='img_grupo' src='".$grupo['imagem']."'> </div>
                                 </div>
                             </form>"; 
                     } 
