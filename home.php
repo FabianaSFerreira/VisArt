@@ -52,7 +52,7 @@
     </header>
     
     <section class="container-fluid" align="center">
-        <div style="padding-left: 10%; padding-right: 10%; margin:10px;" align="center">
+        <div style="margin:10px;" align="center">
             <div id="Carousel" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
                     <li data-target="#Carousel" data-slide-to="0" class="active"></li>
@@ -77,27 +77,34 @@
                         while($arte = mysqli_fetch_array($select)){
                             if ($art['IdArte'] == $arte['IdArte']) {
                                 echo "<div class='item active'>
-                                        <img src='".$arte['arquivo']."' style='width:100%;'>
-                                        <div class='carousel-caption'> 
-                                            <h3>Top 1</h3> 
-                                            <p>".$arte['nome']."</p>
-                                        </div>
+                                        <form action='home.php' method='post'>
+                                            <button class='descricao' type='submit' name='desc".$arte['IdArte']."'>
+                                                <img id='img_hg' src='".$arte['arquivo']."'>
+                                                <div class='carousel-caption'> 
+                                                    <h3>Top 1</h3> 
+                                                    <p>".$arte['nome']."</p>
+                                                </div>
+                                            </button>
+                                        </form>
                                     </div>";
                             }
                             else {
                                 echo "<div class='item'>
-                                        <img src='".$arte['arquivo']."' style='width:100%;'>
-                                        <div class='carousel-caption'> 
-                                            <h3>Top $cont</h3> 
-                                            <p>".$arte['nome']."</p>
-                                        </div>
+                                        <form action='home.php' method='post'>
+                                            <button class='descricao' type='submit' name='desc".$arte['IdArte']."'>
+                                                <img id='img_hg' src='".$arte['arquivo']."'>
+                                                <div class='carousel-caption'> 
+                                                    <h3>Top $cont</h3> 
+                                                    <p>".$arte['nome']."</p>
+                                                </div>
+                                            </button>
+                                        </form>
                                     </div>";
 
                                 $cont ++;
                             }
                         }
                     ?>
-                    
                 </div>
 
                 <a class="left carousel-control" href="#Carousel" data-slide="prev"> <span class="glyphicon glyphicon-chevron-left"></span> </a>
