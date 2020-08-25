@@ -28,7 +28,7 @@
                 <a class="col-sm-2" href="galeria.php">Galeria</a>
                 <a class="col-sm-2" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['usuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
+                    if ($_SESSION['IdUsuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
                     else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
                 ?>
             </div>
@@ -49,15 +49,15 @@
                 $usuario = $_POST["usuario"];
                 $senha = $_POST["senha"];
 
-                $nome = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM usuario WHERE usuario='$usuario' AND senha='$senha'"));
-                if ($nome['nome'] == "") {
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdUsuario, Nome FROM usuarios WHERE usuario='$usuario' AND senha='$senha'"));
+                if ($us['Nome'] == "") {
                     echo "<div id='alert'>
                             <button type='button' class='close'>&times;</button>
                             <strong>Usuário ou senha Incorreto! </strong> Por favor, tente novamente
                         </div>";          
                 }
                 else {    
-                    $_SESSION['usuario'] = $usuario;
+                    $_SESSION['IdUsuario'] = $us['IdUsuario'];
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">'; 
                 }
             }
@@ -69,7 +69,7 @@
                 $con_senha = $_POST["con_senha"];
 
                 if (($usuario != "") && ($email != "") && ($nov_senha != "") && ($con_senha != "") && ($nov_senha == $con_senha)) {
-                    $update = mySqli_query($conexao, "UPDATE usuario SET senha='$nov_senha' WHERE usuario='$usuario' AND email='$email';");
+                    $update = mySqli_query($conexao, "UPDATE usuarios SET senha='$nov_senha' WHERE usuario='$usuario' AND email='$email';");
 
                     if ($update != "") {
                         echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=login.php">'; 

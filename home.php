@@ -2,12 +2,12 @@
     include_once("Conexao/conexao.php");
     session_start(); 
 
-    $usuario = $_SESSION['usuario'];
+    $usuario = $_SESSION['IdUsuario'];
 
     $maxArtes = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdArte) AS max FROM artes"));
     $maxA = (int) $maxArtes['max'];
 
-    $maxComentarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdComentario) AS max FROM comentarios"));
+    $maxComentarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdComentario) AS max FROM artes_comentarios"));
     $maxC = (int) $maxComentarios['max'];
 ?>
 
@@ -36,7 +36,7 @@
                 <a class="col-sm-2" href="galeria.php">Galeria</a>
                 <a class="col-sm-2" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['usuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
+                    if ($usuario == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
                     else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
                 ?>
             </div>
@@ -69,8 +69,8 @@
 
                 <div id='hanking' class="carousel-inner">           
                     <?php
-                        $art = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, nome, arquivo FROM artes ORDER BY curtidas DESC LIMIT 1"));
-                        $select = mySqli_query($conexao, "SELECT IdArte, nome, arquivo FROM artes ORDER BY curtidas DESC LIMIT 10");
+                        $art = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, TituloArte, LocalArquivo FROM artes ORDER BY curtidas DESC LIMIT 1"));
+                        $select = mySqli_query($conexao, "SELECT IdArte, TituloArte, LocalArquivo FROM artes ORDER BY curtidas DESC LIMIT 10");
 
                         $cont = 2;
 
@@ -79,10 +79,10 @@
                                 echo "<div class='item active'>
                                         <form action='home.php' method='post'>
                                             <button class='descricao' type='submit' name='desc".$arte['IdArte']."'>
-                                                <img id='img_hg' src='".$arte['arquivo']."'>
+                                                <img id='img_hg' src='".$arte['LocalArquivo']."'>
                                                 <div class='carousel-caption'> 
                                                     <h3>Top 1</h3> 
-                                                    <p>".$arte['nome']."</p>
+                                                    <p>".$arte['TituloArte']."</p>
                                                 </div>
                                             </button>
                                         </form>
@@ -92,10 +92,10 @@
                                 echo "<div class='item'>
                                         <form action='home.php' method='post'>
                                             <button class='descricao' type='submit' name='desc".$arte['IdArte']."'>
-                                                <img id='img_hg' src='".$arte['arquivo']."'>
+                                                <img id='img_hg' src='".$arte['LocalArquivo']."'>
                                                 <div class='carousel-caption'> 
                                                     <h3>Top $cont</h3> 
-                                                    <p>".$arte['nome']."</p>
+                                                    <p>".$arte['TituloArte']."</p>
                                                 </div>
                                             </button>
                                         </form>
@@ -115,7 +115,8 @@
         <?php 
             for ($i=1; $i <= $maxA; $i++) { 
                 if (isset($_POST["desc$i"])) {
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte='$i'")); 
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte='$i'")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                     $_SESSION['IdArte'] = $DadosArte['IdArte'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
@@ -133,22 +134,25 @@
                 $comentario = $_POST['comentario'];
 
                 if ($comentario != "") {
-                    mySqli_query($conexao, "INSERT INTO comentarios(IdArte, texto, usuario) VALUES(".$_SESSION['IdArte'].", '$comentario', '$usuario')");
+                    mySqli_query($conexao, "INSERT INTO artes_comentarios(IdUsuario, IdArte, texto) VALUES('$usuario', ".$_SESSION['IdArte'].", '$comentario')");
 
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte']."")); 
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte']."")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
                 }
             }
 
             if(isset($_POST['excluir_coment'])) { 
-                mySqli_query($conexao, "DELETE FROM comentarios WHERE IdComentario=".$_SESSION['IdComentario']."");
+                mySqli_query($conexao, "DELETE FROM artes_comentarios WHERE IdComentario=".$_SESSION['IdComentario']."");
                 
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
             }
 
             if(isset($_POST['voltar'])){
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
             }
 
@@ -158,7 +162,7 @@
 
                 $curt = $curtidas + 1;
                 $update = mySqli_query($conexao, "UPDATE artes SET curtidas='$curt' WHERE IdArte=".$_SESSION['IdArte']."");
-                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=galeria.php">';
+                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">';
             }  
         ?>   
 
@@ -169,23 +173,23 @@
                     <div class='modal-header'>
                         <?php 
                             if ($usuario != "") {
-                                echo "<form action='galeria.php' method='post'>
+                                echo "<form action='home.php' method='post'>
                                         <button class='descricao' type='submit' name='curtir' title='curtir' style='float:left;'> 
-                                        <span class='glyphicon glyphicon-heart'> ".$DadosArte['curtidas']."</span> </button>
+                                        <span class='glyphicon glyphicon-heart'> ".$DadosArte['Curtidas']."</span> </button>
                                     </form>";
                             }
                         ?>
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <?php echo "<h4 class='modal-title'>".$DadosArte['nome']."</h4>"; ?>
+                        <?php echo "<h4 class='modal-title'>".$DadosArte['TituloArte']."</h4>"; ?>
                     </div>
 
                     <div class='modal-body'>
                         <div class='row'> 
                             <div class='col-sm-6' align='center'>
                                 <?php 
-                                    echo "<div id='descricao'> <img src='".$DadosArte['arquivo']."'> </div> 
-                                        <button type='text' style='width:250px;'> Autor(a): ".$DadosArte['usuario']." </button>
-                                        <button type='text' style='width:250px;'> Descrição: ".$DadosArte['descricao']." </button>"; 
+                                    echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'> </div> 
+                                        <button type='text' style='width:250px;'> Autor(a): ".$us['Nome']." </button>
+                                        <button type='text' style='width:250px;'> Descrição: ".$DadosArte['Descricao']." </button>"; 
                                 ?>
                             </div>
 
@@ -195,13 +199,13 @@
                                 <div style="height: 280px; overflow-y: scroll;">
                                     <?php 
                                         for ($i=1; $i <= $maxC; $i++) { 
-                                            $comentario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario, texto FROM comentarios WHERE IdComentario='$i' AND IdArte=".$DadosArte['IdArte'].""));                                               
+                                            $comentario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario, texto FROM artes_comentarios WHERE IdComentario='$i' AND IdArte=".$DadosArte['IdArte'].""));                                               
                                             
                                             if ($comentario != "") {
-                                                $meu_coment = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario FROM comentarios WHERE IdComentario='$i' AND usuario='$usuario'")); 
+                                                $meu_coment = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario FROM artes_comentarios WHERE IdComentario='$i' AND IdUsuario='$usuario'")); 
 
                                                 if ($meu_coment['IdComentario'] != "") {
-                                                    echo "<form action='galeria.php' method='post'>
+                                                    echo "<form action='home.php' method='post'>
                                                             <div id='comentario'>
                                                                 <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$comentario['texto']." </button>
                                                                 <button type='submit' class='icon' name='coment".$i."' data-title='Excluir' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
@@ -219,7 +223,7 @@
                         </div>
                         
                         <div class='row'>
-                            <form action='galeria.php' method='post'>
+                            <form action='home.php' method='post'>
                                 <?php 
                                     if ($usuario != "") {
                                         echo "<div class='form-group' align='center' id='comentario' style='margin: 25px;'>

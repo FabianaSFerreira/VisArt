@@ -28,7 +28,7 @@
                 <a class="col-sm-2" href="galeria.php">Galeria</a>
                 <a class="col-sm-2" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['usuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
+                    if ($_SESSION['IdUsuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
                     else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
                 ?>
             </div>
@@ -52,7 +52,7 @@
                 $senha = $_POST["senha"];
                 $con_senha = $_POST["con_senha"];  
                 
-                $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM usuario WHERE usuario='$usuario'")); 
+                $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM usuarios WHERE usuario='$usuario'")); 
 
                 if($select["usuario"] != "") {
                     echo "<div id='alert'>
@@ -73,7 +73,7 @@
                         </div>";
                 }
                 else {
-                    $inserir = mySqli_query($conexao, "INSERT INTO usuario(usuario, nome, email, senha) VALUES('$usuario', '$nome', '$email', '$senha')");
+                    $inserir = mySqli_query($conexao, "INSERT INTO usuarios(usuario, nome, email, senha) VALUES('$usuario', '$nome', '$email', '$senha')");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">';
                 }
             }

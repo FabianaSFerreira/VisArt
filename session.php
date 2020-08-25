@@ -7,10 +7,10 @@
 	
 	$_SESSION['IdGrupo'] = "";
 
-	$_SESSION['usuario'] = "";
+	$_SESSION['IdUsuario'] = "";
 
-	$_SESSION['IdMembro'] = ""; 
-	
+	$_SESSION['IdUsGrupo'] = "";
+
 	$_SESSION['IdMensagem'] = ""; 
 
 	$_SESSION['IdComentario'] = "";

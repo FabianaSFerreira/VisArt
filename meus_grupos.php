@@ -2,16 +2,17 @@
     include_once("Conexao/conexao.php"); 
     session_start(); 
 
-    $usuario = $_SESSION['usuario'];
-    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, email, imagem, curtidas FROM usuario WHERE usuario='$usuario'"));                 
+    $usuario = $_SESSION['IdUsuario'];
+    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
+    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT SUM(Curtidas) AS curt FROM artes WHERE IdUsuario='$usuario'"));
     
+    $maxUsuarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdUsuario) AS max FROM usuarios"));
+    $maxU = (int) $maxUsuarios['max'];
+
     $maxGrupos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdGrupo) AS max FROM grupos"));
     $maxG = (int) $maxGrupos['max'];
 
-    $maxMembros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdMembro) AS max FROM membros_grupo"));
-    $maxM = (int) $maxMembros['max'];
-
-    $maxMensagens = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdMensagem) AS max FROM mensagens"));
+    $maxMensagens = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdMensagem) AS max FROM grupos_mensagens"));
     $maxMsg = (int) $maxMensagens['max'];
 ?>
 
@@ -40,7 +41,7 @@
                 <a class="col-sm-2" href="galeria.php">Galeria</a>
                 <a class="col-sm-2" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['usuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
+                    if ($usuario == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
                     else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
                 ?>
             </div>
@@ -56,14 +57,14 @@
         <div class="row" id="perfil">     
             <div class="col-sm-6" style="padding: 15px;" align="center"> 
                 <div class="col-sm-7" id="img_perfil"> 
-                    <?php echo "<img src='".$select['imagem']."' style='width:100%; height:100%;'>"; ?>
+                    <?php echo "<img src='".$select['LocalFoto']."' style='width:100%; height:100%;'>"; ?>
                 </div>
 
                 <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
                     <?php
                         echo "<label>Nome: ".$select['nome']."</label><br>";
-                        echo "<label>Usuário: $usuario </label><br>";
-                        echo "<label>Curtidas ".$select['curtidas']."</label>";
+                        echo "<label>Usuário: ".$select['usuario']."</label><br>";
+                        echo "<label>Curtidas ".$curtidas['curt']."</label>";
                     ?> 
                 </div>
             </div>
@@ -104,16 +105,16 @@
             }
 
             for ($i=1; $i <= $maxG; $i++) { 
-                $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.nome, G.imagem FROM grupos G JOIN membros_grupo M ON G.IdGrupo = M.IdGrupo WHERE G.IdGrupo='$i' AND M.Usuario='$usuario' AND M.solicitacao='0'"));
+                $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.TituloGrupo, G.LocalImagem FROM grupos G JOIN grupos_usuarios GU ON G.IdGrupo = GU.IdGrupo WHERE G.IdGrupo='$i' AND GU.IdUsuario='$usuario' AND GU.solicitacao='0'"));
 
                 if ($grupo != "") {
                     echo "<form action='meus_grupos.php' method='post'>
                             <div class='col-sm-3'> 
-                                <h5>".$grupo['nome']." 
+                                <h5>".$grupo['TituloGrupo']." 
                                     <button class='descricao' type='submit' name='botG".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
                                     <button class='descricao' type='submit' name='bp".$i."' data-title='Bate-Papo' style='float:left;'> <span class='glyphicon glyphicon-comment'></span> </button>
                                 </h5> 
-                                <div id='grupo'> <img id='img_grupo' src='".$grupo['imagem']."'> </div>
+                                <div id='grupo'> <img id='img_grupo' src='".$grupo['LocalImagem']."'> </div>
                             </div>
                         </form>"; 
                 } 
@@ -121,24 +122,26 @@
 
             for ($j=1; $j <= $maxG; $j++) { 
                 if (isset($_POST["botG$j"])) {
-                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo='$j'")); 
+                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, administrador, LocalImagem, TituloGrupo, descricao, status FROM grupos WHERE IdGrupo='$j'")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosGrupo['administrador'].""));
                     $_SESSION['IdGrupo'] = $DadosGrupo['IdGrupo'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";     
                 }
 
                 if (isset($_POST["bp$j"])) {
-                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome FROM grupos WHERE IdGrupo='$j'")); 
+                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, TituloGrupo FROM grupos WHERE IdGrupo='$j'")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosGrupo['administrador'].""));
                     $_SESSION['IdGrupo'] = $DadosGrupo['IdGrupo'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>";     
                 }
             } 
 
-            for ($l=1; $l <= $maxM; $l++) { 
-                if (isset($_POST["membro$l"])) {
-                    $_SESSION['IdMembro'] = $l;
-                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#excluir_membro').modal('show'); }); </script>";      
+            for ($l=1; $l <= $maxU; $l++) { 
+                if (isset($_POST["us$l"])) {
+                    $_SESSION['IdUsGrupo'] = $l;
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#excluir_usuario').modal('show'); }); </script>";      
                 }
             } 
 
@@ -157,7 +160,7 @@
                         $pasta = "Arquivos/Grupos/";                
     
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
-                            mySqli_query($conexao, "UPDATE grupos SET nome='$nome', status='$status', descricao='$descricao', imagem='$pasta$novoNome' WHERE IdGrupo=".$_SESSION['IdGrupo']."");
+                            mySqli_query($conexao, "UPDATE grupos SET LocalImagem='$pasta$novoNome', TituloGrupo='$nome' descricao='$descricao', status='$status' WHERE IdGrupo=".$_SESSION['IdGrupo']."");
                             echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_grupos.php">';
                         }
                         else {
@@ -171,9 +174,10 @@
                     }
                 } 
                 else {
-                    mySqli_query($conexao, "UPDATE grupos SET nome='$nome', status='$status', descricao='$descricao' WHERE IdGrupo=".$_SESSION['IdGrupo']."");
+                    mySqli_query($conexao, "UPDATE grupos SET TituloGrupo='$nome' descricao='$descricao', status='$status' WHERE IdGrupo=".$_SESSION['IdGrupo']."");
                     
-                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, administrador, LocalImagem, TituloGrupo, descricao, status FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosGrupo['administrador'].""));
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>"; 
                 }  
             } 
@@ -188,19 +192,21 @@
             }
 
             if(isset($_POST['voltar_grupo'])) { 
-                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, administrador, LocalImagem, TituloGrupo, descricao, status FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosGrupo['administrador'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";
             } 
 
             if(isset($_POST['sair_grupo'])) { 
-                $delete = mySqli_query($conexao, "DELETE FROM membros_grupo WHERE IdGrupo=".$_SESSION['IdGrupo']." AND usuario='$usuario'");
+                $delete = mySqli_query($conexao, "DELETE FROM grupos_usuarios WHERE IdGrupo=".$_SESSION['IdGrupo']." AND IdUsuario='$usuario'");
                 echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_grupos.php">';
             }
 
-            if(isset($_POST['excluir_membro'])) {
-                $delete = mySqli_query($conexao, "DELETE FROM membros_grupo WHERE IdMembro=".$_SESSION['IdMembro']."");
+            if(isset($_POST['excluir_usuario'])) {
+                $delete = mySqli_query($conexao, "DELETE FROM grupos_usuarios WHERE IdUsuario=".$_SESSION['IdUsGrupo']." AND IdGrupo=".$_SESSION['IdGrupo']."");
 
-                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, administrador, LocalImagem, TituloGrupo, descricao, status FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosGrupo['administrador'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";
             } 
         ?>  
@@ -209,7 +215,6 @@
             for ($l=1; $l <= $maxMsg; $l++) { 
                 if(isset($_POST["msg$l"])) { 
                     $_SESSION['IdMensagem'] = $l;
-                    echo 'botao';
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#excluir_mensagem').modal('show'); }); </script>";
                 }
             }
@@ -218,22 +223,22 @@
                 $mensagem = $_POST['mensagem'];
 
                 if ($mensagem != "") {
-                    mySqli_query($conexao, "INSERT INTO mensagens(IdGrupo, texto, usuario) VALUES(".$_SESSION['IdGrupo'].", '$mensagem', '$usuario')");
+                    mySqli_query($conexao, "INSERT INTO grupos_mensagens(IdGrupo, IdUsuario, texto) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '$mensagem')");
 
-                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, TituloGrupo FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>"; 
                 }
             }
 
             if(isset($_POST['excluir_msg'])) { 
-                mySqli_query($conexao, "DELETE FROM mensagens WHERE IdMensagem=".$_SESSION['IdMensagem']."");
+                mySqli_query($conexao, "DELETE FROM grupos_mensagens WHERE IdMensagem=".$_SESSION['IdMensagem']."");
                 
-                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, TituloGrupo FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>";
             }
 
             if(isset($_POST['voltar_bp'])){
-                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, TituloGrupo FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>"; 
             }
         ?>  
@@ -252,50 +257,49 @@
                             }
                         ?>
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <?php echo "<h4 class='modal-title'>".$DadosGrupo['nome']."</h4>"; ?>
+                        <?php echo "<h4 class='modal-title'>".$DadosGrupo['TituloGrupo']."</h4>"; ?>
                     </div>
 
                     <div class='modal-body'>
                         <div class='row'> 
                             <div class='col-sm-6' align='center'>
-                                <?php echo "<div id='descricao'> <img src='".$DadosGrupo['imagem']."'> </div>"; ?>
+                                <?php echo "<div id='descricao'> <img src='".$DadosGrupo['LocalImagem']."'> </div>"; ?>
                             </div>
 
                             <div class='col-sm-6' align='center'>
                                 <?php
                                     echo "<button type='text'> Descrição: ".$DadosGrupo['descricao']." </button><br>";
-                                    echo "<button type='text'> Administrador: ".$DadosGrupo['administrador']." </button><br>";
+                                    echo "<button type='text'> Administrador: ".$us['Nome']." </button><br>";
 
-                                    if ($DadosGrupo['status'] == 1) { echo "<button type='text'> Status: Aberto </button>"; }
-                                    else if ($DadosGrupo['status'] == 2) { echo "<button type='text'> Status: Fechado </button>"; }
+                                    if ($DadosGrupo['status'] == 'aberto') { echo "<button type='text'> Status: Aberto </button>"; }
+                                    else if ($DadosGrupo['status'] == 'fechado') { echo "<button type='text'> Status: Fechado </button>"; }
+                                    
+                                    $UsGrupos = mySqli_query($conexao, "SELECT IdUsuario FROM grupos_usuarios WHERE IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'");  
 
                                     if ($admin != "") {
                                         echo "<div id='membros' style='width: 250px; margin: 10px 10px 0px;'> <label style='padding: inherit;'> Membros do grupo: </label>";
-                                        
-                                        for ($i=1; $i <= $maxM; $i++) { 
-                                            $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
-                                            
-                                            if ($membros != "") {
-                                                if ($membros['usuario'] == $admin['administrador']) {
-                                                    echo "<button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$membros['usuario']." </button>";
-                                                }
-                                                else {
-                                                    echo "<form action='meus_grupos.php' method='post'>                                 
-                                                            <button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$membros['usuario']." </button>
-                                                            <button type='submit' class='icon' name='membro".$i."' data-title='Excluir' style='margin: 0px;'> <span class='glyphicon glyphicon-trash'></span> </button>                                                   
-                                                        </form>"; 
-                                                } 
-                                            }
-                                        }
+                                        while($us = mysqli_fetch_array($UsGrupos)) {
+                                            $nome = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$us['IdUsuario'].""));
 
+                                            if ($us['IdUsuario'] == $admin['administrador']) {
+                                                echo "<button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$nome['Nome']." </button>";
+                                            }
+                                            else {
+                                                echo "<form action='meus_grupos.php' method='post'>                                 
+                                                        <button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$nome['Nome']." </button>
+                                                        <button type='submit' class='icon' name='us".$us['IdUsuario']."' data-title='Excluir' style='margin: 0px;'> <span class='glyphicon glyphicon-trash'></span> </button>                                                   
+                                                    </form>"; 
+                                            }  
+                                        }
                                         echo "</div>";
                                     }
                                     else {
-                                        echo "<select> <option> Membros </option>";      
-                                        for ($i=1; $i <= $maxM; $i++) { 
-                                            $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
-                                            if ($membros != "") { echo "<option>". $membros['usuario'] ."</option>"; }
-                                        } echo "</select>";
+                                        echo "<select> <option> Membros </option>"; 
+                                        while($us = mysqli_fetch_array($UsGrupos)) {
+                                            $nome = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$us['IdUsuario'].""));
+                                            echo "<option>". $nome['Nome'] ."</option>"; 
+                                        }
+                                        echo "</select>";
 
                                         echo "<button type='button' data-toggle='modal' data-target='#sair_grupo' style='background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);'> Sair do Grupo </button>";
                                     }
@@ -324,7 +328,7 @@
                                 <div class="col-sm-10" align="left"><input type="file" name="new_imagem" style='width:-webkit-fill-available;'></div>
 
                                 <div class="col-sm-2" align="left"><label> Nome: </label></div>
-                                <div class="col-sm-10" align="left"><?php echo "<input type='text' name='nome' value='".$DadosGrupo['nome']."' style='width:-webkit-fill-available;'>";?></div>
+                                <div class="col-sm-10" align="left"><?php echo "<input type='text' name='nome' value='".$DadosGrupo['TituloGrupo']."' style='width:-webkit-fill-available;'>";?></div>
 
                                 <div class="col-sm-2" align="left"><label> Descrição: </label></div>
                                 <div class="col-sm-10" align="left"><?php echo "<textarea name='descricao' rows='3' style='width:-webkit-fill-available;'>".$DadosGrupo['descricao']."</textarea>";?></div>
@@ -333,7 +337,7 @@
                                 <div class="col-sm-10" align="left">
                                     <?php 
                                         echo "<select name='status' style='width:-webkit-fill-available;'>";
-                                        if ($DadosGrupo['status'] == 1) { echo "<option value='1'> Aberto </option> <option value='2'> Fechado </option> </select>"; } 
+                                        if ($DadosGrupo['status'] == "aberto") { echo "<option value='1'> Aberto </option> <option value='2'> Fechado </option> </select>"; } 
                                         else { echo "<option value='2'> Fechado </option> <option value='1'> Aberto </option> </select>"; }   
                                     ?>
                                 </div>
@@ -394,19 +398,19 @@
             </div>
         </div>
 
-        <div class="modal fade" id="excluir_membro" role="dialog">
+        <div class="modal fade" id="excluir_usuario" role="dialog">
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Excluir Membro</h4>
+                        <h4 class="modal-title">Excluir Usuario</h4>
                     </div>
 
                     <div class="modal-body">
                         <form action='meus_grupos.php' method='post'>
                             <div class='form-group' align="center">
-                                <label> Tem certeza que deseja excluir esse membro do grupo? </label> <br>
-                                <input type='submit' name='excluir_membro' value='Excluir' style='width: 120px;'>
+                                <label> Tem certeza que deseja excluir esse usuário do grupo? </label> <br>
+                                <input type='submit' name='excluir_usuario' value='Excluir' style='width: 120px;'>
                                 <input type='submit' name='voltar_grupo' value='Voltar' style='width: 120px;'>
                             </div>  
                         </form>       
@@ -423,17 +427,18 @@
 
                     <div class='modal-header'>                     
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <?php echo "<h4 class='modal-title'> Bate-Papo - ".$DadosGrupo['nome']."</h4>"; ?>
+                        <?php echo "<h4 class='modal-title'> Bate-Papo - ".$DadosGrupo['TituloGrupo']."</h4>"; ?>
                     </div>
 
                     <div class='modal-body'>
                         <div class='row' id="sala_BP">
                             <?php 
                                 for ($l=$maxMsg; $l > 0; $l--) { 
-                                    $mensagem = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem, texto, usuario FROM mensagens WHERE IdMensagem='$l' AND IdGrupo=".$DadosGrupo['IdGrupo'].""));                                               
-                                    
+                                    $mensagem = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem, IdUsuario, texto FROM grupos_mensagens WHERE IdMensagem='$l' AND IdGrupo=".$DadosGrupo['IdGrupo'].""));                                               
+                                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$mensagem['IdUsuario'].""));
+
                                     if ($mensagem != "") {
-                                        $meu_msg = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem FROM mensagens WHERE IdMensagem='$l' AND usuario='$usuario'")); 
+                                        $meu_msg = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem FROM grupos_mensagens WHERE IdMensagem='$l' AND IdUsuario='$usuario'")); 
 
                                         if ($meu_msg['IdMensagem'] != "") {
                                             echo "<form action='meus_grupos.php' method='post'>
@@ -441,13 +446,13 @@
                                                         <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$mensagem['texto']." </button>
                                                         <button type='submit' class='icon' name='msg".$l."' data-title='Excluir' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
                                                     </div>
-                                                    <p style='width:50%;float:right;margin: 0px 15px;text-align: right;'>".$mensagem['usuario']."</p>
+                                                    <p style='width:50%;float:right;margin: 0px 15px;text-align: right;'>".$us['Nome']."</p>
                                                 </form>"; 
                                         }
                                         else {
                                             echo "<div>
                                                     <div id='mensagem' style='width:50%; float:left; margin:10px;'> <button type='text' class='icon' style='width:70%; float:none; margin:5px;'> ".$mensagem['texto']." </button> </div>
-                                                    <p style='width:50%;float:left;margin: 0px 15px;'>".$mensagem['usuario']."</p>
+                                                    <p style='width:50%;float:left;margin: 0px 15px;'>".$us['Nome']."</p>
                                                 </div>"; 
                                         }  
                                     } 

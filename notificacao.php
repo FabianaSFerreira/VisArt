@@ -2,11 +2,12 @@
     include_once("Conexao/conexao.php"); 
     session_start(); 
 
-    $usuario = $_SESSION['usuario'];               
-    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, email, imagem, curtidas FROM usuario WHERE usuario='$usuario'"));
+    $usuario = $_SESSION['IdUsuario'];               
+    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
+    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT SUM(Curtidas) AS curt FROM artes WHERE IdUsuario='$usuario'"));
 
-    $maxMembros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdMembro) AS max FROM membros_grupo"));
-    $maxM = (int) $maxMembros['max'];
+    $maxUsuarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdUsuario) AS max FROM usuarios"));
+    $maxU = (int) $maxUsuarios['max'];
 
     $cont = 0;
 ?>
@@ -36,7 +37,7 @@
                 <a class="col-sm-2" href="galeria.php">Galeria</a>
                 <a class="col-sm-2" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['usuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
+                    if ($usuario == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
                     else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
                 ?>
             </div>
@@ -52,14 +53,14 @@
         <div class="row" id="perfil">     
             <div class="col-sm-6" style="padding: 15px;" align="center"> 
                 <div class="col-sm-7" id="img_perfil"> 
-                    <?php echo "<img src='".$select['imagem']."' style='width:100%; height:100%;'>"; ?>
+                    <?php echo "<img src='".$select['LocalFoto']."' style='width:100%; height:100%;'>"; ?>
                 </div>
 
                 <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
                     <?php
                         echo "<label>Nome: ".$select['nome']."</label><br>";
-                        echo "<label>Usuário: $usuario </label><br>";
-                        echo "<label>Curtidas ".$select['curtidas']."</label>";
+                        echo "<label>Usuário: ".$select['usuario']."</label><br>";
+                        echo "<label>Curtidas ".$curtidas['curt']."</label>";
                     ?> 
                 </div>
             </div>
@@ -94,41 +95,38 @@
     
     <section class="container-fluid">
         <?php
-            for ($i=1; $i <= $maxM; $i++) {
-                $solicitacao = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT M.IdMembro, G.nome, M.usuario FROM membros_grupo M JOIN grupos G ON M.IdGrupo = G.IdGrupo WHERE M.IdMembro='$i' AND M.solicitacao='1' AND G.Administrador='$usuario'")); 
-                
-                if ($solicitacao != "") {
-                    echo "<div class='row' id='notificacao'>
-                            <form action='notificacao.php' method='post'>
-                                <div class='col-sm-7'>
-                                    <p> O usuário <strong>'".$solicitacao['usuario']."'</strong> enviou uma solicitação para participar do grupo <strong>'".$solicitacao['nome']."'</strong>.</p>
-                                </div>
-                                
-                                <div class='col-sm-5' align='center'>
-                                    <input type='submit' name='aceitar$i' value='Aceitar' style='width: 100px; background: none;'>
-                                    <input type='submit' name='recusar$i' value='Recusar' style='width: 100px; background: none;'>
-                                </div>
-                            </form>    
-                        </div>"; 
-                } 
-                else {
-                    $cont ++;
-                }
-                
-                if(isset($_POST["aceitar$i"])) { 
-                    $update = mySqli_query($conexao, "UPDATE membros_grupo SET solicitacao='0' WHERE IdMembro='$i'");
+            $solicitacao = mySqli_query($conexao, "SELECT G.TituloGrupo, GU.IdGrupo, GU.IdUsuario FROM grupos_usuarios GU JOIN grupos G ON GU.IdGrupo=G.IdGrupo WHERE GU.solicitacao='1' AND G.Administrador='$usuario'"); 
+
+            while ($sol = mysqli_fetch_array($solicitacao)) { 
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$sol['IdUsuario'].""));
+
+                echo "<div class='row' id='notificacao'>
+                    <form action='notificacao.php' method='post'>
+                        <div class='col-sm-7'>
+                            <p> O usuário <strong>'".$us['Nome']."'</strong> enviou uma solicitação para participar do grupo <strong>'".$sol['TituloGrupo']."'</strong>.</p>
+                        </div>
+                        
+                        <div class='col-sm-5' align='center'>
+                            <input type='submit' name='aceitar".$sol['IdUsuario']."' value='Aceitar' style='width: 100px; background: none;'>
+                            <input type='submit' name='recusar".$sol['IdUsuario']."' value='Recusar' style='width: 100px; background: none;'>
+                        </div> 
+                    </form>    
+                </div>"; 
+
+                if(isset($_POST["aceitar".$sol['IdUsuario'].""])) { 
+                    $update = mySqli_query($conexao, "UPDATE grupos_usuarios SET solicitacao='0' WHERE IdUsuario=".$sol['IdUsuario']." AND IdGrupo=".$sol['IdGrupo']."");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=notificacao.php">';
                 }
     
-                if(isset($_POST["recusar$i"])) { 
-                    mySqli_query($conexao, "DELETE FROM membros_grupo WHERE IdMembro='$i'");
+                if(isset($_POST["recusar".$sol['IdUsuario'].""])) { 
+                    mySqli_query($conexao, "DELETE FROM grupos_usuarios WHERE IdUsuario=".$sol['IdUsuario']." AND IdGrupo=".$sol['IdGrupo']."");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=notificacao.php">';
-                }
+                }      
             } 
 
-            if ($cont == $maxM) {
+            if ($sol == "") {
                 echo "<div class='row' id='notificacao'> <strong> Você não possue nenhuma notificação </strong> </div>";
-            }
+            } 
         ?>
     </section>
     

@@ -2,10 +2,11 @@
     include_once("Conexao/conexao.php"); 
     session_start(); 
 
-    $usuario = $_SESSION['usuario'];               
-    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, email, imagem, curtidas FROM usuario WHERE usuario='$usuario'"));
+    $usuario = $_SESSION['IdUsuario'];               
+    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
+    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT SUM(Curtidas) AS curt FROM artes WHERE IdUsuario='$usuario'"));
 
-    $maxTipos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdTipo) AS max FROM tipo_arte"));
+    $maxTipos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdTipo) AS max FROM artes_tipos"));
     $maxT = (int) $maxTipos['max'];
 
     $maxGrupos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdGrupo) AS max FROM grupos"));
@@ -37,7 +38,7 @@
                 <a class="col-sm-2" href="galeria.php">Galeria</a>
                 <a class="col-sm-2" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['usuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
+                    if ($usuario == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
                     else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
                 ?>
             </div>
@@ -53,14 +54,14 @@
         <div class="row" id="perfil">     
             <div class="col-sm-6" style="padding: 15px;" align="center"> 
                 <div class="col-sm-7" id="img_perfil"> 
-                    <?php echo "<img src='".$select['imagem']."' style='width:100%; height:100%;'>"; ?>
+                    <?php echo "<img src='".$select['LocalFoto']."' style='width:100%; height:100%;'>"; ?>
                 </div>
 
                 <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
                     <?php
                         echo "<label>Nome: ".$select['nome']."</label><br>";
-                        echo "<label>Usuário: $usuario </label><br>";
-                        echo "<label>Curtidas ".$select['curtidas']."</label>";
+                        echo "<label>Usuário: ".$select['usuario']."</label><br>";
+                        echo "<label>Curtidas ".$curtidas['curt']."</label>";
                     ?> 
                 </div>
             </div>
@@ -100,7 +101,7 @@
                                         <?php 
                                             echo "<select name='tipo' style='width:-webkit-fill-available;'>";      
                                             for ($i=1; $i <= $maxT; $i++) { 
-                                                $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM tipo_arte WHERE IdTipo=$i"));  
+                                                $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo=$i"));  
                                                 echo "<option value='$i'>". $tipo['nome'] ."</option>";
                                             } echo "</select>";
                                         ?>
@@ -139,7 +140,7 @@
                                     <div class="col-sm-10" align="left"><input type='text' name='nome' placeholder='Título' style='width:-webkit-fill-available;' required></div>
                                     
                                     <div class="col-sm-2" align="left"><label> Status: </label></div>
-                                    <div class="col-sm-10" align="left"> <select name='status' style='width:-webkit-fill-available;'> <option value='1'> Aberto </option> <option value='2'> Fechado </option> </select></div>
+                                    <div class="col-sm-10" align="left"> <select name='status' style='width:-webkit-fill-available;'> <option value='aberto'> Aberto </option> <option value='fechado'> Fechado </option> </select></div>
 
                                     <div class="col-sm-2" align="left"><label> Descrição: </label></div>
                                     <div class="col-sm-10" align="left"><textarea name="descricao" rows="3" placeholder='Texto' style='width:-webkit-fill-available;' required></textarea></div>
@@ -272,7 +273,7 @@
                 $formatosPermitidos = array('png', 'jpeg', 'jpg', 'gif', 'mp4');
                 $extensao = pathinfo($_FILES["arquivo"]["name"], PATHINFO_EXTENSION);
 
-                $NomeTipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM tipo_arte WHERE IdTipo='$tipo'"));
+                $NomeTipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo='$tipo'"));
 
                 if(in_array($extensao, $formatosPermitidos)) {
                     $arquivo = $_FILES["arquivo"]["tmp_name"];
@@ -280,7 +281,7 @@
                     $pasta = "Arquivos/".$NomeTipo['nome']."/";
 
                     if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
-                        $inserir = mySqli_query($conexao, "INSERT INTO artes(arquivo, nome, tipo, descricao, usuario) values('$pasta$novoNome', '$nome', '$tipo', '$descricao', '$usuario')");
+                        $inserir = mySqli_query($conexao, "INSERT INTO artes(IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao) values('$nome', '$tipo', '$usuario', '$nome', '$pasta$novoNome', '$descricao')");
                         
                         if ($inserir != "") {
                             $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Arte adicionada com sucesso </strong> </div>";
@@ -304,7 +305,7 @@
 
             if(isset($_POST['add_grupo'])){
                 $nome = $_POST["nome"];
-                $status = (int) $_POST["status"];
+                $status = $_POST["status"];
                 $descricao = $_POST["descricao"];
 
                 $formatosPermitidos = array('png', 'jpeg', 'jpg', 'gif');
@@ -317,11 +318,11 @@
                         $pasta = "Arquivos/Grupos/";               
 
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
-                            $inserir = mySqli_query($conexao, "INSERT INTO grupos(imagem, nome, administrador, status, descricao) values('$pasta$novoNome', '$nome', '$usuario', '$status', '$descricao')");
+                            $inserir = mySqli_query($conexao, "INSERT INTO grupos(administrador, LocalImagem, TituloGrupo, descricao, status) values('$usuario', '$pasta$novoNome', '$nome', '$descricao', '$status')");
                             
                             if ($inserir != "") {
                                 $maxG ++;
-                                mySqli_query($conexao, "INSERT INTO membros_grupo(IdGrupo, usuario, solicitacao) VALUES('$maxG', '$usuario', '0')");
+                                mySqli_query($conexao, "INSERT INTO grupos_usuarios(IdGrupo, IdUsuario, solicitacao) VALUES('$maxG', '$usuario', '0')");
 
                                 $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Grupo adicionado com sucesso </strong> </div>";
                                 echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
@@ -342,11 +343,11 @@
                     }
                 }
                 else {
-                    $inserir = mySqli_query($conexao, "INSERT INTO grupos(nome, administrador, status, descricao) values('$nome', '$usuario', '$status', '$descricao')");
+                    $inserir = mySqli_query($conexao, "INSERT INTO grupos(administrador, TituloGrupo, descricao, status) values('$usuario', '$nome', '$descricao', '$status')");
 
                     if ($inserir != "") {
                         $maxG ++;
-                        mySqli_query($conexao, "INSERT INTO membros_grupo(IdGrupo, usuario, solicitacao) VALUES('$maxG', '$usuario', '0')");
+                        mySqli_query($conexao, "INSERT INTO grupos_usuarios(IdGrupo, IdUsuario, solicitacao) VALUES('$maxG', '$usuario', '0')");
                         
                         $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Grupo adicionado com sucesso </strong> </div>";
                         echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
@@ -366,7 +367,7 @@
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
                 }
                 else {
-                    $update = mySqli_query($conexao, "UPDATE usuario SET nome='$alt_nome', email='$alt_email' WHERE usuario='$usuario';");
+                    $update = mySqli_query($conexao, "UPDATE usuarios SET nome='$alt_nome', email='$alt_email' WHERE IdUsuario='$usuario';");
                     
                     if ($update != "") {
                         $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Dados do perfil alterados com sucesso </strong> </div>";
@@ -381,7 +382,7 @@
                         $pasta = "Arquivos/Perfil/";                
     
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
-                            $update = mySqli_query($conexao, "UPDATE usuario SET imagem='$pasta$novoNome' WHERE usuario='$usuario';");
+                            $update = mySqli_query($conexao, "UPDATE usuarios SET LocalFoto='$pasta$novoNome' WHERE IdUsuario='$usuario';");
                             
                             if ($update != "") {
                                 $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Dados do perfil alterados com sucesso </strong> </div>";
@@ -405,7 +406,7 @@
                 $con_senha = $_POST["con_senha"];
 
                 if (($alt_senha != "") && ($con_senha != "") && ($alt_senha == $con_senha)) {
-                    $update = mySqli_query($conexao, "UPDATE usuario SET senha='$alt_senha' WHERE usuario='$usuario';");
+                    $update = mySqli_query($conexao, "UPDATE usuarios SET senha='$alt_senha' WHERE IdUsuario='$usuario';");
                     
                     if ($update != "") {
                         $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Senha alterada com sucesso </strong> </div>"; 
@@ -419,14 +420,14 @@
             } 
 
             if(isset($_POST['excluir_perfil'])) { 
-                $_SESSION['usuario'] = "";
+                $_SESSION['IdUsuario'] = "";
                 
-                mySqli_query($conexao, "DELETE FROM usuario WHERE usuario='$usuario';"); 
+                mySqli_query($conexao, "DELETE FROM usuarios WHERE IdUsuario='$usuario';"); 
                 echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">';
             }
 
             if(isset($_POST['sair'])){
-                $_SESSION['usuario'] = "";
+                $_SESSION['IdUsuario'] = "";
                 echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">'; 
             }
         ?>

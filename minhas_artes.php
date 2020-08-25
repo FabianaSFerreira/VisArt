@@ -2,16 +2,17 @@
     include_once("Conexao/conexao.php"); 
     session_start(); 
 
-    $usuario = $_SESSION['usuario'];
-    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, email, imagem, curtidas FROM usuario WHERE usuario='$usuario'"));               
-    
-    $maxTipos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdTipo) AS max FROM tipo_arte"));
+    $usuario = $_SESSION['IdUsuario'];
+    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));               
+    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT SUM(Curtidas) AS curt FROM artes WHERE IdUsuario='$usuario'"));
+
+    $maxTipos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdTipo) AS max FROM artes_tipos"));
     $maxT = (int) $maxTipos['max'];
 
     $maxArtes = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdArte) AS max FROM artes"));
     $maxA = (int) $maxArtes['max'];
 
-    $maxComentarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdComentario) AS max FROM comentarios"));
+    $maxComentarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdComentario) AS max FROM artes_comentarios"));
     $maxC = (int) $maxComentarios['max'];
 ?>
 
@@ -40,7 +41,7 @@
                 <a class="col-sm-2" href="galeria.php">Galeria</a>
                 <a class="col-sm-2" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['usuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
+                    if ($usuario == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
                     else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
                 ?>
             </div>
@@ -56,14 +57,14 @@
         <div class="row" id="perfil">     
             <div class="col-sm-6" style="padding: 15px;" align="center"> 
                 <div class="col-sm-7" id="img_perfil"> 
-                    <?php echo "<img src='".$select['imagem']."' style='width:100%; height:100%;'>"; ?>
+                    <?php echo "<img src='".$select['LocalFoto']."' style='width:100%; height:100%;'>"; ?>
                 </div>
 
                 <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
                     <?php
                         echo "<label>Nome: ".$select['nome']."</label><br>";
-                        echo "<label>Usuário: $usuario </label><br>";
-                        echo "<label>Curtidas ".$select['curtidas']."</label>";
+                        echo "<label>Usuário: ".$select['usuario']."</label><br>";
+                        echo "<label>Curtidas ".$curtidas['curt']."</label>";
                     ?> 
                 </div>
             </div>
@@ -104,13 +105,13 @@
             }
 
             for ($i=1; $i <= $maxA; $i++) { 
-                $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, arquivo FROM artes WHERE IdArte='$i' AND Usuario='$usuario'"));
+                $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$usuario'"));
                 
                 if ($arte != "") {
                     echo "<form action='minhas_artes.php' method='post'>
                         <div class='col-sm-4'> 
-                            <h5>".$arte['nome']." <button type='submit' name='botA".$i."' class='descricao' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
-                            <div id='arte'> <img id='img_arte' src='".$arte['arquivo']."'> </div>
+                            <h5>".$arte['TituloArte']." <button type='submit' name='botA".$i."' class='descricao' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                            <div id='arte'> <img id='img_arte' src='".$arte['LocalArquivo']."'> </div>
                         </div>
                     </form>";
                 }                                      
@@ -118,7 +119,7 @@
             
             for ($j=1; $j <= $maxA; $j++) { 
                 if (isset($_POST["botA$j"])) {
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte='$j'")); 
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte='$j'")); 
                     $_SESSION['IdArte'] = $DadosArte['IdArte'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
@@ -132,7 +133,7 @@
 
                 $formatosPermitidos = array('png', 'jpeg', 'jpg', 'gif', 'mp4');
                 $extensao = pathinfo($_FILES["new_arquivo"]["name"], PATHINFO_EXTENSION);
-                $NomeTipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM tipo_arte WHERE IdTipo='$tipo'"));
+                $NomeTipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo='$tipo'"));
 
                 if ($extensao != "") {
                     if(in_array($extensao, $formatosPermitidos)) {
@@ -141,7 +142,7 @@
                         $pasta = "Arquivos/".$NomeTipo['nome']."/";                 
     
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
-                            mySqli_query($conexao, "UPDATE artes SET nome='$nome', tipo='$tipo', descricao='$descricao', arquivo='$pasta$novoNome' WHERE IdArte=".$_SESSION['IdArte']."");
+                            mySqli_query($conexao, "UPDATE artes SET IdTipo='$tipo', TituloArte='$nome', LocalArquivo='$pasta$novoNome', descricao='$descricao' WHERE IdArte=".$_SESSION['IdArte']."");
                             echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=minhas_artes.php">';
                         }
                         else {
@@ -155,7 +156,7 @@
                     }
                 }
                 else {
-                    mySqli_query($conexao, "UPDATE artes SET nome='$nome', tipo='$tipo', descricao='$descricao' WHERE IdArte=".$_SESSION['IdArte']."");
+                    mySqli_query($conexao, "UPDATE artes SET IdTipo='$tipo', TituloArte='$nome', descricao='$descricao' WHERE IdArte=".$_SESSION['IdArte']."");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=minhas_artes.php">';
                 }     
             }
@@ -166,7 +167,7 @@
             }
 
             if(isset($_POST['voltar_arte'])) { 
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
             }
         ?>  
@@ -183,17 +184,17 @@
                 $comentario = $_POST['comentario'];
 
                 if ($comentario != "") {
-                    mySqli_query($conexao, "INSERT INTO comentarios(IdArte, texto, usuario) VALUES(".$_SESSION['IdArte'].", '$comentario', '$usuario')");
+                    mySqli_query($conexao, "INSERT INTO artes_comentarios (IdUsuario, IdArte, texto) VALUES('$usuario', ".$_SESSION['IdArte'].", '$comentario')");
 
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte']."")); 
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte']."")); 
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
                 }
             }
 
             if(isset($_POST['excluir_coment'])) { 
-                mySqli_query($conexao, "DELETE FROM comentarios WHERE IdComentario=".$_SESSION['IdComentario']."");
+                mySqli_query($conexao, "DELETE FROM artes_comentarios WHERE IdComentario=".$_SESSION['IdComentario']."");
                 
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, arquivo, nome, tipo, descricao, usuario, curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
             }
         ?>
@@ -207,16 +208,16 @@
                         <button class="descricao" type="button" data-toggle="modal" data-target="#excluir_arte" data-title='Excluir' style='float:left;'> <span class="glyphicon glyphicon-trash"></span> </button>
                         
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <?php echo "<h4 class='modal-title'>".$DadosArte['nome']."</h4>"; ?>
+                        <?php echo "<h4 class='modal-title'>".$DadosArte['TituloArte']."</h4>"; ?>
                     </div>
 
                     <div class='modal-body'>
                         <div class='row'> 
                             <div class='col-sm-6' align='center'>
                                 <?php 
-                                    echo "<div id='descricao'> <img src='".$DadosArte['arquivo']."'> </div> 
-                                        <button type='text' style='width:250px;'> Autor(a): ".$DadosArte['usuario']." </button>
-                                        <button type='text' style='width:250px;'> Descrição: ".$DadosArte['descricao']." </button>"; 
+                                    echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'> </div> 
+                                        <button type='text' style='width:250px;'> Autor(a): ".$select['nome']." </button>
+                                        <button type='text' style='width:250px;'> Descrição: ".$DadosArte['Descricao']." </button>"; 
                                 ?>
                             </div>
 
@@ -226,13 +227,13 @@
                                 <div style="height: 280px; overflow-y: scroll;">
                                     <?php 
                                         for ($i=1; $i <= $maxC; $i++) { 
-                                            $comentario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario, texto FROM comentarios WHERE IdComentario='$i' AND IdArte=".$DadosArte['IdArte'].""));                                               
+                                            $comentario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario, texto FROM artes_comentarios WHERE IdComentario='$i' AND IdArte=".$DadosArte['IdArte'].""));                                               
                                             
                                             if ($comentario != "") {
-                                                $meu_coment = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario FROM comentarios WHERE IdComentario='$i' AND usuario='$usuario'")); 
+                                                $meu_coment = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario FROM artes_comentarios WHERE IdComentario='$i' AND IdUsuario='$usuario'")); 
 
                                                 if ($meu_coment['IdComentario'] != "") {
-                                                    echo "<form action='minhas_artes.php' method='post'>
+                                                    echo "<form action='galeria.php' method='post'>
                                                             <div id='comentario'>
                                                                 <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$comentario['texto']." </button>
                                                                 <button type='submit' class='icon' name='coment".$i."' data-title='Excluir' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
@@ -280,17 +281,17 @@
                                     <div class="col-sm-10" align="left"><input type="file" name="new_arquivo" style='width:-webkit-fill-available;'></div>
                                     
                                     <div class="col-sm-2" align="left"><label> Nome: </label></div>
-                                    <div class="col-sm-10" align="left"><?php echo "<input type='text' name='nome' value='".$DadosArte['nome']."' style='width:-webkit-fill-available;'>";?></div>
+                                    <div class="col-sm-10" align="left"><?php echo "<input type='text' name='nome' value='".$DadosArte['TituloArte']."' style='width:-webkit-fill-available;'>";?></div>
                                     
                                     <div class="col-sm-2" align="left"><label> Tipo: </label></div>
                                     <div class="col-sm-10" align="left">
                                         <?php 
-                                            $NomeTipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM tipo_arte WHERE IdTipo=".$DadosArte['tipo'].""));
+                                            $NomeTipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo=".$DadosArte['IdTipo'].""));
                                             
                                             echo "<select name='tipo' style='width:-webkit-fill-available;'> <option value=".$DadosArte['tipo'].">".$NomeTipo['nome']."</option>";      
                                             for ($i=1; $i <= $maxT; $i++) { 
                                                 if ($i != $DadosArte['tipo']) {
-                                                    $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM tipo_arte WHERE IdTipo=$i"));  
+                                                    $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo=$i"));  
                                                     echo "<option value='$i'>". $tipo['nome'] ."</option>";
                                                 }  
                                             } echo "</select>";

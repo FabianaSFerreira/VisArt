@@ -2,13 +2,10 @@
     include_once("Conexao/conexao.php"); 
     session_start();
      
-    $usuario = $_SESSION['usuario'];  
+    $usuario = $_SESSION['IdUsuario'];  
     
     $maxGrupos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdGrupo) AS max FROM grupos"));
     $maxG = (int) $maxGrupos['max'];
-    
-    $maxMembros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdMembro) AS max FROM membros_grupo"));
-    $maxM = (int) $maxMembros['max'];
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +33,7 @@
                 <a class="col-sm-2" href="galeria.php">Galeria</a>
                 <a class="col-sm-2" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['usuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
+                    if ($usuario == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
                     else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
                 ?>
             </div>
@@ -64,13 +61,13 @@
         <div class="row" id="filtro" style="padding: 10px;">
             <?php
                 for ($i=1; $i <= $maxG; $i++) { 
-                    $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome, imagem FROM grupos WHERE IdGrupo='$i'"));
+                    $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT TituloGrupo, LocalImagem FROM grupos WHERE IdGrupo='$i'"));
 
                     if ($grupo != "") {
                         echo "<form action='grupos.php' method='post' class='bloco'>
                                 <div class='col-sm-3'> 
-                                    <h5>".$grupo['nome']." <button type='submit' name='bot".$i."' data-title='Descrição' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
-                                    <div id='grupo'> <img id='img_grupo' src='".$grupo['imagem']."'> </div>
+                                    <h5>".$grupo['TituloGrupo']." <button type='submit' name='bot".$i."' data-title='Descrição' class='descricao'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
+                                    <div id='grupo'> <img id='img_grupo' src='".$grupo['LocalImagem']."'> </div>
                                 </div>
                             </form>"; 
                     } 
@@ -81,7 +78,8 @@
         <?php 
             for ($i=1; $i <= $maxG; $i++) { 
                 if (isset($_POST["bot$i"])) {
-                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo='$i'")); 
+                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, administrador, LocalImagem, TituloGrupo, descricao, status FROM grupos WHERE IdGrupo='$i'")); 
+                    $admin = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosGrupo['administrador'].""));
                     $_SESSION['IdGrupo'] = $DadosGrupo['IdGrupo'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";     
@@ -89,14 +87,14 @@
             } 
 
             if(isset($_POST['solicitar'])) {
-                mySqli_query($conexao, "INSERT INTO membros_grupo(IdGrupo, usuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '1')");
+                mySqli_query($conexao, "INSERT INTO grupos_usuarios (IdGrupo, IdUsuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '1')");
                 echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=grupos.php">'; 
             }  
             
             if(isset($_POST['entrar'])) {
-                mySqli_query($conexao, "INSERT INTO membros_grupo(IdGrupo, usuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '0')");
+                mySqli_query($conexao, "INSERT INTO grupos_usuarios (IdGrupo, IdUsuario, solicitacao) VALUES(".$_SESSION['IdGrupo'].", '$usuario', '0')");
 
-                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, nome, administrador, status, descricao, imagem FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
+                $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, administrador, LocalImagem, TituloGrupo, descricao, status FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."")); 
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";    
             }
         ?>
@@ -107,28 +105,31 @@
 
                     <div class='modal-header'>
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <?php echo "<h4 class='modal-title'>".$DadosGrupo['nome']."</h4>"; ?>
+                        <?php echo "<h4 class='modal-title'>".$DadosGrupo['TituloGrupo']."</h4>"; ?>
                     </div>
 
                     <div class='modal-body'>
                         <div class='row'> 
                             <div class='col-sm-6' align='center'>
-                                <?php echo "<div id='descricao'> <img src='".$DadosGrupo['imagem']."'> </div>"; ?>
+                                <?php echo "<div id='descricao'> <img src='".$DadosGrupo['LocalImagem']."'> </div>"; ?>
                             </div>
 
                             <div class='col-sm-6' align='center'>
                                 <?php
                                     echo "<button type='text'> Descrição: ".$DadosGrupo['descricao']." </button><br>";
-                                    echo "<button type='text'> Administrador: ".$DadosGrupo['administrador']." </button><br>";
+                                    echo "<button type='text'> Administrador: ".$admin['Nome']." </button><br>";
 
-                                    if ($DadosGrupo['status'] == 1) { echo "<button type='text'> Status: Aberto </button>"; }
-                                    else if ($DadosGrupo['status'] == 2) { echo "<button type='text'> Status: Fechado </button>"; }
-
-                                    echo "<select> <option> Membros </option>";      
-                                    for ($i=1; $i <= $maxM; $i++) { 
-                                        $membros = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM membros_grupo WHERE IdMembro='$i' AND IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'"));  
-                                        if ($membros != "") { echo "<option>". $membros['usuario'] ."</option>"; }
-                                    } echo "</select>";
+                                    if ($DadosGrupo['status'] == 'aberto') { echo "<button type='text'> Status: Aberto </button>"; }
+                                    else if ($DadosGrupo['status'] == 'fechado') { echo "<button type='text'> Status: Fechado </button>"; }
+                                         
+                                    $UsGrupos = mySqli_query($conexao, "SELECT IdUsuario FROM grupos_usuarios WHERE IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'");  
+                                
+                                    echo "<select> <option> Membros </option>"; 
+                                    while($us = mysqli_fetch_array($UsGrupos)) {
+                                        $nome = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$us['IdUsuario'].""));
+                                        echo "<option>". $nome['Nome'] ."</option>"; 
+                                    }
+                                    echo "</select>";
                                 ?>
                             </div>
                         </div>
@@ -138,8 +139,8 @@
                                 <div class='form-group' align='center'>
                                     <?php
                                         if ($usuario != "") {
-                                            if ($DadosGrupo['status'] == 1) { echo "<input type='submit' name='entrar' value='Participar do grupo'>"; }
-                                            else if ($DadosGrupo['status'] == 2) { echo "<input type='submit' name='solicitar' value='Enviar Solicitação'>"; }
+                                            if ($DadosGrupo['status'] == 'aberto') { echo "<input type='submit' name='entrar' value='Participar do grupo'>"; }
+                                            else if ($DadosGrupo['status'] == 'fechado') { echo "<input type='submit' name='solicitar' value='Enviar Solicitação'>"; }
                                         } 
                                     ?>
                                 </div>
