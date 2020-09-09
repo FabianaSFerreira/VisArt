@@ -406,7 +406,7 @@
                 $con_senha = $_POST["con_senha"];
 
                 if (($alt_senha != "") && ($con_senha != "") && ($alt_senha == $con_senha)) {
-                    $update = mySqli_query($conexao, "UPDATE usuarios SET senha='$alt_senha' WHERE IdUsuario='$usuario';");
+                    $update = mySqli_query($conexao, "UPDATE usuarios SET senha= MD5('$alt_senha') WHERE IdUsuario='$usuario';");
                     
                     if ($update != "") {
                         $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Senha alterada com sucesso </strong> </div>"; 

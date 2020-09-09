@@ -48,9 +48,16 @@
             if(isset($_POST['logar'])){
                 $usuario = $_POST["usuario"];
                 $senha = $_POST["senha"];
+                
+                mySqli_query($conexao, "DELIMITER $ DROP FUNCTION IF EXISTS `fun_valida_usuario`$  
+                CREATE FUNCTION `fun_valida_usuario`(p_login VARCHAR(20), p_senha VARCHAR(50) ) RETURNS INT(1) BEGIN DECLARE l_ret INT(1) DEFAULT 0;  
+                SET l_ret = IFNULL((SELECT DISTINCT 1 FROM usuarios WHERE usuario = p_usuario AND senha = MD5(p_senha)),0);                           
+                RETURN l_ret; END$ DELIMITER;");
+                
+                $valida = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT fun_valida_usuario('$usuario','$senha') as Validou"));
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdUsuario FROM usuarios WHERE Usuario='$usuario'"));
 
-                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdUsuario, Nome FROM usuarios WHERE usuario='$usuario' AND senha='$senha'"));
-                if ($us['Nome'] == "") {
+                if ($valida['Validou'] == "") {
                     echo "<div id='alert'>
                             <button type='button' class='close'>&times;</button>
                             <strong>Usuário ou senha Incorreto! </strong> Por favor, tente novamente
@@ -69,7 +76,7 @@
                 $con_senha = $_POST["con_senha"];
 
                 if (($usuario != "") && ($email != "") && ($nov_senha != "") && ($con_senha != "") && ($nov_senha == $con_senha)) {
-                    $update = mySqli_query($conexao, "UPDATE usuarios SET senha='$nov_senha' WHERE usuario='$usuario' AND email='$email';");
+                    $update = mySqli_query($conexao, "UPDATE usuarios SET senha= MD5('$nov_senha') WHERE usuario='$usuario' AND email='$email';");
 
                     if ($update != "") {
                         echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=login.php">'; 

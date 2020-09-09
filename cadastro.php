@@ -73,7 +73,7 @@
                         </div>";
                 }
                 else {
-                    $inserir = mySqli_query($conexao, "INSERT INTO usuarios(usuario, nome, email, senha) VALUES('$usuario', '$nome', '$email', '$senha')");
+                    $inserir = mySqli_query($conexao, "INSERT INTO usuarios(usuario, nome, email, senha) VALUES('$usuario', '$nome', '$email', MD5('$senha'))");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">';
                 }
             }
