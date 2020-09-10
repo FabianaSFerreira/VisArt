@@ -435,10 +435,10 @@
                             <?php 
                                 for ($l=$maxMsg; $l > 0; $l--) { 
                                     $mensagem = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem, IdUsuario, texto FROM grupos_mensagens WHERE IdMensagem='$l' AND IdGrupo=".$DadosGrupo['IdGrupo'].""));                                               
-                                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$mensagem['IdUsuario'].""));
 
                                     if ($mensagem != "") {
                                         $meu_msg = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem FROM grupos_mensagens WHERE IdMensagem='$l' AND IdUsuario='$usuario'")); 
+                                        $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$mensagem['IdUsuario'].""));
 
                                         if ($meu_msg['IdMensagem'] != "") {
                                             echo "<form action='meus_grupos.php' method='post'>
