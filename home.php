@@ -69,8 +69,8 @@
 
                 <div id='hanking' class="carousel-inner">           
                     <?php
-                        $art = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, TituloArte, LocalArquivo FROM artes ORDER BY curtidas DESC LIMIT 1"));
-                        $select = mySqli_query($conexao, "SELECT IdArte, TituloArte, LocalArquivo FROM artes ORDER BY curtidas DESC LIMIT 10");
+                        $art = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdTipo!=4 ORDER BY curtidas DESC LIMIT 1"));
+                        $select = mySqli_query($conexao, "SELECT IdArte, IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdTipo!=4 ORDER BY curtidas DESC LIMIT 10");
 
                         $cont = 2;
 
@@ -187,8 +187,12 @@
                         <div class='row'> 
                             <div class='col-sm-6' align='center'>
                                 <?php 
-                                    echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'> </div> 
-                                        <button type='text' style='width:250px;'> Autor(a): ".$us['Nome']." </button>
+                                    if ($DadosArte['IdTipo'] == 4) { 
+                                        echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4'></video> </div>";
+                                    }
+                                    else {echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'> </div>";}  
+
+                                    echo "<button type='text' style='width:250px;'> Autor(a): ".$us['Nome']." </button>
                                         <button type='text' style='width:250px;'> Descrição: ".$DadosArte['Descricao']." </button>"; 
                                 ?>
                             </div>

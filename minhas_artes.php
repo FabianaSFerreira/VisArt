@@ -105,21 +105,22 @@
             }
 
             for ($i=1; $i <= $maxA; $i++) { 
-                $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$usuario'"));
+                $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$usuario'"));
                 
                 if ($arte != "") {
-                    echo "<form action='minhas_artes.php' method='post'>
-                        <div class='col-sm-4'> 
-                            <h5>".$arte['TituloArte']." <button type='submit' name='botA".$i."' class='descricao' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5> 
-                            <div id='arte'> <img id='img_arte' src='".$arte['LocalArquivo']."'> </div>
-                        </div>
-                    </form>";
+                    echo "<form action='minhas_artes.php' method='post'> <div class='col-sm-4'> 
+                            <h5>".$arte['TituloArte']." <button type='submit' name='botA".$i."' class='descricao' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5>";
+
+                    if ($arte['IdTipo'] == 4) { 
+                        echo "<div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'></video> </div> </div></form>";
+                    }
+                    else {echo "<div id='arte'> <img id='img_arte' src='".$arte['LocalArquivo']."'> </div> </div></form>";}  
                 }                                      
             }         
             
             for ($j=1; $j <= $maxA; $j++) { 
                 if (isset($_POST["botA$j"])) {
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte='$j'")); 
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte='$j'")); 
                     $_SESSION['IdArte'] = $DadosArte['IdArte'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
@@ -215,9 +216,13 @@
                         <div class='row'> 
                             <div class='col-sm-6' align='center'>
                                 <?php 
-                                    echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'> </div> 
-                                        <button type='text' style='width:250px;'> Autor(a): ".$select['nome']." </button>
-                                        <button type='text' style='width:250px;'> Descrição: ".$DadosArte['Descricao']." </button>"; 
+                                   if ($DadosArte['IdTipo'] == 4) { 
+                                    echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4'></video> </div>";
+                                    }
+                                    else {echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'> </div>";}  
+
+                                    echo "<button type='text' style='width:250px;'> Autor(a): ".$select['usuario']." </button>
+                                        <button type='text' style='width:250px;'> Descrição: ".$DadosArte['Descricao']." </button>";
                                 ?>
                             </div>
 

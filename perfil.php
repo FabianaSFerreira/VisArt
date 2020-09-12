@@ -281,7 +281,7 @@
                     $pasta = "Arquivos/".$NomeTipo['nome']."/";
 
                     if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
-                        $inserir = mySqli_query($conexao, "INSERT INTO artes(IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao) values('$nome', '$tipo', '$usuario', '$nome', '$pasta$novoNome', '$descricao')");
+                        $inserir = mySqli_query($conexao, "INSERT INTO artes(IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao) values('$tipo', '$usuario', '$nome', '$pasta$novoNome', '$descricao')");
                         
                         if ($inserir != "") {
                             $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Arte adicionada com sucesso </strong> </div>";

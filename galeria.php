@@ -84,7 +84,7 @@
 
                     if ($select == 0) {
                         for ($i=1; $i <= $maxA; $i++) { 
-                            $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$i'"));
+                            $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$i'"));
                             
                             if ($arte != "") {
                                 echo "<form action='galeria.php' method='post' class='bloco'> <div class='col-sm-4'> 
@@ -95,7 +95,10 @@
                                             <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label></button>";
                                 } 
 
-                                echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'></div> </div></form>";  
+                                if ($arte['IdTipo'] == 4) { 
+                                    echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'> </video> </div></div></form>";
+                                }
+                                else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'></div> </div></form>";}  
                             }                                  
                         }
                     }
@@ -103,7 +106,7 @@
                         for ($j=1; $j <= $maxT; $j++) { 
                             if ($select == $j) {
                                 for ($l=1; $l <= $maxA; $l++) { 
-                                    $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$l' AND IdTipo='$j'"));
+                                    $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$l' AND IdTipo='$j'"));
                                     
                                     if ($arte != "") {
                                         echo "<form action='galeria.php' method='post' class='bloco'> <div class='col-sm-4'> 
@@ -114,7 +117,10 @@
                                                     <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label></button>";
                                         } 
         
-                                        echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'></div> </div></form>";  
+                                        if ($arte['IdTipo'] == 4) { 
+                                            echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'> </video> </div></div></form>";
+                                        }
+                                        else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'></div> </div></form>";}  
                                     }                    
                                 }
                             }
@@ -125,7 +131,7 @@
                     $texto = $_POST['texto'];
 
                     for ($i=1; $i <= $maxA; $i++) { 
-                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$i' AND TituloArte LIKE '%$texto%'"));
+                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$i' AND TituloArte LIKE '%$texto%'"));
                         
                         if ($arte != "") {
                             echo "<form action='galeria.php' method='post' class='bloco'> <div class='col-sm-4'> 
@@ -136,13 +142,16 @@
                                         <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label></button>";
                             } 
 
-                            echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'></div> </div></form>";  
+                            if ($arte['IdTipo'] == 4) { 
+                                echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'> </video> </div></div></form>";
+                            }
+                            else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'></div> </div></form>";}    
                         }                                    
                     }
                 }
                 else {
                     for ($i=1; $i <= $maxA; $i++) { 
-                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$i'"));
+                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$i'"));
                         
                         if ($arte != "") {
                             echo "<form action='galeria.php' method='post' class='bloco'> <div class='col-sm-4'> 
@@ -153,7 +162,10 @@
                                         <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label> </button>";
                             } 
 
-                            echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'></div> </div></form>";  
+                            if ($arte['IdTipo'] == 4) { 
+                                echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'></video> </div></div></form>";
+                            }
+                            else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'></div> </div></form>";}  
                         }                                    
                     }
                 }   
@@ -244,8 +256,12 @@
                         <div class='row'> 
                             <div class='col-sm-6' align='center'>
                                 <?php 
-                                    echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'> </div> 
-                                        <button type='text' style='width:250px;'> Autor(a): ".$us['Nome']." </button>
+                                    if ($DadosArte['IdTipo'] == 4) { 
+                                        echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4'></video> </div>";
+                                    }
+                                    else {echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'> </div>";}  
+
+                                    echo "<button type='text' style='width:250px;'> Autor(a): ".$us['Nome']." </button>
                                         <button type='text' style='width:250px;'> Descrição: ".$DadosArte['Descricao']." </button>"; 
                                 ?>
                             </div>
