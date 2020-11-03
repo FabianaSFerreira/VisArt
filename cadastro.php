@@ -10,10 +10,10 @@
     <title>VisArt</title>
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+   
     <link rel="icon" href="Arquivos/VisArt/logo.png" type="image/x-icon">
     <link rel="stylesheet" href="CSS/estilos.css">
 </head>
@@ -21,25 +21,26 @@
 <body>
     <header class="container-fluid"><br>
         <div class="row" id="header">     
-            <div class="col-sm-2" style="padding: 10px;" align="center"> <img src="Arquivos/VisArt/marca.png" class="img-responsive" width="150"> </div>
+            <div class="col-sm-2" style="padding: 10px; margin-top: 10px;" align="center"> <img src="Arquivos/VisArt/marca.png" class="img-responsive" width="150"> </div>
             
-            <div class="col-sm-7" style="padding: 1.5% 1.5% 10px;" align="center">
-                <a class="col-sm-2" href="home.php">Home</a>
-                <a class="col-sm-2" href="galeria.php">Galeria</a>
-                <a class="col-sm-2" href="grupos.php">Grupos</a>
+            <div class="col-sm-10" style="padding: 1.5%" align="center">
+                <a class="col-sm-2" style="margin-top: 10px;" href="home.php">Home</a>
+                <a class="col-sm-2" style="margin-top: 10px;" href="galeria.php">Galeria</a>
+                <a class="col-sm-2" style="margin-top: 10px;" href="grupos.php">Grupos</a>
                 <?php 
-                    if ($_SESSION['IdUsuario'] == "") { echo "<a class='col-sm-2' href='login.php'>Login</a>"; }
-                    else { echo "<a class='col-sm-2' href='perfil.php'>Perfil</a>"; }
+                    if ($usuario == "") { echo "<a class='col-sm-2' style='margin-top: 10px;' href='login.php'>Login</a>"; }
+                    else { echo "<a class='col-sm-2' style='margin-top: 10px;' href='perfil.php'>Perfil</a>"; }
                 ?>
-            </div>
 
-            <div class="col-sm-3" style="padding: 1.5% 1.5% 10px;" align="right">   
-                <form id="buscar" action="galeria.php" method='post'>
-                    <input id="text_busca" type="text" name="texto" placeholder="Buscar artes" style="width: 80%">
-                    <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
-                </form>
-            </div>
+                <div class="col-sm-3" style="margin-top: 10px;" align="right">   
+                    <form id="buscar" action="galeria.php" method='post'>
+                        <input id="text_busca" type="text" name="texto" placeholder="Buscar artes" style="width: 80%">
+                        <button class="icon" type="submit" name="buscar" style="margin: 0; padding: 0px 5px 5px;"> <span class="glyphicon glyphicon-search"></span> </button> 
+                    </form>
+                </div>
+            </div>  
         </div><br>
+
         <div class="row" id="titulo" style="padding: 10px;"> Cadastro </div>
     </header>
     
@@ -111,8 +112,9 @@
 
             <div class="col-sm-6" style="padding: 10px 30px;">
                 <label>Conteúdo</label> 
-                <p> Sistema voltado para a exposição de trabalhos de diferentes artistas com o intuito de proporcionar um espaço de integração e colaboração entre os usuários. 
-                    Assim sendo um espaço onde possam aprimorar e compartilhar suas habilidades artísticas, tornando-se, não somente um espaço para visibilidade, mas também para aprendizado.
+                <p> Projeto voltado para a exposição de artes autorais de diferentes usuários, com o objetivo de incentivar o pensamento artístico, 
+                    bem como proporcionar um espaço de integração e colaboração entre os usuários através da criação de grupos e salas de bate-papo, 
+                    visando promover o aprendizado e a troca de ideias, além de propiciar visibilidade para todos os tipos de artistas.
                 </p>
             </div>
 
