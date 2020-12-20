@@ -1,15 +1,11 @@
 <?php 
     include_once("Conexao/conexao.php"); 
-    session_start(); 
-
-    $usuario = $_SESSION['IdUsuario'];               
-    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
-    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT SUM(Curtidas) AS curt FROM artes WHERE IdUsuario='$usuario'"));
-
-    $maxUsuarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdUsuario) AS max FROM usuarios"));
-    $maxU = (int) $maxUsuarios['max'];
-
-    $cont = 0;
+    session_start();
+     
+    $usuario = $_SESSION['IdUsuario'];  
+    
+    $maxEventos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdEvento) AS max FROM evento"));
+    $maxE = (int) $maxEventos['max'];
 ?>
 
 <!DOCTYPE html>
@@ -36,10 +32,10 @@
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li class="nav-item"> <a class="nav-link active" href="home.php">Home</a> </li>
+                    <li class="nav-item"> <a class="nav-link" href="home.php">Home</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="galeria.php">Galeria</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="grupos.php">Grupos</a> </li>
-                    <li class="nav-item"> <a class="nav-link" href="eventos.php">Eventos</a> </li>
+                    <li class="nav-item"> <a class="nav-link active" href="eventos.php">Eventos</a> </li>
                     <li class="nav-item">
                         <?php 
                             if ($usuario == "") { echo "<a class='nav-link' href='login.php'>Login</a>"; }
@@ -57,88 +53,118 @@
                     </button> 
                 </form>  
             </div>  
-        </nav><br>  
+        </nav><br>
 
-        <div class="row" id="perfil">     
-            <div class="col-sm-6" style="padding: 15px;" align="center"> 
-                <div class="col-sm-7" id="img_perfil"> 
-                    <?php echo "<img src='".$select['LocalFoto']."' style='width:100%; height:100%;'>"; ?>
-                </div>
-
-                <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
-                    <?php
-                        echo "<label>Nome: ".$select['nome']."</label><br>";
-                        echo "<label>Usuário: ".$select['usuario']."</label><br>";
-                        echo "<label>Curtidas ".$curtidas['curt']."</label>";
-                    ?> 
-                </div>
-            </div>
-
-            <div class="col-sm-6" style="padding: 15px; margin: 1% 0px;" align="right"> 
-                <a class="col-sm-5 col-xs-5" href="minhas_artes.php" style="margin: 10px;"> Minhas Artes </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalArte" value="Adicionar Arte" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="meus_grupos.php" style="margin: 10px;"> Meus Grupos </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalGrupo" value="Adicionar Grupo" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="notificacao.php" style="margin: 10px;"> Notificações </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="configuracoes" value="Configurações" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-            </div>
-        </div>
+        <nav lass="navbar navbar-expand-lg navbar-light bg-light" id="titulo"> Eventos </nav>
     </header>
     
     <section class="container-fluid">
-        <?php
-            $solicitacao = mySqli_query($conexao, "SELECT G.TituloGrupo, GU.IdGrupo, GU.IdUsuario FROM grupos_usuarios GU JOIN grupos G ON GU.IdGrupo=G.IdGrupo WHERE GU.solicitacao='1' AND G.Administrador='$usuario'"); 
+        <div class="row" align="right">
+            <div class="col-sm-7" style="padding: 20px 25px;">
+                <form id="buscar" action='grupos.php' method='post'>
+                    <label style="padding: 0px 0px 0px 10px; margin: 0px;"> Pesquisar: </label>
+                    <input class="pesquisar" id="text_busca" type='text' style="width: 65%;">      
+                </form>
+            </div>
+        </div>
+        
+        <div class="row" id="filtro" style="padding: 10px;">
+            <?php
+                for ($i=1; $i <= $maxE; $i++) { 
+                    $evento = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT NomeEvento, LocalImagem FROM evento WHERE IdEvento='$i'"));
 
-            while ($sol = mysqli_fetch_array($solicitacao)) { 
-                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$sol['IdUsuario'].""));
-
-                echo "<div class='row' id='notificacao'>
-                    <form action='notificacao.php' method='post'>
-                        <div class='col-sm-7'>
-                            <p> O usuário <strong>'".$us['Nome']."'</strong> enviou uma solicitação para participar do grupo <strong>'".$sol['TituloGrupo']."'</strong>.</p>
-                        </div>
-                        
-                        <div class='col-sm-5' align='center'>
-                            <input type='submit' name='aceitar".$sol['IdUsuario']."' value='Aceitar' style='width: 100px; background: none;'>
-                            <input type='submit' name='recusar".$sol['IdUsuario']."' value='Recusar' style='width: 100px; background: none;'>
-                        </div> 
-                    </form>    
-                </div>"; 
-
-                if(isset($_POST["aceitar".$sol['IdUsuario'].""])) { 
-                    $update = mySqli_query($conexao, "UPDATE grupos_usuarios SET solicitacao='0' WHERE IdUsuario=".$sol['IdUsuario']." AND IdGrupo=".$sol['IdGrupo']."");
-                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=notificacao.php">';
+                    if ($evento != "") {
+                        echo "<form class='col-sm-3' action='eventos.php' method='post' class='bloco'>
+                                <h5>".$evento['NomeEvento']."                                   
+                                <button class='descricao' type='submit' name='bot".$i."' data-title='Descrição'> 
+                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-square-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'/></svg>
+                                </button></h5> 
+                                <div id='grupo'> <img id='img_grupo' src='".$evento['LocalImagem']."'> </div>
+                            </form>"; 
+                    } 
                 }
-    
-                if(isset($_POST["recusar".$sol['IdUsuario'].""])) { 
-                    mySqli_query($conexao, "DELETE FROM grupos_usuarios WHERE IdUsuario=".$sol['IdUsuario']." AND IdGrupo=".$sol['IdGrupo']."");
-                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=notificacao.php">';
-                }      
+            ?>
+        </div> 
+        
+        <?php 
+            for ($i=1; $i <= $maxE; $i++) { 
+                if (isset($_POST["bot$i"])) {
+                    $DadosEvento = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdEvento, IdUsuario, LocalImagem, NomeEvento, descricao, participantes FROM evento WHERE IdEvento='$i'")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosEvento['IdUsuario'].""));
+                    $_SESSION['IdEvento'] = $DadosEvento['IdEvento'];
+                    
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_evento').modal('show'); }); </script>";     
+                }
             } 
+            
+            if(isset($_POST['presenca'])) {
+                $participantes = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT participantes FROM evento WHERE IdEvento=".$_SESSION['IdEvento'].""));
+                $participantes = (int) $participantes['participantes'];
 
-            if ($sol == "") {
-                echo "<div class='row' id='notificacao'> <strong> Você não possue nenhuma notificação </strong> </div>";
-            } 
+                $part = $participantes + 1;
+                $update = mySqli_query($conexao, "UPDATE evento SET participantes='$part' WHERE IdEvento=".$_SESSION['IdEvento']."");
+                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=eventos.php">';
+            }
         ?>
+        
+        <div class='modal fade' id='descricao_evento' role='dialog'>
+            <div class='modal-dialog'>  
+                <div class='modal-content'>   
+
+                    <div class='modal-header'>
+                        <?php echo "<h4 class='modal-title'>".$DadosEvento['NomeEvento']."</h4>"; ?>
+                        <button type='button' class='close' data-dismiss='modal'>&times;</button>  
+                    </div>
+
+                    <div class='modal-body'>
+                        <div class='row'> 
+                            <?php 
+                                echo "<div id='descricao'> <img src='".$DadosEvento['LocalImagem']."' style='width: -webkit-fill-available;'> </div><br>"; 
+                                echo "<button type='text'> Descrição: ".$DadosEvento['descricao']." </button><br>";
+                                
+                                echo "<form action='perfil.php' method='post' style='width: -webkit-fill-available; padding: 0px 15px;'>
+                                        <input id='usuario' type='submit' name='perfil".$DadosEvento['IdUsuario']."' value='Criador(a): ".$us['Nome']."' style='width: -webkit-fill-available; padding: 10px;'>
+                                    </form>";
+                                
+                                echo "<button type='text'> Número de participantes: ".$DadosEvento['participantes']." </button><br>";                                      
+                            ?>
+                        </div>  
+                    </div>
+
+                    <div class='modal-footer'>
+                        <form action='eventos.php' method='post' style="width: -webkit-fill-available;">
+                            <div class='form-group align-center' align="center">
+                                <?php
+                                    if ($usuario != "") {
+                                        echo "<input type='submit' name='presenca' value='Confirmar presença no evento'>";
+                                    } 
+                                ?>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     
+    <script>
+        $(document).ready(function(){
+            $(".close").click(function(){ $("#alert").hide(); }); 
+            
+            $(".pesquisar").keyup(function(){
+                var texto = $(this).val();
+                
+                $(".bloco").each(function(){
+                    var nomeEvento = $(this).find("span").text().toUpperCase()
+                    var resultado = nomeEvento.indexOf(texto.toUpperCase())
+                     
+                    if(resultado < 0) { $(this).hide(); }
+                    else { $(this).show(); }
+                }); 
+            });
+        });
+    </script>
+
     <footer class="container" style="margin: 15px; width: auto; max-width: max-content;">
         <div class="row" >
             <div class="col-sm-4" style="padding: 10px 30px;"> 

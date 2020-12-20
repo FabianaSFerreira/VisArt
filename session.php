@@ -6,8 +6,10 @@
 	$_SESSION['IdArte'] = "";
 	
 	$_SESSION['IdGrupo'] = "";
+	
+	$_SESSION['IdEvento'] = "";
 
-	$_SESSION['IdUsuario'] = "";
+	$_SESSION['IdUsuario'] = "1";
 
 	$_SESSION['IdUsGrupo'] = "";
 

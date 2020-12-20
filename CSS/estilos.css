@@ -4,19 +4,28 @@ body {
     height: 100%;     
     font-size: auto;
     color: #073763;
+    overflow-x: hidden;
     background-color: #ffffee;  
     font-family: 'Nunito', sans-serif;    
 }
 
-a {
-    padding: 5px;    
+svg {
+    margin: 2px;
+}
+
+a, .nav-item {
+    padding: 5px; 
+    margin: 0px 4px;    
     color: #073763;
     font-weight: bold; 
-    text-align: center;
-    margin: 0px 4px 0px;  
+    text-align: justify; 
     text-decoration: none;
-    background-color: #ffffee;
-    box-shadow: 1px 2px 2px #f0a963;
+}
+
+.navbar-toggler {
+    border: 0px;   
+    width: unset;
+    box-shadow: 0 0 0;
 }
 
 #buscar, #comentario, #mensagem, #membros {
@@ -28,13 +37,19 @@ a {
     box-shadow: 1px 2px 2px #f0a963;
 }
 
-#text_busca {   
+#text_busca, #nav_perfil {   
     margin: 0px; 
     border: 0px;
-    width: 100px; 
-    box-shadow: 0px 0px 0px;
+    box-shadow: 0 0 0;
     padding: 0px 0px 0px 10px;
     background-color: #ffffee; 
+}
+
+#nav_perfil {
+    width: auto;
+    background: 0;
+    padding: .5rem;
+    text-align: center;
 }
 
 #header, #titulo, #perfil {
@@ -63,20 +78,17 @@ h5 {
 }
 
 label {
-    font-weight: bold;     
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    padding-bottom: 0;     
     text-align: center;
-    padding: 15px 10px 10px 15px;
-}
-
-img {
-    max-width: 100%;
-    max-height: 100%;
 }
 
 #img_perfil { 
-    padding: 10px;      
-    height: 180px;
-    max-width: 250px;
+    margin: 0;
+    padding: 10px;     
+    min-width: auto;
     background-color: #ffffee;
 }
 
@@ -94,15 +106,26 @@ img {
     height: 230px;
     display: flex;
     align-items: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     justify-content: center;
     background-color: #ffffee;
     border: 0.5px solid #f0a963;
+    box-shadow: 1px 2px 2px #f0a963;
 }
 
-#grupo { height: 180px; }
-#descricao { margin: 10px; }
-#hanking { height: 300px; }
+#descricao, button[type=text] {
+    padding: 10px;
+    color: #073763;
+    margin-left: 25px;
+    margin-right: 25px;
+    height: max-content;
+    font-weight: lighter; 
+    text-align: -webkit-left;
+    width: -webkit-fill-available;
+}
+
+#grupo {height: 180px;}
+#hanking {height: 300px;}
 
 #alert, #campo, #notificacao {
     margin: 20px;
@@ -119,8 +142,7 @@ section, #alert, #notificacao {
 
 footer {
     font-size: 13px;
-    text-align: justify;
-    font-family: 'Nunito', sans-serif;    
+    text-align: justify;  
     background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
 }
 
@@ -135,9 +157,17 @@ footer {
     background-image: linear-gradient(to bottom right, #f9cb9c, #ffffee);
 }
 
+#scroll_coment {
+    max-height: 200px; 
+    overflow-y: scroll; 
+    overflow-x: hidden; 
+    width: -webkit-fill-available;
+}
+
 #imagem, button, select, textarea, input {
     margin: 10px; 
     width: 250px; 
+    color: #073763;
     font-weight: bold; 
     padding: 5px 5px 5px 10px;
     background-color: #ffffee;
@@ -145,12 +175,7 @@ footer {
     box-shadow: 1px 2px 2px #f0a963;
 }
 
-button[type=text] {
-    text-align: justify;
-    font-weight: lighter; 
-}
-
-input[type=submit], .modal-header, .modal-footer { 
+.modal-header, .modal-footer { 
     background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);
 }
 
@@ -160,8 +185,10 @@ input[type=submit], .modal-header, .modal-footer {
 }
 
 .close, .alt_perfil, .alt_senha, .sair, .icon, .descricao {   
-    border: 0;
-    opacity: 1;  
+    border: 0;  
+    margin: 0;
+    padding: 0;
+    opacity: 1; 
     float: right;
     width: initial;
     color: #073763;
@@ -176,9 +203,20 @@ input[type=submit], .modal-header, .modal-footer {
     margin-left: 5px;
 }
 
-::-webkit-input-placeholder {
+::-webkit-input-placeholder, #usuario {
     color: #073763;
+    text-align: left;
     font-weight: lighter; 
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background: #ffffee;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #073763;
+    border: 0.5px solid #f0a963;
 }
 
 ::-webkit-file-upload-button {
