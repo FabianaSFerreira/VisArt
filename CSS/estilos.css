@@ -148,12 +148,12 @@ footer {
 
 #sala_BP {
     margin: 5px;
-    height: 350px;
+    height: 400px;
     padding: 20px;
     display: flex;
     overflow-y: scroll;
     overflow-x: hidden;
-    flex-direction: column-reverse;
+    width: -webkit-fill-available;
     background-image: linear-gradient(to bottom right, #f9cb9c, #ffffee);
 }
 
