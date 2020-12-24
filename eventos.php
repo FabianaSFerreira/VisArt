@@ -2,6 +2,7 @@
     include_once("Conexao/conexao.php"); 
     session_start();
      
+    $_SESSION['IdPerfil'] = "";
     $usuario = $_SESSION['IdUsuario'];  
     
     $maxEventos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdEvento) AS max FROM evento"));

@@ -2,6 +2,7 @@
     include_once("Conexao/conexao.php");
     session_start(); 
 
+    $_SESSION['IdPerfil'] = "";
     $usuario = $_SESSION['IdUsuario']; 
 
     $maxTipos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdTipo) AS max FROM artes_tipos"));
@@ -273,9 +274,9 @@
                         <div class='row'> 
                             <?php 
                                 if ($DadosArte['IdTipo'] == 4) { 
-                                    echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4'></video> </div>";
+                                    echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4' style='width: -webkit-fill-available;></video> </div>";
                                 }
-                                else {echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'  style='width: -webkit-fill-available;'> </div>";}  
+                                else {echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."' style='width: -webkit-fill-available;'> </div>";}  
                              
                                 if ($usuario != "") {
                                     echo "<form action='galeria.php' method='post' style='margin-right: 30px; width: -webkit-fill-available;'>

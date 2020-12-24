@@ -61,22 +61,17 @@
                 $usuario = $_POST["usuario"];
                 $senha = $_POST["senha"];
                 
-                mySqli_query($conexao, "DELIMITER $ DROP FUNCTION IF EXISTS `fun_valida_usuario`$  
-                CREATE FUNCTION `fun_valida_usuario`(p_login VARCHAR(20), p_senha VARCHAR(50) ) RETURNS INT(1) BEGIN DECLARE l_ret INT(1) DEFAULT 0;  
-                SET l_ret = IFNULL((SELECT DISTINCT 1 FROM usuarios WHERE usuario = p_usuario AND senha = MD5(p_senha)),0);                           
-                RETURN l_ret; END$ DELIMITER;");
-                
-                $valida = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT fun_valida_usuario('$usuario','$senha') as Validou"));
-                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdUsuario FROM usuarios WHERE Usuario='$usuario'"));
+                $valida_senha = md5(mysqli_real_escape_string($conexao, $senha));               
+                $valida = mysql_fetch_assoc(mySqli_query($conexao, "SELECT IdUsuario FROM usuarios WHERE usuario='$usuario' AND senha='$valida_senha'"));
 
-                if ($valida['Validou'] == "") {
+                if ($valida['IdUsuario'] == "") {
                     echo "<div id='alert'>
                             <button type='button' class='close'>&times;</button>
                             <strong>Usuário ou senha Incorreto! </strong> Por favor, tente novamente
                         </div>";          
                 }
                 else {    
-                    $_SESSION['IdUsuario'] = $us['IdUsuario'];
+                    $_SESSION['IdUsuario'] = $valida['IdUsuario'];
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">'; 
                 }
             }

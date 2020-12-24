@@ -36,14 +36,14 @@
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li class="nav-item"> <a class="nav-link active" href="home.php">Home</a> </li>
+                    <li class="nav-item"> <a class="nav-link" href="home.php">Home</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="galeria.php">Galeria</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="grupos.php">Grupos</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="eventos.php">Eventos</a> </li>
                     <li class="nav-item">
                         <?php 
                             if ($usuario == "") { echo "<a class='nav-link' href='login.php'>Login</a>"; }
-                            else { echo "<a class='nav-link' href='perfil.php'>Perfil</a>"; }
+                            else { echo "<a class='nav-link active' href='perfil.php'>Perfil</a>"; }
                         ?>
                     </li>
                 </ul>
@@ -59,87 +59,104 @@
             </div>  
         </nav><br>  
 
-        <div class="row" id="perfil">     
-            <div class="col-sm-6" style="padding: 15px;" align="center"> 
-                <div class="col-sm-7" id="img_perfil"> 
-                    <?php echo "<img src='".$select['LocalFoto']."' style='width:100%; height:100%;'>"; ?>
-                </div>
+        <?php 
+            if ($_SESSION['IdPerfil'] != "") {
+                $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'"));
 
-                <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
-                    <?php
-                        echo "<label>Nome: ".$select['nome']."</label><br>";
-                        echo "<label>Usuário: ".$select['usuario']."</label><br>";
-                        echo "<label>Curtidas ".$curtidas['curt']."</label>";
-                    ?> 
-                </div>
-            </div>
+                echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
+                        <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
+                            <img src="'.$perfil_usuario['LocalFoto'].'" style="width:100%; height:100%;"><br> 
+                            <label style="margin: 0; padding: 10px; float: left;">'.$perfil_usuario['nome'].'</label>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+                            </button>
+                        </div>
+                            
+                        <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
+                            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li>
+                            </ul>
+                        </div>  
+                    </nav>';
+            }
+            else {
+                echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
+                        <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
+                            <img src="'.$select['LocalFoto'].'" style="width:100%; height:100%;"><br>
+                            <label style="margin: 0; padding: 10px; float: left;">'.$select['nome'].'</label>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+                            </button>
+                        </div>
+                            
+                        <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
+                            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li><br>
 
-            <div class="col-sm-6" style="padding: 15px; margin: 1% 0px;" align="right"> 
-                <a class="col-sm-5 col-xs-5" href="minhas_artes.php" style="margin: 10px;"> Minhas Artes </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalArte" value="Adicionar Arte" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="meus_grupos.php" style="margin: 10px;"> Meus Grupos </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalGrupo" value="Adicionar Grupo" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="notificacao.php" style="margin: 10px;"> Notificações </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="configuracoes" value="Configurações" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-            </div>
-        </div>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalArte" value="Adicionar Arte"></form> </li>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalGrupo" value="Adicionar Grupo"></form> </li>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalEvento" value="Adicionar Evento"></form> </li><br>
+                                
+                                <li class="nav-item"> <a class="nav-link" href="notificacao.php">Notificações</a> </li>                    
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="configuracoes" value="Configurações"></form> </li>
+                            </ul>
+                        </div>  
+                    </nav>';
+            }
+        ?>
     </header>
     
     <section class="container-fluid">
         <?php
-            $solicitacao = mySqli_query($conexao, "SELECT G.TituloGrupo, GU.IdGrupo, GU.IdUsuario FROM grupos_usuarios GU JOIN grupos G ON GU.IdGrupo=G.IdGrupo WHERE GU.solicitacao='1' AND G.Administrador='$usuario'"); 
+            $solicitacao = mySqli_query($conexao, "SELECT G.TituloGrupo, GU.IdGrupo, GU.IdUsuario FROM grupos_usuarios GU JOIN grupos G ON GU.IdGrupo=G.IdGrupo WHERE GU.solicitacao='1' AND G.Administrador='$usuario'");  
+            $cont = 1;
 
             while ($sol = mysqli_fetch_array($solicitacao)) { 
                 $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$sol['IdUsuario'].""));
 
-                echo "<div class='row' id='notificacao'>
-                    <form action='notificacao.php' method='post'>
-                        <div class='col-sm-7'>
-                            <p> O usuário <strong>'".$us['Nome']."'</strong> enviou uma solicitação para participar do grupo <strong>'".$sol['TituloGrupo']."'</strong>.</p>
+                echo "<form action='notificacao.php' method='post' style='padding: 10px; width: -webkit-fill-available;'>
+                        <div class='row' id='notificacao'>
+                            <div class='col-sm-8'>
+                                <p> O usuário <strong>'".$us['Nome']."'</strong> enviou uma solicitação para participar do grupo <strong>'".$sol['TituloGrupo']."'</strong>.</p>
+                            </div>
+                            
+                            <div class='col-sm-4' align='center'>
+                                <input type='submit' name='aceitar$cont' value='Aceitar' style='width: 100px; background: none;'>
+                                <input type='submit' name='recusar$cont' value='Recusar' style='width: 100px; background: none;'>
+                            </div> 
                         </div>
-                        
-                        <div class='col-sm-5' align='center'>
-                            <input type='submit' name='aceitar".$sol['IdUsuario']."' value='Aceitar' style='width: 100px; background: none;'>
-                            <input type='submit' name='recusar".$sol['IdUsuario']."' value='Recusar' style='width: 100px; background: none;'>
-                        </div> 
-                    </form>    
-                </div>"; 
+                    </form>"; 
 
-                if(isset($_POST["aceitar".$sol['IdUsuario'].""])) { 
+                if(isset($_POST["aceitar$cont"])) { 
                     $update = mySqli_query($conexao, "UPDATE grupos_usuarios SET solicitacao='0' WHERE IdUsuario=".$sol['IdUsuario']." AND IdGrupo=".$sol['IdGrupo']."");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=notificacao.php">';
                 }
     
-                if(isset($_POST["recusar".$sol['IdUsuario'].""])) { 
+                if(isset($_POST["recusar$cont"])) { 
                     mySqli_query($conexao, "DELETE FROM grupos_usuarios WHERE IdUsuario=".$sol['IdUsuario']." AND IdGrupo=".$sol['IdGrupo']."");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=notificacao.php">';
-                }      
+                }
+                
+                $cont++;
             } 
-
-            if ($sol == "") {
+            
+            if ($cont == 1) {
                 echo "<div class='row' id='notificacao'> <strong> Você não possue nenhuma notificação </strong> </div>";
             } 
         ?>
     </section>
+
+    <script>
+        $(document).ready(function(){
+            $(".close").click(function(){ $("#alert").hide(); });
+        });
+    </script>
     
-    <footer class="container" style="margin: 15px; width: auto; max-width: max-content;">
+    <footer class="container" style="margin: 15px; width: auto; max-width: max-content; ">
         <div class="row" >
             <div class="col-sm-4" style="padding: 10px 30px;"> 
                 <label>Instituição</label>

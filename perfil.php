@@ -2,7 +2,8 @@
     include_once("Conexao/conexao.php"); 
     session_start(); 
 
-    $usuario = $_SESSION['IdUsuario'];               
+    $usuario = $_SESSION['IdUsuario'];
+
     $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
     $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT SUM(Curtidas) AS curt FROM artes WHERE IdUsuario='$usuario'"));
 
@@ -72,7 +73,7 @@
                     $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'"));
 
                     echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
-                            <div class="navbar-brand" id="img_perfil"> 
+                            <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
                                 <img src="'.$perfil_usuario['LocalFoto'].'" style="width:100%; height:100%;"><br> 
                                 <label style="margin: 0; padding: 10px; float: left;">'.$perfil_usuario['nome'].'</label>
                                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
@@ -88,10 +89,11 @@
                                 </ul>
                             </div>  
                         </nav>';
+                        break;
                 }
                 else {
                     echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
-                            <div class="navbar-brand" id="img_perfil"> 
+                            <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
                                 <img src="'.$select['LocalFoto'].'" style="width:100%; height:100%;"><br>
                                 <label style="margin: 0; padding: 10px; float: left;">'.$select['nome'].'</label>
                                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
@@ -458,7 +460,7 @@
                     if(in_array($extensao, $formatosPermitidos)) {
                         $arquivo = $_FILES["imagem"]["tmp_name"];
                         $novoNome = uniqid().".$extensao";
-                        $pasta = "Arquivos/Grupos/";               
+                        $pasta = "Arquivos/Eventos/";               
 
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
                             $inserir = mySqli_query($conexao, "INSERT INTO evento(IdUsuario, LocalImagem, NomeEvento, descricao) values('$usuario', '$pasta$novoNome', '$nome', '$descricao')");

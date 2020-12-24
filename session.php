@@ -9,7 +9,9 @@
 	
 	$_SESSION['IdEvento'] = "";
 
-	$_SESSION['IdUsuario'] = "1";
+	$_SESSION['IdPerfil'] = "";
+
+	$_SESSION['IdUsuario'] = "2";
 
 	$_SESSION['IdUsGrupo'] = "";
 

@@ -2,6 +2,7 @@
     include_once("Conexao/conexao.php"); 
     session_start();
      
+    $_SESSION['IdPerfil'] = "";
     $usuario = $_SESSION['IdUsuario'];  
     
     $maxGrupos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdGrupo) AS max FROM grupos"));

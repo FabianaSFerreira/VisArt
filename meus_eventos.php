@@ -40,14 +40,14 @@
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li class="nav-item"> <a class="nav-link active" href="home.php">Home</a> </li>
+                    <li class="nav-item"> <a class="nav-link" href="home.php">Home</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="galeria.php">Galeria</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="grupos.php">Grupos</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="eventos.php">Eventos</a> </li>
                     <li class="nav-item">
                         <?php 
                             if ($usuario == "") { echo "<a class='nav-link' href='login.php'>Login</a>"; }
-                            else { echo "<a class='nav-link' href='perfil.php'>Perfil</a>"; }
+                            else { echo "<a class='nav-link active' href='perfil.php'>Perfil</a>"; }
                         ?>
                     </li>
                 </ul>
@@ -63,70 +63,82 @@
             </div>  
         </nav><br>
 
-        <div class="row" id="perfil">     
-            <div class="col-sm-6" style="padding: 15px;" align="center"> 
-                <div class="col-sm-7" id="img_perfil"> 
-                    <?php echo "<img src='".$select['LocalFoto']."' style='width:100%; height:100%;'>"; ?>
-                </div>
+        <?php 
+            if ($_SESSION['IdPerfil'] != "") {
+                $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'"));
 
-                <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
-                    <?php
-                        echo "<label>Nome: ".$select['nome']."</label><br>";
-                        echo "<label>Usuário: ".$select['usuario']."</label><br>";
-                        echo "<label>Curtidas ".$curtidas['curt']."</label>";
-                    ?> 
-                </div>
-            </div>
+                echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
+                        <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
+                            <img src="'.$perfil_usuario['LocalFoto'].'" style="width:100%; height:100%;"><br> 
+                            <label style="margin: 0; padding: 10px; float: left;">'.$perfil_usuario['nome'].'</label>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+                            </button>
+                        </div>
+                            
+                        <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
+                            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li>
+                            </ul>
+                        </div>  
+                    </nav>';
+            }
+            else {
+                echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
+                        <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
+                            <img src="'.$select['LocalFoto'].'" style="width:100%; height:100%;"><br>
+                            <label style="margin: 0; padding: 10px; float: left;">'.$select['nome'].'</label>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+                            </button>
+                        </div>
+                            
+                        <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
+                            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li><br>
 
-            <div class="col-sm-6" style="padding: 15px; margin: 1% 0px;" align="right"> 
-                <a class="col-sm-5 col-xs-5" href="minhas_artes.php" style="margin: 10px;"> Minhas Artes </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalArte" value="Adicionar Arte" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="meus_grupos.php" style="margin: 10px;"> Meus Grupos </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalGrupo" value="Adicionar Grupo" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="notificacao.php" style="margin: 10px;"> Notificações </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="configuracoes" value="Configurações" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-            </div>
-        </div>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalArte" value="Adicionar Arte"></form> </li>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalGrupo" value="Adicionar Grupo"></form> </li>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalEvento" value="Adicionar Evento"></form> </li><br>
+                                
+                                <li class="nav-item"> <a class="nav-link" href="notificacao.php">Notificações</a> </li>                    
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="configuracoes" value="Configurações"></form> </li>
+                            </ul>
+                        </div>  
+                    </nav>';
+            }
+        ?>
     </header>
     
     <section class="container-fluid">
+        <div class="row" style="padding: 10px;">
+            <?php
+                for ($i=1; $i <= $maxG; $i++) { 
+                    $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.TituloGrupo, G.LocalImagem FROM grupos G JOIN grupos_usuarios GU ON G.IdGrupo = GU.IdGrupo WHERE G.IdGrupo='$i' AND GU.IdUsuario='$usuario' AND GU.solicitacao='0'"));
+    
+                    if ($grupo != "") {
+                        echo "<form action='meus_eventos.php' method='post'>
+                                <div class='col-sm-3'> 
+                                    <h5>".$grupo['TituloGrupo']." 
+                                        <button class='descricao' type='submit' name='botG".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
+                                        <button class='descricao' type='submit' name='bp".$i."' data-title='Bate-Papo' style='float:left;'> <span class='glyphicon glyphicon-comment'></span> </button>
+                                    </h5> 
+                                    <div id='grupo'> <img id='img_grupo' src='".$grupo['LocalImagem']."'> </div>
+                                </div>
+                            </form>"; 
+                    } 
+                }
+            ?>
+        </div>
+
         <?php
             if ($_SESSION['Alert'] != "") { 
                 echo $_SESSION['Alert'];
                 $_SESSION['Alert'] = ""; 
-            }
-
-            for ($i=1; $i <= $maxG; $i++) { 
-                $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.TituloGrupo, G.LocalImagem FROM grupos G JOIN grupos_usuarios GU ON G.IdGrupo = GU.IdGrupo WHERE G.IdGrupo='$i' AND GU.IdUsuario='$usuario' AND GU.solicitacao='0'"));
-
-                if ($grupo != "") {
-                    echo "<form action='meus_grupos.php' method='post'>
-                            <div class='col-sm-3'> 
-                                <h5>".$grupo['TituloGrupo']." 
-                                    <button class='descricao' type='submit' name='botG".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
-                                    <button class='descricao' type='submit' name='bp".$i."' data-title='Bate-Papo' style='float:left;'> <span class='glyphicon glyphicon-comment'></span> </button>
-                                </h5> 
-                                <div id='grupo'> <img id='img_grupo' src='".$grupo['LocalImagem']."'> </div>
-                            </div>
-                        </form>"; 
-                } 
             }
 
             for ($j=1; $j <= $maxG; $j++) { 
@@ -170,16 +182,16 @@
     
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
                             mySqli_query($conexao, "UPDATE grupos SET LocalImagem='$pasta$novoNome', TituloGrupo='$nome' descricao='$descricao', status='$status' WHERE IdGrupo=".$_SESSION['IdGrupo']."");
-                            echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_grupos.php">';
+                            echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_eventos.php">';
                         }
                         else {
                             $_SESSION['Alert'] =  "<div id='alert'> <button type='button' class='close'>&times;</button><strong>Falha no Upload!</strong> Por favor, tente novamente.</div>"; 
-                            echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_grupos.php">';
+                            echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_eventos.php">';
                         }    
                     }
                     else {
                         $_SESSION['Alert'] =  "<div id='alert'> <button type='button' class='close'>&times;</button> <strong>Formato de Imagem inválido!</strong> O sistema suporta os siguintes formatos: 'png', 'jpeg', 'jpg', 'gif'. </div>"; 
-                        echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_grupos.php">';
+                        echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_eventos.php">';
                     }
                 } 
                 else {
@@ -196,7 +208,7 @@
                 
                 if ($delete != "") {
                     $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong>Grupo deletado com sucesso!</strong> </div>"; 
-                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_grupos.php">';
+                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_eventos.php">';
                 }
             }
 
@@ -208,7 +220,7 @@
 
             if(isset($_POST['sair_grupo'])) { 
                 $delete = mySqli_query($conexao, "DELETE FROM grupos_usuarios WHERE IdGrupo=".$_SESSION['IdGrupo']." AND IdUsuario='$usuario'");
-                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_grupos.php">';
+                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=meus_eventos.php">';
             }
 
             if(isset($_POST['excluir_usuario'])) {
@@ -252,7 +264,7 @@
             }
         ?>  
 
-        <div class='modal fade' id='descricao_grupo' role='dialog'>
+        <div class='modal fade' id='descricao_evento' role='dialog'>
             <div class='modal-dialog'>  
                 <div class='modal-content'>   
 
@@ -294,7 +306,7 @@
                                                 echo "<button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$nome['Nome']." </button>";
                                             }
                                             else {
-                                                echo "<form action='meus_grupos.php' method='post'>                                 
+                                                echo "<form action='meus_eventos.php' method='post'>                                 
                                                         <button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$nome['Nome']." </button>
                                                         <button type='submit' class='icon' name='us".$us['IdUsuario']."' data-title='Excluir' style='margin: 0px;'> <span class='glyphicon glyphicon-trash'></span> </button>                                                   
                                                     </form>"; 
@@ -322,7 +334,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="editar_grupo" role="dialog">
+        <div class="modal fade" id="editar_evento" role="dialog">
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
@@ -331,19 +343,19 @@
                     </div>
 
                     <div class="modal-body">
-                        <form action='meus_grupos.php' method='post' enctype="multipart/form-data">
-                            <div class='form-group' align="center">
-                                <div class="col-sm-2" align="left"><label> Imagem: </label></div>
-                                <div class="col-sm-10" align="left"><input type="file" name="new_imagem" style='width:-webkit-fill-available;'></div>
+                        <form action='meus_eventos.php' method='post' enctype="multipart/form-data" style="padding: 10px; width: -webkit-fill-available;">
+                            <div class='form-group' align="center" style='margin: 0;'>
+                                <div style="float: left;"><label> Imagem: </label></div>
+                                <div><input type="file" name="new_imagem" style='width:-webkit-fill-available;'></div>
 
-                                <div class="col-sm-2" align="left"><label> Nome: </label></div>
-                                <div class="col-sm-10" align="left"><?php echo "<input type='text' name='nome' value='".$DadosGrupo['TituloGrupo']."' style='width:-webkit-fill-available;'>";?></div>
+                                <div style="float: left;"><label> Nome: </label></div>
+                                <div><?php echo "<input type='text' name='nome' value='".$DadosGrupo['TituloGrupo']."' style='width:-webkit-fill-available;'>";?></div>
 
-                                <div class="col-sm-2" align="left"><label> Descrição: </label></div>
-                                <div class="col-sm-10" align="left"><?php echo "<textarea name='descricao' rows='3' style='width:-webkit-fill-available;'>".$DadosGrupo['descricao']."</textarea>";?></div>
+                                <div style="float: left;"><label> Descrição: </label></div>
+                                <div><?php echo "<textarea name='descricao' rows='3' style='width:-webkit-fill-available;'>".$DadosGrupo['descricao']."</textarea>";?></div>
 
-                                <div class="col-sm-2" align="left"><label> Status: </label></div>
-                                <div class="col-sm-10" align="left">
+                                <div style="float: left;"><label> Status: </label></div>
+                                <div>
                                     <?php 
                                         echo "<select name='status' style='width:-webkit-fill-available;'>";
                                         if ($DadosGrupo['status'] == "aberto") { echo "<option value='1'> Aberto </option> <option value='2'> Fechado </option> </select>"; } 
@@ -351,7 +363,7 @@
                                     ?>
                                 </div>
 
-                                <div align="center"> <input type='submit' name='edt_grupo' value='Editar'> </div> 
+                                <div> <input type='submit' name='edt_grupo' value='Editar'> </div> 
                             </div>  
                         </form>       
                     </div>
@@ -361,16 +373,16 @@
             </div>
         </div>
 
-        <div class="modal fade" id="excluir_grupo" role="dialog">
+        <div class="modal fade" id="excluir_evento" role="dialog">
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Excluir Grupo</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
-                        <form action='meus_grupos.php' method='post'>
+                        <form action='meus_eventos.php' method='post'>
                             <div class='form-group' align="center">
                                 <label> Tem certeza que deseja excluir esse grupo? </label> <br>
                                 <input type='submit' name='excluir_grupo' value='Excluir' style='width: 120px;'>
@@ -384,16 +396,16 @@
             </div>
         </div>
 
-        <div class="modal fade" id="sair_grupo" role="dialog">
+        <div class="modal fade" id="sair_evento" role="dialog">
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Sair do Grupo</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
-                        <form action='meus_grupos.php' method='post'>
+                        <form action='meus_eventos.php' method='post'>
                             <div class='form-group' align="center">
                                 <label> Tem certeza que deseja sair do grupo? </label> <br>
                                 <input type='submit' name='sair_grupo' value='Sair' style='width: 120px;'>
@@ -411,12 +423,12 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Excluir Usuario</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
-                        <form action='meus_grupos.php' method='post'>
+                        <form action='meus_eventos.php' method='post'>
                             <div class='form-group' align="center">
                                 <label> Tem certeza que deseja excluir esse usuário do grupo? </label> <br>
                                 <input type='submit' name='excluir_usuario' value='Excluir' style='width: 120px;'>
@@ -450,7 +462,7 @@
                                         $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$mensagem['IdUsuario'].""));
 
                                         if ($meu_msg['IdMensagem'] != "") {
-                                            echo "<form action='meus_grupos.php' method='post'>
+                                            echo "<form action='meus_eventos.php' method='post'>
                                                     <div id='mensagem' style='width:50%; float:right; margin:10px;'>
                                                         <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$mensagem['texto']." </button>
                                                         <button type='submit' class='icon' name='msg".$l."' data-title='Excluir' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
@@ -470,7 +482,7 @@
                         </div> 
 
                         <div class='row'>
-                            <form action='meus_grupos.php' method='post'>
+                            <form action='meus_eventos.php' method='post'>
                                 <div class='form-group' align='center' id='mensagem' style='margin: 20px;'>
                                     <textarea name="mensagem" rows="1" placeholder='Escrever Mensagem' class='icon' style='width:70%; float:left;'></textarea>
                                     <input type='submit' name='add_mensagem' value='Enviar' style='width: 100px;'>
@@ -488,12 +500,12 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Excluir Mensagem</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
-                        <form action='meus_grupos.php' method='post'>
+                        <form action='meus_eventos.php' method='post'>
                             <div class='form-group' align="center">
                                 <label> Tem certeza que deseja excluir essa mensagem?</label> <br>
                                 <input type='submit' name='excluir_msg' value='Excluir' style='width: 120px;'>

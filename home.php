@@ -2,6 +2,7 @@
     include_once("Conexao/conexao.php");
     session_start(); 
 
+    $_SESSION['IdPerfil'] = "";
     $usuario = $_SESSION['IdUsuario'];
 
     $maxArtes = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdArte) AS max FROM artes"));
@@ -209,8 +210,11 @@
                                         </form>";
                                 }
 
-                                echo "<button type='text'> Autor(a): <a href='perfil.php'>".$us['Nome']."</a></button>
-                                        <button type='text'> Descrição: ".$DadosArte['Descricao']." </button>"; 
+                                echo "<form action='perfil.php' method='post' style='width: -webkit-fill-available; padding: 0px 15px;'>
+                                        <input id='usuario' type='submit' name='perfil".$DadosArte['IdUsuario']."' value='Autor(a): ".$us['Nome']."' style='width: -webkit-fill-available; padding: 10px;'>
+                                    </form>";
+
+                                echo "<button type='text'> Descrição: ".$DadosArte['Descricao']." </button>"; 
                             ?>
 
                             <div class="row" id='descricao' style="margin-top: 20px;">

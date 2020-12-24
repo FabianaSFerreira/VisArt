@@ -40,14 +40,14 @@
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li class="nav-item"> <a class="nav-link active" href="home.php">Home</a> </li>
+                    <li class="nav-item"> <a class="nav-link" href="home.php">Home</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="galeria.php">Galeria</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="grupos.php">Grupos</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="eventos.php">Eventos</a> </li>
                     <li class="nav-item">
                         <?php 
                             if ($usuario == "") { echo "<a class='nav-link' href='login.php'>Login</a>"; }
-                            else { echo "<a class='nav-link' href='perfil.php'>Perfil</a>"; }
+                            else { echo "<a class='nav-link active' href='perfil.php'>Perfil</a>"; }
                         ?>
                     </li>
                 </ul>
@@ -63,73 +63,88 @@
             </div>  
         </nav><br>
 
-        <div class="row" id="perfil">     
-            <div class="col-sm-6" style="padding: 15px;" align="center"> 
-                <div class="col-sm-7" id="img_perfil"> 
-                    <?php echo "<img src='".$select['LocalFoto']."' style='width:100%; height:100%;'>"; ?>
-                </div>
+        <?php 
+            if ($_SESSION['IdPerfil'] != "") {
+                $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'"));
+                
+                echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
+                        <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
+                            <img src="'.$perfil_usuario['LocalFoto'].'" style="width:100%; height:100%;"><br> 
+                            <label style="margin: 0; padding: 10px; float: left;">'.$perfil_usuario['nome'].'</label>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+                            </button>
+                        </div>
+                            
+                        <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
+                            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li>
+                            </ul>
+                        </div>  
+                    </nav>';
+            }
+            else {
+                echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
+                        <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
+                            <img src="'.$select['LocalFoto'].'" style="width:100%; height:100%;"><br>
+                            <label style="margin: 0; padding: 10px; float: left;">'.$select['nome'].'</label>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+                            </button>
+                        </div>
+                            
+                        <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
+                            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li><br>
 
-                <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
-                    <?php
-                        echo "<label>Nome: ".$select['nome']."</label><br>";
-                        echo "<label>Usuário: ".$select['usuario']."</label><br>";
-                        echo "<label>Curtidas ".$curtidas['curt']."</label>";
-                    ?> 
-                </div>
-            </div>
-
-            <div class="col-sm-6" style="padding: 15px; margin: 1% 0px;" align="right"> 
-                <a class="col-sm-5 col-xs-5" href="minhas_artes.php" style="margin: 10px;"> Minhas Artes </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalArte" value="Adicionar Arte" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="meus_grupos.php" style="margin: 10px;"> Meus Grupos </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalGrupo" value="Adicionar Grupo" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="notificacao.php" style="margin: 10px;"> Notificações </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="configuracoes" value="Configurações" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-            </div>
-        </div>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalArte" value="Adicionar Arte"></form> </li>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalGrupo" value="Adicionar Grupo"></form> </li>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalEvento" value="Adicionar Evento"></form> </li><br>
+                                
+                                <li class="nav-item"> <a class="nav-link" href="notificacao.php">Notificações</a> </li>                    
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="configuracoes" value="Configurações"></form> </li>
+                            </ul>
+                        </div>  
+                    </nav>';
+            }
+        ?>
     </header>
     
     <section class="container-fluid">
+        <div class="row" style="padding: 10px;">
+            <?php
+                for ($i=1; $i <= $maxA; $i++) { 
+                    $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$usuario'"));
+                    
+                    if ($arte != "") {
+                        echo "<form class='col-sm-4' action='minhas_artes.php' method='post'> <h5>".$arte['TituloArte']." 
+                                <button type='submit' name='botA".$i."' class='descricao' data-title='Descrição'> 
+                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-square-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'/></svg> 
+                                </button></h5>";
+    
+                        if ($arte['IdTipo'] == 4) { 
+                            echo "<div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'></video> </div></form>";
+                        }
+                        else {echo "<div id='arte'> <img id='img_arte' src='".$arte['LocalArquivo']."'> </div></form>";}  
+                    }                                      
+                }   
+            ?>
+        </div>
+
         <?php   
             if ($_SESSION['Alert'] != "") { 
                 echo $_SESSION['Alert'];
                 $_SESSION['Alert'] = ""; 
-            }
-
-            for ($i=1; $i <= $maxA; $i++) { 
-                $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$usuario'"));
-                
-                if ($arte != "") {
-                    echo "<form action='minhas_artes.php' method='post'> <div class='col-sm-4'> 
-                            <h5>".$arte['TituloArte']." <button type='submit' name='botA".$i."' class='descricao' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button></h5>";
-
-                    if ($arte['IdTipo'] == 4) { 
-                        echo "<div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'></video> </div> </div></form>";
-                    }
-                    else {echo "<div id='arte'> <img id='img_arte' src='".$arte['LocalArquivo']."'> </div> </div></form>";}  
-                }                                      
-            }         
+            }      
             
             for ($j=1; $j <= $maxA; $j++) { 
                 if (isset($_POST["botA$j"])) {
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte='$j'")); 
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte='$j'")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                     $_SESSION['IdArte'] = $DadosArte['IdArte'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
@@ -178,6 +193,7 @@
 
             if(isset($_POST['voltar_arte'])) { 
                 $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
             }
         ?>  
@@ -209,36 +225,56 @@
             }
         ?>
 
-        <div class="modal fade" id="descricao_arte" role="dialog">
+        <div class="modal" id="descricao_arte" role="dialog">   
             <div class="modal-dialog">  
                 <div class="modal-content">
                     
                     <div class='modal-header'>
-                        <button class="descricao" type="button" data-toggle="modal" data-target="#editar_arte" data-title='Editar' style='float:left;'> <span class="glyphicon glyphicon-pencil"></span> </button>
-                        <button class="descricao" type="button" data-toggle="modal" data-target="#excluir_arte" data-title='Excluir' style='float:left;'> <span class="glyphicon glyphicon-trash"></span> </button>
-                        
-                        <button type='button' class='close' data-dismiss='modal'>&times;</button>
                         <?php echo "<h4 class='modal-title'>".$DadosArte['TituloArte']."</h4>"; ?>
+                        <button type='button' class='close' data-dismiss='modal'>&times;</button>
                     </div>
 
-                    <div class='modal-body'>
-                        <div class='row'> 
-                            <div class='col-sm-6' align='center'>
-                                <?php 
-                                   if ($DadosArte['IdTipo'] == 4) { 
-                                    echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4'></video> </div>";
+                    <div class='modal-body' align='center'>
+                        <div class='row'>                                
+                            <div class='row' style='width: -webkit-fill-available; margin: 10px 30px;'>
+                                <?php
+                                    if (($usuario != "") && ($_SESSION['IdPerfil'] == "")) {  
+                                        if($DadosArte['IdUsuario'] == $usuario) {
+                                            echo '<button class="descricao col-1" type="button" data-toggle="modal" data-target="#editar_arte" data-title="Editar"> 
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/> </svg>
+                                                </button>
+                        
+                                                <button class="descricao col-1" type="button" data-toggle="modal" data-target="#excluir_arte" data-title="Excluir"> 
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/> </svg>
+                                                </button>';
+                                        }
                                     }
-                                    else {echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."'> </div>";}  
 
-                                    echo "<button type='text' style='width:250px;'> Autor(a): ".$select['usuario']." </button>
-                                        <button type='text' style='width:250px;'> Descrição: ".$DadosArte['Descricao']." </button>";
+                                    echo "<button class='descricao col' type='submit' name='curtir' data-title='curtir' style='text-align: right;'> 
+                                            <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-heart-fill' viewBox='0 0 16 16'> 
+                                                <path fill-rule='evenodd' d='M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z'/>
+                                            </svg> &nbsp".$DadosArte['Curtidas']."
+                                        </button>";
                                 ?>
                             </div>
 
-                            <div class='col-sm-6' align='center'>
+                            <?php
+                                if ($DadosArte['IdTipo'] == 4) { 
+                                    echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4' style='width: -webkit-fill-available;'></video> </div>";
+                                }
+                                else {echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."' style='width: -webkit-fill-available;'> </div>";}  
+                                
+                                echo "<form action='perfil.php' method='post' style='width: -webkit-fill-available; padding: 0px 15px;'>
+                                            <input id='usuario' type='submit' name='perfil".$DadosArte['IdUsuario']."' value='Autor(a): ".$us['Nome']."' style='width: -webkit-fill-available; padding: 10px;'>
+                                        </form>";
+
+                                echo "<button type='text'> Descrição: ".$DadosArte['Descricao']." </button>"; 
+                            ?>
+
+                            <div class="row" id='descricao' style="margin-top: 20px;">
                                 <label> Comentarios: </label><br>
                                 
-                                <div style="height: 280px; overflow-y: scroll;">
+                                <div id='scroll_coment'>
                                     <?php 
                                         for ($i=1; $i <= $maxC; $i++) { 
                                             $comentario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario, texto FROM artes_comentarios WHERE IdComentario='$i' AND IdArte=".$DadosArte['IdArte'].""));                                               
@@ -247,10 +283,12 @@
                                                 $meu_coment = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario FROM artes_comentarios WHERE IdComentario='$i' AND IdUsuario='$usuario'")); 
 
                                                 if ($meu_coment['IdComentario'] != "") {
-                                                    echo "<form action='galeria.php' method='post'>
+                                                    echo "<form action='minhas_artes.php' method='post'>
                                                             <div id='comentario'>
                                                                 <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$comentario['texto']." </button>
-                                                                <button type='submit' class='icon' name='coment".$i."' data-title='Excluir' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
+                                                                <button type='submit' class='icon' name='coment".$i."' data-title='Excluir' style='margin: 5px; padding-top: 10px;'> 
+                                                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-trash-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z'/> </svg>
+                                                                </button>
                                                             </div>
                                                         </form>"; 
                                                 }
@@ -262,19 +300,21 @@
                                     ?>
                                 </div>
                             </div>
-                        </div><br>
-                        
-                        <div class='row'>
-                            <form action='minhas_artes.php' method='post'>
-                                <div class='form-group' align='center' id='comentario' style='margin: 20px;'>
-                                    <textarea name="comentario" rows="1" placeholder='Escrever Comentario' class='icon' style='width:70%; float: left;'></textarea>
-                                    <input type='submit' name='add_coment' value='Enviar' style='width: 100px;'>
-                                </div>
-                            </form>
                         </div>
                     </div>
 
-                    <div class='modal-footer'></div>
+                    <div class='modal-footer' style="justify-content: center;">
+                        <form action='minhas_artes.php' method='post'>
+                            <?php 
+                                if ($usuario != "") {
+                                    echo "<div class='form-group row align-items-center' style='flex-wrap: initial;'>
+                                            <textarea class='col-7' name='comentario' rows='1' placeholder='Comente...'></textarea>
+                                            <input class='col-3' type='submit' name='add_coment' value='Enviar'>
+                                        </div>";
+                                }
+                            ?>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -283,26 +323,26 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                 <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Editar Arte</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
                         <div class="row">
-                            <form action='minhas_artes.php' method='post' enctype="multipart/form-data">                                 
-                                <div class='form-group' align="center">
-                                    <div class="col-sm-2" align="left"><label> Imagem: </label></div>
-                                    <div class="col-sm-10" align="left"><input type="file" name="new_arquivo" style='width:-webkit-fill-available;'></div>
+                            <form action='minhas_artes.php' method='post' enctype="multipart/form-data" style="padding: 10px; width: -webkit-fill-available;">                                 
+                                <div class='form-group' align="center" style='margin: 0;'> 
+                                    <div style="float: left;"><label> Imagem: </label></div>
+                                    <div><input type="file" name="new_arquivo" style='width:-webkit-fill-available;'></div>
                                     
-                                    <div class="col-sm-2" align="left"><label> Nome: </label></div>
-                                    <div class="col-sm-10" align="left"><?php echo "<input type='text' name='nome' value='".$DadosArte['TituloArte']."' style='width:-webkit-fill-available;'>";?></div>
+                                    <div style="float: left;"><label> Nome: </label></div>
+                                    <div><?php echo "<input type='text' name='nome' value='".$DadosArte['TituloArte']."' style='width:-webkit-fill-available;'>";?></div>
                                     
-                                    <div class="col-sm-2" align="left"><label> Tipo: </label></div>
-                                    <div class="col-sm-10" align="left">
+                                    <div style="float: left;"><label> Tipo: </label></div>
+                                    <div>
                                         <?php 
                                             $NomeTipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo=".$DadosArte['IdTipo'].""));
                                             
-                                            echo "<select name='tipo' style='width:-webkit-fill-available;'> <option value=".$DadosArte['tipo'].">".$NomeTipo['nome']."</option>";      
+                                            echo "<select name='tipo' style='width:-webkit-fill-available;'> <option value=".$DadosArte['IdTipo'].">".$NomeTipo['nome']."</option>";      
                                             for ($i=1; $i <= $maxT; $i++) { 
                                                 if ($i != $DadosArte['tipo']) {
                                                     $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo=$i"));  
@@ -312,10 +352,10 @@
                                         ?>
                                     </div>
 
-                                    <div class="col-sm-2" align="left"><label> Descrição: </label></div>
-                                    <div class="col-sm-10" align="left"><?php echo "<textarea name='descricao' rows='3' style='width:-webkit-fill-available;'>".$DadosArte['descricao']."</textarea>";?></div>
+                                    <div style="float: left;"><label> Descrição: </label></div>
+                                    <div><?php echo "<textarea name='descricao' rows='3' style='width:-webkit-fill-available;'>".$DadosArte['Descricao']."</textarea>";?></div>
 
-                                    <div align="center"> <input type='submit' name='edt_arte' value='Editar'> </div>                                    
+                                    <div> <input type='submit' name='edt_arte' value='Editar'> </div>                                    
                                 </div>
                             </form>
                         </div>
@@ -330,8 +370,8 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Excluir Arte</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
@@ -353,8 +393,8 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Excluir Comentario</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">

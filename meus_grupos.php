@@ -40,14 +40,14 @@
 
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                    <li class="nav-item"> <a class="nav-link active" href="home.php">Home</a> </li>
+                    <li class="nav-item"> <a class="nav-link" href="home.php">Home</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="galeria.php">Galeria</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="grupos.php">Grupos</a> </li>
                     <li class="nav-item"> <a class="nav-link" href="eventos.php">Eventos</a> </li>
                     <li class="nav-item">
                         <?php 
                             if ($usuario == "") { echo "<a class='nav-link' href='login.php'>Login</a>"; }
-                            else { echo "<a class='nav-link' href='perfil.php'>Perfil</a>"; }
+                            else { echo "<a class='nav-link active' href='perfil.php'>Perfil</a>"; }
                         ?>
                     </li>
                 </ul>
@@ -63,70 +63,84 @@
             </div>  
         </nav><br>
 
-        <div class="row" id="perfil">     
-            <div class="col-sm-6" style="padding: 15px;" align="center"> 
-                <div class="col-sm-7" id="img_perfil"> 
-                    <?php echo "<img src='".$select['LocalFoto']."' style='width:100%; height:100%;'>"; ?>
-                </div>
+        <?php 
+            if ($_SESSION['IdPerfil'] != "") {
+                $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'"));
 
-                <div class="col-sm-5" style="padding: 0px; margin: 1% 0px;"> 
-                    <?php
-                        echo "<label>Nome: ".$select['nome']."</label><br>";
-                        echo "<label>Usuário: ".$select['usuario']."</label><br>";
-                        echo "<label>Curtidas ".$curtidas['curt']."</label>";
-                    ?> 
-                </div>
-            </div>
+                echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
+                        <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
+                            <img src="'.$perfil_usuario['LocalFoto'].'" style="width:100%; height:100%;"><br> 
+                            <label style="margin: 0; padding: 10px; float: left;">'.$perfil_usuario['nome'].'</label>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+                            </button>
+                        </div>
+                            
+                        <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
+                            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li>
+                            </ul>
+                        </div>  
+                    </nav>';
+            }
+            else {
+                echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
+                        <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
+                            <img src="'.$select['LocalFoto'].'" style="width:100%; height:100%;"><br>
+                            <label style="margin: 0; padding: 10px; float: left;">'.$select['nome'].'</label>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
+                            </button>
+                        </div>
+                            
+                        <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
+                            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li><br>
 
-            <div class="col-sm-6" style="padding: 15px; margin: 1% 0px;" align="right"> 
-                <a class="col-sm-5 col-xs-5" href="minhas_artes.php" style="margin: 10px;"> Minhas Artes </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalArte" value="Adicionar Arte" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="meus_grupos.php" style="margin: 10px;"> Meus Grupos </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="modalGrupo" value="Adicionar Grupo" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-                
-                <a class="col-sm-5 col-xs-5" href="notificacao.php" style="margin: 10px;"> Notificações </a>
-                
-                <div class="col-sm-5 col-xs-5" style="padding: initial; margin: 0px 10px;">
-                    <form action="perfil.php" method="post">
-                        <input type="submit" name="configuracoes" value="Configurações" style="background: #ffffee;  width: -webkit-fill-available; margin: 10px 0px; border: 0px; padding: 5px;">
-                    </form>
-                </div>
-            </div>
-        </div>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalArte" value="Adicionar Arte"></form> </li>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalGrupo" value="Adicionar Grupo"></form> </li>
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalEvento" value="Adicionar Evento"></form> </li><br>
+                                
+                                <li class="nav-item"> <a class="nav-link" href="notificacao.php">Notificações</a> </li>                    
+                                <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="configuracoes" value="Configurações"></form> </li>
+                            </ul>
+                        </div>  
+                    </nav>';
+            }
+        ?>
     </header>
     
     <section class="container-fluid">
+        <div class="row" style="padding: 10px;">
+            <?php
+                for ($i=1; $i <= $maxG; $i++) { 
+                    $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.TituloGrupo, G.LocalImagem FROM grupos G JOIN grupos_usuarios GU ON G.IdGrupo = GU.IdGrupo WHERE G.IdGrupo='$i' AND GU.IdUsuario='$usuario' AND GU.solicitacao='0'"));
+    
+                    if ($grupo != "") {
+                        echo "<form class='col-sm-3' action='meus_grupos.php' method='post'> <h5>".$grupo['TituloGrupo']." 
+                                <button class='descricao' type='submit' name='botG".$i."' data-title='Descrição'> 
+                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-circle-fill' viewBox='0 0 16 16'> <path d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'/> </svg>
+                                </button>
+
+                                <button class='descricao' type='submit' name='bp".$i."' data-title='Bate-Papo' style='float:left;'> 
+                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chat-text-fill' viewBox='0 0 16 16'> <path d='M16 8c0 3.866-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7zM4.5 5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2.5a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1h-7zm0 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1h-4z'/> </svg>
+                                </button></h5>
+                                 
+                                <div id='grupo'> <img id='img_grupo' src='".$grupo['LocalImagem']."'> </div>
+                            </form>"; 
+                    } 
+                }
+            ?>
+        </div>
+
         <?php
             if ($_SESSION['Alert'] != "") { 
                 echo $_SESSION['Alert'];
                 $_SESSION['Alert'] = ""; 
-            }
-
-            for ($i=1; $i <= $maxG; $i++) { 
-                $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.TituloGrupo, G.LocalImagem FROM grupos G JOIN grupos_usuarios GU ON G.IdGrupo = GU.IdGrupo WHERE G.IdGrupo='$i' AND GU.IdUsuario='$usuario' AND GU.solicitacao='0'"));
-
-                if ($grupo != "") {
-                    echo "<form action='meus_grupos.php' method='post'>
-                            <div class='col-sm-3'> 
-                                <h5>".$grupo['TituloGrupo']." 
-                                    <button class='descricao' type='submit' name='botG".$i."' data-title='Descrição'> <span class='glyphicon glyphicon-option-vertical'></span> </button>
-                                    <button class='descricao' type='submit' name='bp".$i."' data-title='Bate-Papo' style='float:left;'> <span class='glyphicon glyphicon-comment'></span> </button>
-                                </h5> 
-                                <div id='grupo'> <img id='img_grupo' src='".$grupo['LocalImagem']."'> </div>
-                            </div>
-                        </form>"; 
-                } 
             }
 
             for ($j=1; $j <= $maxG; $j++) { 
@@ -140,7 +154,6 @@
 
                 if (isset($_POST["bp$j"])) {
                     $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, TituloGrupo FROM grupos WHERE IdGrupo='$j'")); 
-                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosGrupo['administrador'].""));
                     $_SESSION['IdGrupo'] = $DadosGrupo['IdGrupo'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#bate_papo').modal('show'); }); </script>";     
@@ -257,63 +270,72 @@
                 <div class='modal-content'>   
 
                     <div class='modal-header'>
-                        <?php 
-                            $admin = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT administrador FROM grupos WHERE IdGrupo=".$DadosGrupo['IdGrupo']." AND administrador='$usuario'"));
-
-                            if ($admin != "") {
-                                echo "<button class='descricao' type='button' data-toggle='modal' data-target='#editar_grupo' data-title='Editar' style='float:left;'> <span class='glyphicon glyphicon-pencil'></span> </button>
-                                    <button class='descricao' type='button' data-toggle='modal' data-target='#excluir_grupo' data-title='Excluir' style='float:left;'> <span class='glyphicon glyphicon-trash'></span> </button>";
-                            }
-                        ?>
+                        <?php echo "<h4 class='modal-title'>".$DadosGrupo['TituloGrupo']."</h4><br>";?>
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <?php echo "<h4 class='modal-title'>".$DadosGrupo['TituloGrupo']."</h4>"; ?>
                     </div>
 
-                    <div class='modal-body'>
-                        <div class='row'> 
-                            <div class='col-sm-6' align='center'>
-                                <?php echo "<div id='descricao'> <img src='".$DadosGrupo['LocalImagem']."'> </div>"; ?>
-                            </div>
+                    <div class='modal-body' align="center">
+                        <div class='row' style='width: -webkit-fill-available; margin: 10px 30px;'>
+                            <?php
+                                $admin = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT administrador FROM grupos WHERE IdGrupo=".$DadosGrupo['IdGrupo']." AND administrador='$usuario'"));
 
-                            <div class='col-sm-6' align='center'>
-                                <?php
-                                    echo "<button type='text'> Descrição: ".$DadosGrupo['descricao']." </button><br>";
-                                    echo "<button type='text'> Administrador: ".$us['Nome']." </button><br>";
+                                if ($admin != "") {
+                                    echo '<button class="descricao" type="button" data-toggle="modal" data-target="#editar_grupo" data-title="Editar" style="float:left;"> 
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/> </svg>
+                                        </button>
+                
+                                        <button class="descricao" type="button" data-toggle="modal" data-target="#excluir_grupo" data-title="Excluir" style="float:left;"> 
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/> </svg>
+                                        </button>';
+                                }
+                            ?>
+                        </div>
 
-                                    if ($DadosGrupo['status'] == 'aberto') { echo "<button type='text'> Status: Aberto </button>"; }
-                                    else if ($DadosGrupo['status'] == 'fechado') { echo "<button type='text'> Status: Fechado </button>"; }
+                        <div class='row' align="center">  
+                            <?php
+                                if ($DadosGrupo['LocalImagem'] != ""){
+                                    echo "<div id='descricao'> <img src='".$DadosGrupo['LocalImagem']."' style='width: -webkit-fill-available;'> </div><br>";
+                                }
+                                
+                                echo "<button type='text'> Descrição: ".$DadosGrupo['descricao']." </button><br>";
+                                echo "<button type='text'> Administrador: ".$us['Nome']." </button><br>";
+
+                                if ($DadosGrupo['status'] == 'aberto') { echo "<button type='text'> Status: Aberto </button>"; }
+                                else if ($DadosGrupo['status'] == 'fechado') { echo "<button type='text'> Status: Fechado </button>"; }
+
+                                $UsGrupos = mySqli_query($conexao, "SELECT IdUsuario FROM grupos_usuarios WHERE IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'");  
+
+                                if ($admin != "") {
+                                    echo "<div id='membros' style='width: -webkit-fill-available; margin: 25px;'> <label style='padding: inherit;'> Membros do grupo: </label>";
+                                    while($us = mysqli_fetch_array($UsGrupos)) {
+                                        $nome = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$us['IdUsuario'].""));
+
+                                        if ($us['IdUsuario'] == $admin['administrador']) {
+                                            echo "<button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$nome['Nome']." </button>";
+                                        }
+                                        else {
+                                            echo "<form action='meus_grupos.php' method='post'>                                 
+                                                    <button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$nome['Nome']." </button>
+                                                    <button type='submit' class='icon' name='us".$us['IdUsuario']."' data-title='Excluir' style='margin: 0px;'> 
+                                                        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-trash-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z'/> </svg>
+                                                    </button>                                                   
+                                                </form>"; 
+                                        }  
+                                    }
+                                    echo "</div>";
                                     
-                                    $UsGrupos = mySqli_query($conexao, "SELECT IdUsuario FROM grupos_usuarios WHERE IdGrupo=".$DadosGrupo['IdGrupo']." AND Solicitacao='0'");  
-
-                                    if ($admin != "") {
-                                        echo "<div id='membros' style='width: 250px; margin: 10px 10px 0px;'> <label style='padding: inherit;'> Membros do grupo: </label>";
-                                        while($us = mysqli_fetch_array($UsGrupos)) {
-                                            $nome = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$us['IdUsuario'].""));
-
-                                            if ($us['IdUsuario'] == $admin['administrador']) {
-                                                echo "<button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$nome['Nome']." </button>";
-                                            }
-                                            else {
-                                                echo "<form action='meus_grupos.php' method='post'>                                 
-                                                        <button type='text' class='icon' style='width:70%; float: none; margin: 0px;'> ".$nome['Nome']." </button>
-                                                        <button type='submit' class='icon' name='us".$us['IdUsuario']."' data-title='Excluir' style='margin: 0px;'> <span class='glyphicon glyphicon-trash'></span> </button>                                                   
-                                                    </form>"; 
-                                            }  
-                                        }
-                                        echo "</div>";
+                                }
+                                else {
+                                    echo "<select id='descricao'> <option> Membros </option>"; 
+                                    while($us = mysqli_fetch_array($UsGrupos)) {
+                                        $nome = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$us['IdUsuario'].""));
+                                        echo "<option>". $nome['Nome'] ."</option>"; 
                                     }
-                                    else {
-                                        echo "<select> <option> Membros </option>"; 
-                                        while($us = mysqli_fetch_array($UsGrupos)) {
-                                            $nome = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$us['IdUsuario'].""));
-                                            echo "<option>". $nome['Nome'] ."</option>"; 
-                                        }
-                                        echo "</select>";
+                                    echo "</select>";
 
-                                        echo "<button type='button' data-toggle='modal' data-target='#sair_grupo' style='background-image: radial-gradient(circle, #f9cb9c, #f0a963, #ff9900);'> Sair do Grupo </button>";
-                                    }
-                                ?>
-                            </div>
+                                    echo "<button type='button' data-toggle='modal' data-target='#sair_grupo' style='margin: auto;'> Sair do Grupo </button>";
+                                }
+                            ?>
                         </div>     
                     </div>
 
@@ -326,24 +348,24 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Editar Grupo</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button> 
                     </div>
 
                     <div class="modal-body">
                         <form action='meus_grupos.php' method='post' enctype="multipart/form-data">
                             <div class='form-group' align="center">
-                                <div class="col-sm-2" align="left"><label> Imagem: </label></div>
-                                <div class="col-sm-10" align="left"><input type="file" name="new_imagem" style='width:-webkit-fill-available;'></div>
+                                <div style="float: left;"><label> Imagem: </label></div>
+                                <div><input type="file" name="new_imagem" style='width:-webkit-fill-available;'></div>
 
-                                <div class="col-sm-2" align="left"><label> Nome: </label></div>
-                                <div class="col-sm-10" align="left"><?php echo "<input type='text' name='nome' value='".$DadosGrupo['TituloGrupo']."' style='width:-webkit-fill-available;'>";?></div>
+                                <div style="float: left;"><label> Nome: </label></div>
+                                <div><?php echo "<input type='text' name='nome' value='".$DadosGrupo['TituloGrupo']."' style='width:-webkit-fill-available;'>";?></div>
 
-                                <div class="col-sm-2" align="left"><label> Descrição: </label></div>
-                                <div class="col-sm-10" align="left"><?php echo "<textarea name='descricao' rows='3' style='width:-webkit-fill-available;'>".$DadosGrupo['descricao']."</textarea>";?></div>
+                                <div style="float: left;"><label> Descrição: </label></div>
+                                <div><?php echo "<textarea name='descricao' rows='3' style='width:-webkit-fill-available;'>".$DadosGrupo['descricao']."</textarea>";?></div>
 
-                                <div class="col-sm-2" align="left"><label> Status: </label></div>
-                                <div class="col-sm-10" align="left">
+                                <div style="float: left;"><label> Status: </label></div>
+                                <div>
                                     <?php 
                                         echo "<select name='status' style='width:-webkit-fill-available;'>";
                                         if ($DadosGrupo['status'] == "aberto") { echo "<option value='1'> Aberto </option> <option value='2'> Fechado </option> </select>"; } 
@@ -365,8 +387,8 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Excluir Grupo</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
@@ -388,8 +410,8 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Sair do Grupo</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
@@ -411,8 +433,8 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Excluir Usuario</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
@@ -434,33 +456,35 @@
             <div class='modal-dialog'>  
                 <div class='modal-content'>   
 
-                    <div class='modal-header'>                     
+                    <div class='modal-header'>
+                        <?php echo "<h4 class='modal-title'> Bate-Papo - ".$DadosGrupo['TituloGrupo']."</h4>"; ?>                     
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
-                        <?php echo "<h4 class='modal-title'> Bate-Papo - ".$DadosGrupo['TituloGrupo']."</h4>"; ?>
                     </div>
 
                     <div class='modal-body'>
                         <div class='row' id="sala_BP">
                             <?php 
                                 for ($l=$maxMsg; $l > 0; $l--) { 
-                                    $mensagem = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem, IdUsuario, texto FROM grupos_mensagens WHERE IdMensagem='$l' AND IdGrupo=".$DadosGrupo['IdGrupo'].""));                                               
+                                    $mensagem = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdUsuario, texto FROM grupos_mensagens WHERE IdMensagem='$l' AND IdGrupo=".$DadosGrupo['IdGrupo'].""));                                               
 
                                     if ($mensagem != "") {
-                                        $meu_msg = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem FROM grupos_mensagens WHERE IdMensagem='$l' AND IdUsuario='$usuario'")); 
+                                        $msg = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdMensagem FROM grupos_mensagens WHERE IdMensagem='$l' AND IdUsuario='$usuario'")); 
                                         $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$mensagem['IdUsuario'].""));
 
-                                        if ($meu_msg['IdMensagem'] != "") {
+                                        if ($msg['IdMensagem'] != "") {
                                             echo "<form action='meus_grupos.php' method='post'>
-                                                    <div id='mensagem' style='width:50%; float:right; margin:10px;'>
+                                                    <div id='mensagem' style='width:-webkit-fill-available; float:right; margin:10px;'>
                                                         <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$mensagem['texto']." </button>
-                                                        <button type='submit' class='icon' name='msg".$l."' data-title='Excluir' style='margin: 5px;'> <span class='glyphicon glyphicon-trash'></span> </button>
+                                                        <button type='submit' class='icon' name='msg".$l."' data-title='Excluir' style='margin: 5px;'> 
+                                                            <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-trash-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z'/> </svg>
+                                                        </button>
                                                     </div>
                                                     <p style='width:50%;float:right;margin: 0px 15px;text-align: right;'>".$us['Nome']."</p>
                                                 </form>"; 
                                         }
                                         else {
                                             echo "<div>
-                                                    <div id='mensagem' style='width:50%; float:left; margin:10px;'> <button type='text' class='icon' style='width:70%; float:none; margin:5px;'> ".$mensagem['texto']." </button> </div>
+                                                    <div id='mensagem' style='width:-webkit-fill-available; float:left; margin:10px;'> <button type='text' class='icon' style='width:70%; float:none; margin:5px;'> ".$mensagem['texto']." </button> </div>
                                                     <p style='width:50%;float:left;margin: 0px 15px;'>".$us['Nome']."</p>
                                                 </div>"; 
                                         }  
@@ -468,18 +492,20 @@
                                 } 
                             ?>
                         </div> 
-
-                        <div class='row'>
-                            <form action='meus_grupos.php' method='post'>
-                                <div class='form-group' align='center' id='mensagem' style='margin: 20px;'>
-                                    <textarea name="mensagem" rows="1" placeholder='Escrever Mensagem' class='icon' style='width:70%; float:left;'></textarea>
-                                    <input type='submit' name='add_mensagem' value='Enviar' style='width: 100px;'>
-                                </div>
-                            </form>
-                        </div>    
                     </div>
 
-                    <div class='modal-footer'></div>
+                    <div class='modal-footer' style="justify-content: center;">
+                        <form action='meus_grupos.php' method='post'>
+                            <?php 
+                                if ($usuario != "") {
+                                    echo "<div class='form-group row align-items-center'>
+                                            <textarea class='col-7' name='mensagem' rows='1' placeholder='Escrever mensagem'></textarea>
+                                            <input class='col-3' type='submit' name='add_mensagem' value='Enviar' style='width: 100px;'>
+                                        </div>";
+                                }
+                            ?>
+                        </form>
+                    </div>                    
                 </div>
             </div>
         </div>
@@ -488,8 +514,8 @@
             <div class="modal-dialog">  
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Excluir Mensagem</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
                     <div class="modal-body">
