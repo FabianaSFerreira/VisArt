@@ -65,7 +65,7 @@
 
         <?php 
             if ($_SESSION['IdPerfil'] != "") {
-                $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'"));
+                $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario=".$_SESSION['IdPerfil'].""));
 
                 echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
                         <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
@@ -80,7 +80,7 @@
                             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                                 <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
                                 <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
-                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_eventos.php">Eventos</a> </li>
                             </ul>
                         </div>  
                     </nav>';
@@ -99,7 +99,7 @@
                             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                                 <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
                                 <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
-                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li><br>
+                                <li class="nav-item"> <a class="nav-link" href="meus_eventos.php">Eventos</a> </li><br>
 
                                 <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalArte" value="Adicionar Arte"></form> </li>
                                 <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalGrupo" value="Adicionar Grupo"></form> </li>

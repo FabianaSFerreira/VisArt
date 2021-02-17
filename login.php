@@ -59,18 +59,17 @@
         <?php
             if(isset($_POST['logar'])){
                 $usuario = $_POST["usuario"];
-                $senha = $_POST["senha"];
-                
-                $valida_senha = md5(mysqli_real_escape_string($conexao, $senha));               
-                $valida = mysql_fetch_assoc(mySqli_query($conexao, "SELECT IdUsuario FROM usuarios WHERE usuario='$usuario' AND senha='$valida_senha'"));
+                $senha = md5($_POST["senha"]);
 
-                if ($valida['IdUsuario'] == "") {
+                $valida = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdUsuario FROM usuarios WHERE usuario='$usuario' AND senha='$senha'"));
+
+                if ($valida == "") {
                     echo "<div id='alert'>
                             <button type='button' class='close'>&times;</button>
                             <strong>Usuário ou senha Incorreto! </strong> Por favor, tente novamente
                         </div>";          
                 }
-                else {    
+                else {   
                     $_SESSION['IdUsuario'] = $valida['IdUsuario'];
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">'; 
                 }

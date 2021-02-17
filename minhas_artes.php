@@ -65,7 +65,7 @@
 
         <?php 
             if ($_SESSION['IdPerfil'] != "") {
-                $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'"));
+                $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario=".$_SESSION['IdPerfil'].""));
                 
                 echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
                         <div class="navbar-brand" id="img_perfil" style="width:-webkit-fill-available;"> 
@@ -80,7 +80,7 @@
                             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                                 <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
                                 <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
-                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="meus_eventos.php">Eventos</a> </li>
                             </ul>
                         </div>  
                     </nav>';
@@ -99,7 +99,7 @@
                             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                                 <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
                                 <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
-                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li><br>
+                                <li class="nav-item"> <a class="nav-link" href="meus_eventos.php">Eventos</a> </li><br>
 
                                 <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalArte" value="Adicionar Arte"></form> </li>
                                 <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalGrupo" value="Adicionar Grupo"></form> </li>
@@ -118,8 +118,11 @@
         <div class="row" style="padding: 10px;">
             <?php
                 for ($i=1; $i <= $maxA; $i++) { 
-                    $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$usuario'"));
-                    
+                    if($_SESSION['IdPerfil'] != "") {
+                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario=".$_SESSION['IdPerfil'].""));
+                    }
+                    else { $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$usuario'"));}
+
                     if ($arte != "") {
                         echo "<form class='col-sm-4' action='minhas_artes.php' method='post'> <h5>".$arte['TituloArte']." 
                                 <button type='submit' name='botA".$i."' class='descricao' data-title='Descrição'> 
@@ -223,6 +226,15 @@
                 $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
             }
+
+            if(isset($_POST['curtir'])){
+                $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $curtidas = (int) $curtidas['curtidas'];
+
+                $curt = $curtidas + 1;
+                $update = mySqli_query($conexao, "UPDATE artes SET curtidas='$curt' WHERE IdArte=".$_SESSION['IdArte']."");
+                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=minhas_artes.php">';
+            }  
         ?>
 
         <div class="modal" id="descricao_arte" role="dialog">   
@@ -250,11 +262,15 @@
                                         }
                                     }
 
-                                    echo "<button class='descricao col' type='submit' name='curtir' data-title='curtir' style='text-align: right;'> 
-                                            <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-heart-fill' viewBox='0 0 16 16'> 
-                                                <path fill-rule='evenodd' d='M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z'/>
-                                            </svg> &nbsp".$DadosArte['Curtidas']."
-                                        </button>";
+                                    if ($usuario != "") {
+                                        echo "<form action='minhas_artes.php' method='post' class='col'>
+                                                <button class='descricao' type='submit' name='curtir' data-title='curtir'> 
+                                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-heart-fill' viewBox='0 0 16 16'> 
+                                                        <path fill-rule='evenodd' d='M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z'/>
+                                                    </svg> &nbsp".$DadosArte['Curtidas']."
+                                                </button>
+                                            </form>";
+                                    }
                                 ?>
                             </div>
 
@@ -282,7 +298,7 @@
                                             if ($comentario != "") {
                                                 $meu_coment = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario FROM artes_comentarios WHERE IdComentario='$i' AND IdUsuario='$usuario'")); 
 
-                                                if ($meu_coment['IdComentario'] != "") {
+                                                if ($meu_coment != "") {
                                                     echo "<form action='minhas_artes.php' method='post'>
                                                             <div id='comentario'>
                                                                 <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$comentario['texto']." </button>

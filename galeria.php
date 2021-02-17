@@ -77,8 +77,8 @@
             <div class="col-sm-5" style="padding-top: 10px; padding-bottom: 10px;" align="right">
                 <?php
                     echo "<form action='galeria.php' method='post'> 
-                            <select name='tipo' onchange='this.form.submit()' style='width: -webkit-fill-available;'> 
-                                <option> Tipos </option> <option value='0'> Todos </option>";      
+                            <select name='tipo' onchange='this.form.submit()' style='width:-webkit-fill-available;'> 
+                                <option style='display:none;'> Tipos de Arte </option> <option value='0'> Ver Todas </option>";      
                     for ($i=1; $i <= $maxT; $i++) { 
                         $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome from artes_tipos where IdTipo='$i'"));  
                         echo "<option value='$i'>". $tipo['nome'] ."</option>";
@@ -274,7 +274,7 @@
                         <div class='row'> 
                             <?php 
                                 if ($DadosArte['IdTipo'] == 4) { 
-                                    echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4' style='width: -webkit-fill-available;></video> </div>";
+                                    echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4' style='width: -webkit-fill-available;'></video> </div>";
                                 }
                                 else {echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."' style='width: -webkit-fill-available;'> </div>";}  
                              
@@ -306,7 +306,7 @@
                                             if ($comentario != "") {
                                                 $meu_coment = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdComentario FROM artes_comentarios WHERE IdComentario='$i' AND IdUsuario='$usuario'")); 
 
-                                                if ($meu_coment['IdComentario'] != "") {
+                                                if ($meu_coment != "") {
                                                     echo "<form action='galeria.php' method='post'>
                                                             <div id='comentario'>
                                                                 <button type='text' class='icon' style='width:70%; float: none; margin: 5px;'> ".$comentario['texto']." </button>
