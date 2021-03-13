@@ -5,17 +5,17 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item"> <a class="nav-link active" href="home.php">Home</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="galeria.php">Galeria</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="grupos.php">Grupos</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="eventos.php">Eventos</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="show_artes.php">Galeria</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="show_grupos.php">Grupos</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="show_eventos.php">Eventos</a> </li>
             <li class="nav-item">
                 <?php 
-                    if ($usuario == "") { echo "<a class='nav-link' href='login.php'>Login</a>"; }
+                    if ($usuario == "") { echo "<a class='nav-link' href='sign_in.php'>Login</a>"; }
                     else { echo "<a class='nav-link' href='perfil.php'>Perfil</a>"; }
                 ?>
             </li>
         </ul>
-        <form class="form-inline" id="buscar" action="galeria.php" method='post' align="rigth">
+        <form class="form-inline" id="buscar" action="show_artes.php" method='post' align="rigth">
             <input id="text_busca" type="text" name="texto" placeholder="Buscar artes" style="width: 90%;">
             <button class="icon" type="submit" name="buscar" align="left" style="margin: 0; padding: 0; width: 10%;"> 
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

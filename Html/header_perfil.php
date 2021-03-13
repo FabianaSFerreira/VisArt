@@ -13,9 +13,9 @@
                     
                 <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                        <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
-                        <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
-                        <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="perfil_artes.php">Portfólio</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="perfil_grupos.php">Grupos</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="perfil_eventos.php">Eventos</a> </li>
                     </ul>
                 </div>  
             </nav>';
@@ -32,15 +32,15 @@
                     
                 <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
                     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                        <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
-                        <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
-                        <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Eventos</a> </li><br>
+                        <li class="nav-item"> <a class="nav-link" href="perfil_artes.php">Portfólio</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="perfil_grupos.php">Grupos</a> </li>
+                        <li class="nav-item"> <a class="nav-link" href="perfil_eventos.php">Eventos</a> </li><br>
 
                         <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalArte" value="Adicionar Arte"></form> </li>
                         <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalGrupo" value="Adicionar Grupo"></form> </li>
                         <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalEvento" value="Adicionar Evento"></form> </li><br>
                         
-                        <li class="nav-item"> <a class="nav-link" href="notificacao.php">Notificações</a> </li>                    
+                        <li class="nav-item"> <a class="nav-link" href="perfil_notificacao.php">Notificações</a> </li>                    
                         <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="configuracoes" value="Configurações"></form> </li>
                     </ul>
                 </div>  
