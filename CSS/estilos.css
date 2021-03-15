@@ -92,7 +92,7 @@ label {
     background-color: #ffffee;
 }
 
-#img_arte, #img_grupo, #img_hg { 
+#img_arte, #img_grupo, #img_evento, #img_hg { 
     height: 100%;
     padding: 10px;      
     max-width: 100%;
@@ -102,7 +102,7 @@ label {
     height: 300px;
 }
 
-#arte, #grupo, #descricao, #hanking {  
+#arte, #grupo, #evento, #descricao, #hanking {  
     height: 230px;
     display: flex;
     align-items: center;
@@ -124,8 +124,12 @@ label {
     width: -webkit-fill-available;
 }
 
-#grupo {height: 180px;}
-#hanking {height: 300px;}
+#grupo, #evento {
+    height: 180px;
+}
+#hanking {
+    height: 300px;
+}
 
 #alert, #campo, #notificacao {
     margin: 20px;

@@ -1,12 +1,7 @@
 <?php 
     include_once("Conexao/conexao.php"); 
     session_start();
-     
-    $_SESSION['IdPerfil'] = "";
-    $usuario = $_SESSION['IdUsuario'];  
-    
-    $maxGrupos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdGrupo) AS max FROM grupos"));
-    $maxG = (int) $maxGrupos['max'];
+    include('Conexao/max.php');
 ?>
 
 <!DOCTYPE html>
@@ -52,9 +47,9 @@
         <?php 
             for ($i=1; $i <= $maxG; $i++) { 
                 if (isset($_POST["bot$i"])) {
-                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, administrador, LocalImagem, TituloGrupo, descricao, status FROM grupos WHERE IdGrupo='$i'")); 
+                    $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT administrador, LocalImagem, TituloGrupo, descricao, status FROM grupos WHERE IdGrupo='$i'")); 
                     $admin = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosGrupo['administrador'].""));
-                    $_SESSION['IdGrupo'] = $DadosGrupo['IdGrupo'];
+                    $_SESSION['IdGrupo'] = $i;
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_grupo').modal('show'); }); </script>";     
                 }

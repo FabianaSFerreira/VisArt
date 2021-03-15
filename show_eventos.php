@@ -1,12 +1,7 @@
 <?php 
     include_once("Conexao/conexao.php"); 
     session_start();
-     
-    $_SESSION['IdPerfil'] = "";
-    $usuario = $_SESSION['IdUsuario'];  
-    
-    $maxEventos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdEvento) AS max FROM evento"));
-    $maxE = (int) $maxEventos['max'];
+    include('Conexao/max.php');
 ?>
 
 <!DOCTYPE html>
@@ -52,9 +47,9 @@
         <?php 
             for ($i=1; $i <= $maxE; $i++) { 
                 if (isset($_POST["bot$i"])) {
-                    $DadosEvento = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdEvento, Criador, LocalImagem, NomeEvento, descricao, participantes FROM evento WHERE IdEvento='$i'")); 
-                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosEvento['Criador'].""));
-                    $_SESSION['IdEvento'] = $DadosEvento['IdEvento'];
+                    $DadosEvento = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdUsuario, NomeEvento, Organizador, Endereco, Data, Hora, Descricao, LocalImagem FROM evento WHERE IdEvento='$i'")); 
+                    $participantes = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT COUNT(IdEvento) AS part FROM evento WHERE IdEvento='$i'"));
+                    $_SESSION['IdEvento'] = $i;
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_evento').modal('show'); }); </script>";     
                 }
@@ -70,7 +65,7 @@
         ?>
         
         <div class='modal fade' id='descricao_evento' role='dialog'>
-            
+            <?php include('html/modal_eventos.php');?>
         </div>
     </section>
     

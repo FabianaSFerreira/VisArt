@@ -8,9 +8,9 @@
 
         <div class='modal-body' align='center'>
             <div class='row'>                                
-                <div class='row' style='width: -webkit-fill-available; margin: 10px 30px;'>
+                <div class='row' style='width: -webkit-fill-available; margin: 10px;'>
                     <?php
-                        if (($usuario != "") && ($_SESSION['IdPerfil'] == "")) {  
+                        if (($usuario != "") && ($_SESSION['IdPerfil'] == "") && ($pag != "show_artes.php")) {  
                             if($DadosArte['IdUsuario'] == $usuario) {
                                 echo '<button class="descricao col-1" type="button" data-toggle="modal" data-target="#editar_arte" data-title="Editar"> 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/> </svg>
@@ -90,6 +90,99 @@
                     }
                 ?>
             </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editar_arte" role="dialog">
+    <div class="modal-dialog">  
+        <div class="modal-content">
+        <div class="modal-header">
+                <h4 class="modal-title">Editar Arte</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <form action='perfil_artes.php' method='post' enctype="multipart/form-data" style="padding: 10px; width: -webkit-fill-available;">                                 
+                        <div class='form-group' align="center" style='margin: 0;'> 
+                            <div style="float: left;"><label> Imagem: </label></div>
+                            <div><input type="file" name="new_arquivo" style='width:-webkit-fill-available;'></div>
+                            
+                            <div style="float: left;"><label> Nome: </label></div>
+                            <div><?php echo "<input type='text' name='nome' value='".$DadosArte['TituloArte']."' style='width:-webkit-fill-available;'>";?></div>
+                            
+                            <div style="float: left;"><label> Tipo: </label></div>
+                            <div>
+                                <?php 
+                                    $NomeTipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo=".$DadosArte['IdTipo'].""));
+                                    
+                                    echo "<select name='tipo' style='width:-webkit-fill-available;'> <option value=".$DadosArte['IdTipo'].">".$NomeTipo['nome']."</option>";      
+                                    for ($i=1; $i <= $maxT; $i++) { 
+                                        if ($i != $DadosArte['tipo']) {
+                                            $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo=$i"));  
+                                            echo "<option value='$i'>". $tipo['nome'] ."</option>";
+                                        }  
+                                    } echo "</select>";
+                                ?>
+                            </div>
+
+                            <div style="float: left;"><label> Descrição: </label></div>
+                            <div><?php echo "<textarea name='descricao' rows='3' style='width:-webkit-fill-available;'>".$DadosArte['Descricao']."</textarea>";?></div>
+
+                            <div> <input type='submit' name='edt_arte' value='Editar'> </div>                                    
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>         
+        
+<div class="modal fade" id="excluir_arte" role="dialog">
+    <div class="modal-dialog">  
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Excluir Arte</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <form action='perfil_artes.php' method='post'>
+                    <div class='form-group' align="center">
+                        <label> Tem certeza que deseja excluir essa arte? </label> <br>
+                        <input type='submit' name='excluir_arte' value='Excluir' style='width: 120px;'>
+                        <input type='submit' name='voltar_arte' value='Voltar' style='width: 120px;'>
+                    </div>  
+                </form>       
+            </div>
+
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="excluir_coment" role="dialog">
+    <div class="modal-dialog">  
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Excluir Comentario</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <form action='perfil_artes.php' method='post'>
+                    <div class='form-group' align="center">
+                        <label> Tem certeza que deseja excluir esse comentario?</label> <br>
+                        <input type='submit' name='excluir_coment' value='Excluir' style='width: 120px;'>
+                        <input type='submit' name='voltar_arte' value='Voltar' style='width: 120px;'>
+                    </div>  
+                </form>       
+            </div>
+
+            <div class="modal-footer"></div>
         </div>
     </div>
 </div>

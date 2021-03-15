@@ -1,15 +1,7 @@
 <?php 
     include_once("Conexao/conexao.php"); 
     session_start(); 
-
-    $usuario = $_SESSION['IdUsuario'];               
-    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
-    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT SUM(Curtidas) AS curt FROM artes WHERE IdUsuario='$usuario'"));
-
-    $maxUsuarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdUsuario) AS max FROM usuarios"));
-    $maxU = (int) $maxUsuarios['max'];
-
-    $cont = 0;
+    include('Conexao/max.php');
 ?>
 
 <!DOCTYPE html>

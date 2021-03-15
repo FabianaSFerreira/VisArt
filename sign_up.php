@@ -1,8 +1,7 @@
 <?php 
     include_once("Conexao/conexao.php");
     session_start(); 
-
-    $usuario = $_SESSION['IdUsuario'];
+    include('Conexao/max.php');
 ?>
 
 <!DOCTYPE html>

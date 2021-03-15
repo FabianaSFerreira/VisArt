@@ -1,23 +1,7 @@
 <?php 
     include_once("Conexao/conexao.php"); 
     session_start(); 
-
-    $usuario = $_SESSION['IdUsuario'];
-
-    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
-    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT SUM(Curtidas) AS curt FROM artes WHERE IdUsuario='$usuario'"));
-
-    $maxUsuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdUsuario) AS max FROM usuarios"));
-    $maxU = (int) $maxUsuario['max'];
-
-    $maxTipos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdTipo) AS max FROM artes_tipos"));
-    $maxT = (int) $maxTipos['max'];
-
-    $maxGrupos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdGrupo) AS max FROM grupos"));
-    $maxG = (int) $maxGrupos['max'];
-
-    $maxEventos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdEvento) AS max FROM evento"));
-    $maxE = (int) $maxEventos['max'];
+    include('Conexao/max.php');
 ?>
 
 <!DOCTYPE html>
@@ -54,9 +38,9 @@
                             
                         <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
                             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
-                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
-                                <li class="nav-item"> <a class="nav-link" href="meus_eventos.php">Eventos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="perfil_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="perfil_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="perfil_eventos.php">Eventos</a> </li>
                             </ul>
                         </div>  
                     </nav>';
@@ -73,15 +57,15 @@
                             
                         <div class="collapse navbar-collapse" id="navbarPerfil" align="center">
                             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                                <li class="nav-item"> <a class="nav-link" href="minhas_artes.php">Portfólio</a> </li>
-                                <li class="nav-item"> <a class="nav-link" href="meus_grupos.php">Grupos</a> </li>
-                                <li class="nav-item"> <a class="nav-link" href="meus_eventos.php">Eventos</a> </li><br>
+                                <li class="nav-item"> <a class="nav-link" href="perfil_artes.php">Portfólio</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="perfil_grupos.php">Grupos</a> </li>
+                                <li class="nav-item"> <a class="nav-link" href="perfil_eventos.php">Eventos</a> </li><br>
 
                                 <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalArte" value="Adicionar Arte"></form> </li>
                                 <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalGrupo" value="Adicionar Grupo"></form> </li>
                                 <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="modalEvento" value="Adicionar Evento"></form> </li><br>
                                 
-                                <li class="nav-item"> <a class="nav-link" href="notificacao.php">Notificações</a> </li>                    
+                                <li class="nav-item"> <a class="nav-link" href="perfil_notificacao.php">Notificações</a> </li>                    
                                 <li class="nav-item"> <form action="perfil.php" method="post"> <input  class="nav-link" id="nav_perfil" type="submit" name="configuracoes" value="Configurações"></form> </li>
                             </ul>
                         </div>  
@@ -98,38 +82,32 @@
                         <h4 class="modal-title">Adicionar Arte</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
+                    
+                    <form action='perfil.php' method='post' enctype="multipart/form-data" style="width: -webkit-fill-available;">
+                        <div class="modal-body form-group" align="center" style='margin: 0;'>
+                            <div style="float: left;"><label> Imagem: </label></div><br>
+                            <div><input type="file" name="arquivo" style='width:-webkit-fill-available; overflow: hidden;'></div>
+                            
+                            <div style="float: left;"><label> Nome: </label></div><br>
+                            <div><input type='text' name='nome' placeholder='Título' style='width:-webkit-fill-available;' required></div>
+                            
+                            <div style="float: left;"><label> Tipo: </label></div><br>
+                            <div>
+                                <?php 
+                                    echo "<select name='tipo' style='width:-webkit-fill-available;'>";      
+                                    for ($i=1; $i <= $maxT; $i++) { 
+                                        $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo=$i"));  
+                                        echo "<option value='$i'>". $tipo['nome'] ."</option>";
+                                    } echo "</select>";
+                                ?>
+                            </div>
 
-                    <div class="modal-body">
-                        <div class="row">
-                            <form action='perfil.php' method='post' enctype="multipart/form-data" style="padding: 10px; width: -webkit-fill-available;">                                 
-                                <div class='form-group' align="center" style='margin: 0;'>
-                                    <div style="float: left;"><label> Imagem: </label></div><br>
-                                    <div><input type="file" name="arquivo" style='width:-webkit-fill-available; overflow: hidden;'></div>
-                                    
-                                    <div style="float: left;"><label> Nome: </label></div><br>
-                                    <div><input type='text' name='nome' placeholder='Título' style='width:-webkit-fill-available;' required></div>
-                                    
-                                    <div style="float: left;"><label> Tipo: </label></div><br>
-                                    <div>
-                                        <?php 
-                                            echo "<select name='tipo' style='width:-webkit-fill-available;'>";      
-                                            for ($i=1; $i <= $maxT; $i++) { 
-                                                $tipo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT nome FROM artes_tipos WHERE IdTipo=$i"));  
-                                                echo "<option value='$i'>". $tipo['nome'] ."</option>";
-                                            } echo "</select>";
-                                        ?>
-                                    </div>
-
-                                    <div style="float: left;"><label> Descrição: </label></div>
-                                    <div><textarea name="descricao" rows="3" placeholder='Escreva aqui...' style='width:-webkit-fill-available;' required></textarea></div>
-
-                                    <div> <input type='submit' name='add_arte' value='Adicionar'> </div>                                    
-                                </div>
-                            </form>
+                            <div style="float: left;"><label> Descrição: </label></div>
+                            <div><textarea name="descricao" rows="3" placeholder='Escreva aqui...' style='width:-webkit-fill-available;' required></textarea></div>
                         </div>
-                    </div>
-
-                    <div class="modal-footer"></div>
+                    
+                        <div class="modal-footer" style="justify-content: center;"><input type='submit' name='add_arte' value='Adicionar'></div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -141,30 +119,23 @@
                         <h4 class="modal-title">Adicionar Grupo</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
+                    <form action='perfil.php' method='post' enctype="multipart/form-data" style="width: -webkit-fill-available;">
+                        <div class="modal-body form-group" align="center" style='margin: 0;'>
+                            <div style="float: left;"><label> Imagem: </label></div><br>
+                            <div><input type="file" name="imagem" style='width:-webkit-fill-available; overflow: hidden;'></div>
+                            
+                            <div style="float: left;"><label> Nome: </label></div><br>
+                            <div><input type='text' name='nome' placeholder='Título' style='width:-webkit-fill-available;' required></div>
+                            
+                            <div style="float: left;"><label> Status: </label></div><br>
+                            <div> <select name='status' style='width:-webkit-fill-available;'> <option value='aberto'> Aberto </option> <option value='fechado'> Fechado </option> </select></div>
 
-                    <div class="modal-body">
-                        <div class="row">
-                            <form action='perfil.php' method='post' enctype="multipart/form-data" style="padding: 10px; width: -webkit-fill-available;">                                 
-                                <div class='form-group' align="center" style='margin: 0;'> 
-                                    <div style="float: left;"><label> Imagem: </label></div><br>
-                                    <div><input type="file" name="imagem" style='width:-webkit-fill-available; overflow: hidden;'></div>
-                                    
-                                    <div style="float: left;"><label> Nome: </label></div><br>
-                                    <div><input type='text' name='nome' placeholder='Título' style='width:-webkit-fill-available;' required></div>
-                                    
-                                    <div style="float: left;"><label> Status: </label></div><br>
-                                    <div> <select name='status' style='width:-webkit-fill-available;'> <option value='aberto'> Aberto </option> <option value='fechado'> Fechado </option> </select></div>
-
-                                    <div style="float: left;"><label> Descrição: </label></div><br>
-                                    <div><textarea name="descricao" rows="3" placeholder='Escreva aqui...' style='width:-webkit-fill-available;' required></textarea></div>
-
-                                    <div align="center"> <input type='submit' name='add_grupo' value='Adicionar'> </div>                                    
-                                </div>
-                            </form>
+                            <div style="float: left;"><label> Descrição: </label></div><br>
+                            <div><textarea name="descricao" rows="3" placeholder='Escreva aqui...' style='width:-webkit-fill-available;' required></textarea></div>                                  
                         </div>
-                    </div>
 
-                    <div class="modal-footer"></div>
+                        <div class="modal-footer" style="justify-content: center;"> <input type='submit' name='add_grupo' value='Adicionar'> </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -176,27 +147,33 @@
                         <h4 class="modal-title">Adicionar Evento</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
+                    
+                    <form action='perfil.php' method='post' enctype="multipart/form-data" style="width: -webkit-fill-available;">
+                        <div class="modal-body form-group" align="center" style='margin: 0;'>
+                            <div style="float: left;"><label> Imagem: </label></div><br>
+                            <div><input type="file" name="imagem" style='width:-webkit-fill-available; overflow: hidden;'></div>
+                            
+                            <div style="float: left;"><label> Nome: </label></div><br>
+                            <div><input type='text' name='nome' placeholder='Título' style='width:-webkit-fill-available;' required></div>
 
-                    <div class="modal-body">
-                        <div class="row">
-                            <form action='perfil.php' method='post' enctype="multipart/form-data" style="padding: 10px; width: -webkit-fill-available;">                                 
-                                <div class='form-group' align="center" style='margin: 0;'> 
-                                    <div style="float: left;"><label> Imagem: </label></div><br>
-                                    <div><input type="file" name="imagem" style='width:-webkit-fill-available; overflow: hidden;'></div>
-                                    
-                                    <div style="float: left;"><label> Nome: </label></div><br>
-                                    <div><input type='text' name='nome' placeholder='Título' style='width:-webkit-fill-available;' required></div>
+                            <div style="float: left;"><label> Organizador(es): </label></div><br>
+                            <div><input type='text' name='org' placeholder='Exemplo: Fabiana Ferreira e Sheila Silveira' style='width:-webkit-fill-available;' required></div>
 
-                                    <div style="float: left;"><label> Descrição: </label></div><br>
-                                    <div><textarea name="descricao" rows="3" placeholder='Escreva aqui...' style='width:-webkit-fill-available;' required></textarea></div>
+                            <div style="float: left;"><label> Endereço: </label></div><br>
+                            <div><input type='text' name='end' placeholder='Rua, 000 - Bairro, Cidade - RS, CEP' style='width:-webkit-fill-available;' required></div>
 
-                                    <div align="center"> <input type='submit' name='add_evento' value='Adicionar'> </div>                                    
-                                </div>
-                            </form>
+                            <div class="row" style='margin:auto;'><label> Data e Hora: </label></div>
+                            <div class="row" style='width:-webkit-fill-available; margin:auto;'>
+                                <input class="col" type='date' name='data' required>
+                                <input class="col" type='time' name='hora' required>
+                            </div>
+
+                            <div style="float: left;"><label> Descrição: </label></div><br>
+                            <div><textarea name="descricao" rows="3" placeholder='Escreva aqui...' style='width:-webkit-fill-available;' required></textarea></div>
                         </div>
-                    </div>
 
-                    <div class="modal-footer"></div>
+                        <div class="modal-footer" style="justify-content: center;"> <input type='submit' name='add_evento' value='Adicionar'> </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -324,7 +301,6 @@
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#configuracoes').modal('show'); }); </script>";
             }
         ?>
-        
         <?php    
             if(isset($_POST['add_arte'])){
                 $nome = $_POST["nome"];
@@ -418,6 +394,10 @@
 
             if(isset($_POST['add_evento'])){
                 $nome = $_POST["nome"];
+                $org = $_POST["org"];
+                $end = $_POST["end"];
+                $data = $_POST["data"];
+                $hora = $_POST["hora"];
                 $descricao = $_POST["descricao"];
 
                 $formatosPermitidos = array('png', 'jpeg', 'jpg', 'gif');
@@ -430,9 +410,12 @@
                         $pasta = "Arquivos/Eventos/";               
 
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
-                            $inserir = mySqli_query($conexao, "INSERT INTO evento(IdUsuario, LocalImagem, NomeEvento, descricao) values('$usuario', '$pasta$novoNome', '$nome', '$descricao')");
+                            $inserir = mySqli_query($conexao, "INSERT INTO evento(IdUsuario, NomeEvento, Organizador, Endereco, Data, Hora, Descricao, LocalImagem) values('$usuario', '$nome', '$org', '$end', '$data', '$hora', '$descricao', '$pasta$novoNome')");
                             
                             if ($inserir != "") {
+                                $maxE ++;
+                                mySqli_query($conexao, "INSERT INTO eventos_usuarios(IdEvento, IdUsuario) VALUES('$maxE', '$usuario')");
+
                                 $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Evento adicionado com sucesso </strong> </div>";
                                 echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
                             }
@@ -452,15 +435,19 @@
                     }
                 }
                 else {
-                    $inserir = mySqli_query($conexao, "INSERT INTO evento(IdUsuario, NomeEvento, descricao) values('$usuario', '$nome', '$descricao')");
+                    $inserir = mySqli_query($conexao, "INSERT INTO evento(IdUsuario, NomeEvento, Organizador, Endereco, DataHora, Descricao) values('$usuario', '$nome', '$org', '$end', '$data', '$hora', '$descricao')");
 
                     if ($inserir != "") {
+                        $maxE ++;
+                        mySqli_query($conexao, "INSERT INTO eventos_usuarios(IdEvento, IdUsuario) VALUES('$maxE', '$usuario')");
+
                         $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Evento adicionado com sucesso </strong> </div>";
                         echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
                     } 
                 }
             }
-
+        ?>
+        <?php
             if(isset($_POST['alt_perfil'])){
                 $alt_nome = $_POST["nome"];
                 $alt_email = $_POST["email"];

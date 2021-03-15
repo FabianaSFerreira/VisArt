@@ -1,18 +1,7 @@
 <?php 
     include_once("Conexao/conexao.php");
     session_start(); 
-
-    $_SESSION['IdPerfil'] = "";
-    $usuario = $_SESSION['IdUsuario']; 
-
-    $maxTipos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdTipo) AS max FROM artes_tipos"));
-    $maxT = (int) $maxTipos['max'];
-    
-    $maxArtes = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdArte) AS max FROM artes"));
-    $maxA = (int) $maxArtes['max'];
-
-    $maxComentarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdComentario) AS max FROM artes_comentarios"));
-    $maxC = (int) $maxComentarios['max'];
+    include('Conexao/max.php');
 ?>
 
 <!DOCTYPE html>
