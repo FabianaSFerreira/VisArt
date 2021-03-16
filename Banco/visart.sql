@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 24-Dez-2020 às 22:38
+-- Tempo de geração: 16-Mar-2021 às 04:23
 -- Versão do servidor: 10.4.16-MariaDB
 -- versão do PHP: 7.4.12
 
@@ -45,7 +45,7 @@ CREATE TABLE `artes` (
   `TituloArte` varchar(50) NOT NULL,
   `LocalArquivo` varchar(100) NOT NULL,
   `Descricao` varchar(500) NOT NULL,
-  `Curtidas` int(100) NOT NULL
+  `Curtidas` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -53,12 +53,14 @@ CREATE TABLE `artes` (
 --
 
 INSERT INTO `artes` (`IdArte`, `IdTipo`, `IdUsuario`, `TituloArte`, `LocalArquivo`, `Descricao`, `Curtidas`) VALUES
-(1, 1, 1, 'Arte 1', 'Arquivos/Pintura/5f277114ebf91.jpg', 'Teste - arte 1', 8),
-(2, 2, 2, 'Arte 2', 'Arquivos/Escultura/5f277140e6d80.jpg', 'Teste - descricao arte 2', 5),
-(3, 3, 2, 'titulo 3', 'Arquivos/Fotografia/5f2771569c3bd.jpg', 'Teste - arte 3', 6),
-(4, 4, 1, 'Arte 4', 'Arquivos/Audiovisual/5f27717148cae.jpg', 'Teste - arte 4', 9),
-(5, 5, 1, 'Arte 5', 'Arquivos/Artes Graficas/5f2771876b96e.jpg', 'Teste - arte 5', 6),
-(6, 6, 2, 'Arte 6', 'Arquivos/Historias em Quadrinhos/5f2771a5488a0.jpg', 'Teste - arte 6', 3);
+(1, 1, 1, 'Teste Pintura', 'Arquivos/Pintura/5f277114ebf91.jpg', 'Pintura a óleo', 0),
+(2, 2, 2, 'Teste Escultura', 'Arquivos/Escultura/5f277140e6d80.jpg', 'Black Tie 8 cabeças, 2009 – 2011', 0),
+(3, 3, 2, 'Teste Fotografia', 'Arquivos/Fotografia/5f2771569c3bd.jpg', 'Primavera no Japão - O espetáculo da flor de cerejeira', 0),
+(4, 4, 1, 'Teste Video', 'Arquivos/Audiovisual/5f5cfc836699d.mp4', 'Teste - video ', 0),
+(5, 5, 1, 'Teste Artes Graficas', 'Arquivos/Artes Graficas/5f2771876b96e.jpg', 'Hemisférios do cérebro', 1),
+(6, 6, 2, 'Teste WebComic', 'Arquivos/HQs & WebComics/5f2771a5488a0.jpg', 'WebComic - Love Like Cherry Blossoms', 0),
+(7, 3, 1, 'Teste 2 - Fotografia', 'Arquivos/Fotografia/60330d0bda427.jpg', 'teste - fotografia paisagem', 0),
+(8, 1, 2, 'Teste 2 - Desenho', 'Arquivos/Pintura/60330d58e039f.jpg', 'teste - desenho manual', 0);
 
 -- --------------------------------------------------------
 
@@ -80,7 +82,28 @@ CREATE TABLE `artes_comentarios` (
 INSERT INTO `artes_comentarios` (`IdComentario`, `IdUsuario`, `IdArte`, `Texto`) VALUES
 (1, 1, 1, 'comentario'),
 (2, 2, 1, 'comentario 2'),
-(3, 1, 1, 'comentario 3');
+(3, 1, 1, 'comentario 3'),
+(4, 2, 1, 'comentario 4');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura da tabela `artes_curtidas`
+--
+
+CREATE TABLE `artes_curtidas` (
+  `IdArte` int(11) NOT NULL,
+  `IdUsuario` int(11) NOT NULL,
+  `Curtida` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Extraindo dados da tabela `artes_curtidas`
+--
+
+INSERT INTO `artes_curtidas` (`IdArte`, `IdUsuario`, `Curtida`) VALUES
+(1, 1, 1),
+(5, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -103,7 +126,7 @@ INSERT INTO `artes_tipos` (`IdTipo`, `Nome`) VALUES
 (3, 'Fotografia'),
 (4, 'Audiovisual'),
 (5, 'Artes Graficas'),
-(6, 'Historias em Quadrinhos');
+(6, 'HQs & WebComics');
 
 -- --------------------------------------------------------
 
@@ -114,19 +137,22 @@ INSERT INTO `artes_tipos` (`IdTipo`, `Nome`) VALUES
 CREATE TABLE `evento` (
   `IdEvento` int(11) NOT NULL,
   `IdUsuario` int(11) NOT NULL,
-  `LocalImagem` varchar(100) NOT NULL,
   `NomeEvento` varchar(50) NOT NULL,
+  `Organizador` varchar(200) NOT NULL,
+  `Endereco` varchar(200) NOT NULL,
+  `Data` date NOT NULL,
+  `Hora` time NOT NULL,
   `Descricao` varchar(500) NOT NULL,
-  `Participantes` int(11) NOT NULL
+  `LocalImagem` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Extraindo dados da tabela `evento`
 --
 
-INSERT INTO `evento` (`IdEvento`, `IdUsuario`, `LocalImagem`, `NomeEvento`, `Descricao`, `Participantes`) VALUES
-(1, 1, '', 'evento 1', 'teste - evento 1', 0),
-(2, 1, 'Arquivos/Grupos/5fdd497d7bd74.jpg', 'evento 2', 'teste - evento 2', 0);
+INSERT INTO `evento` (`IdEvento`, `IdUsuario`, `NomeEvento`, `Organizador`, `Endereco`, `Data`, `Hora`, `Descricao`, `LocalImagem`) VALUES
+(1, 1, 'Evento - teste 1', 'Fabiana Ferreira e Sheila Silveira', 'Rua, 000 - Bairro, Cidade - RS, CEP', '2021-04-20', '20:00:00', 'teste teste teste', 'Arquivos/Eventos/5fdd497d7bd74.jpg'),
+(2, 1, 'Evento - teste 2', 'Danielle da Silveira de Souza', 'Rua, 000 - Bairro, Cidade - RS, CEP', '2021-05-03', '18:30:00', 'teste teste teste', 'Arquivos/Eventos/f9441abc32574.jpg');
 
 -- --------------------------------------------------------
 
@@ -139,6 +165,14 @@ CREATE TABLE `eventos_usuarios` (
   `IdUsuario` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Extraindo dados da tabela `eventos_usuarios`
+--
+
+INSERT INTO `eventos_usuarios` (`IdEvento`, `IdUsuario`) VALUES
+(1, 1),
+(2, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -147,25 +181,25 @@ CREATE TABLE `eventos_usuarios` (
 
 CREATE TABLE `grupos` (
   `IdGrupo` int(11) NOT NULL,
-  `Administrador` int(11) NOT NULL,
-  `LocalImagem` varchar(100) NOT NULL,
   `TituloGrupo` varchar(20) NOT NULL,
+  `Administrador` int(11) NOT NULL,
   `Descricao` varchar(500) NOT NULL,
-  `Status` varchar(10) NOT NULL
+  `Status` varchar(10) NOT NULL,
+  `LocalImagem` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Extraindo dados da tabela `grupos`
 --
 
-INSERT INTO `grupos` (`IdGrupo`, `Administrador`, `LocalImagem`, `TituloGrupo`, `Descricao`, `Status`) VALUES
-(1, 1, 'Arquivos/Grupos/5f2772476e3e3.jpg', 'Grupo 1', 'Teste - grupo 1', 'aberto'),
-(2, 2, 'Arquivos/Grupos/5f27725b357d1.jpg', 'Grupo 2', 'Teste - grupo 2', 'fechado'),
-(3, 1, 'Arquivos/Grupos/5f27726d6930c.jpg', 'Grupo 3', 'Teste - grupo 3', 'aberto'),
-(4, 2, 'Arquivos/Grupos/5f27727f144dd.jpg', 'Grupo 4', 'Teste - grupo 4', 'fechado'),
-(5, 1, 'Arquivos/Grupos/5f2772b0b86b0.jpg', 'Grupo 5', 'Teste - grupo 5', 'aberto'),
-(6, 1, 'Arquivos/Grupos/5f2772c2b1f0a.jpg', 'Grupo 6', 'Teste - grupo 6', 'fechado'),
-(7, 2, 'Arquivos/Grupos/5f277353aed87.jpg', 'Grupo 7', 'Teste - grupo 7', 'aberto');
+INSERT INTO `grupos` (`IdGrupo`, `TituloGrupo`, `Administrador`, `Descricao`, `Status`, `LocalImagem`) VALUES
+(1, 'Grupo 1', 1, 'Teste - grupo 1', 'aberto', 'Arquivos/Grupos/5f2772476e3e3.jpg'),
+(2, 'Grupo 2', 2, 'Teste - grupo 2', 'fechado', 'Arquivos/Grupos/5f27725b357d1.jpg'),
+(3, 'Grupo 3', 1, 'Teste - grupo 3', 'aberto', 'Arquivos/Grupos/5f27726d6930c.jpg'),
+(4, 'Grupo 4', 2, 'Teste - grupo 4', 'fechado', 'Arquivos/Grupos/5f27727f144dd.jpg'),
+(5, 'Grupo 5', 1, 'Teste - grupo 5', 'aberto', 'Arquivos/Grupos/5f2772b0b86b0.jpg'),
+(6, 'Grupo 6', 1, 'Teste - grupo 6', 'fechado', 'Arquivos/Grupos/5f2772c2b1f0a.jpg'),
+(7, 'Grupo 7', 2, 'Teste - grupo 7', 'aberto', 'Arquivos/Grupos/5f277353aed87.jpg');
 
 -- --------------------------------------------------------
 
@@ -185,8 +219,10 @@ CREATE TABLE `grupos_mensagens` (
 --
 
 INSERT INTO `grupos_mensagens` (`IdMensagem`, `IdUsuario`, `IdGrupo`, `Texto`) VALUES
-(1, 1, 1, 'mensagem'),
-(2, 2, 1, 'mensagem');
+(1, 1, 1, 'mensagem - teste 1'),
+(2, 2, 1, 'mensagem - teste 2'),
+(3, 1, 1, 'mensagem - teste 3'),
+(4, 1, 1, 'mensagem - teste 4');
 
 -- --------------------------------------------------------
 
@@ -225,9 +261,9 @@ INSERT INTO `grupos_usuarios` (`IdGrupo`, `IdUsuario`, `Solicitacao`) VALUES
 CREATE TABLE `usuarios` (
   `IdUsuario` int(11) NOT NULL,
   `Usuario` varchar(30) NOT NULL,
-  `Email` varchar(50) NOT NULL,
   `Nome` varchar(30) NOT NULL,
-  `Senha` varchar(10) NOT NULL,
+  `Email` varchar(50) NOT NULL,
+  `Senha` varchar(32) NOT NULL,
   `LocalFoto` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -235,10 +271,10 @@ CREATE TABLE `usuarios` (
 -- Extraindo dados da tabela `usuarios`
 --
 
-INSERT INTO `usuarios` (`IdUsuario`, `Usuario`, `Email`, `Nome`, `Senha`, `LocalFoto`) VALUES
-(1, 'Fabi_Ferreira', 'fabiana.ferreira.ti@gmail.com', 'Fabiana Ferreira', 'c6550818f6', 'Arquivos/Perfil/5f243caf534f2.jpg'),
-(2, 'Us_2', 'usuario2@gmail.com', 'Usuario 2', '202cb962ac', ''),
-(3, 'Us_3', 'usuario3@gmail.com', 'Usuario 3', '202cb962ac', '');
+INSERT INTO `usuarios` (`IdUsuario`, `Usuario`, `Nome`, `Email`, `Senha`, `LocalFoto`) VALUES
+(1, 'Fabi_Ferreira', 'Fabiana Ferreira', 'fabiana.ferreira.ti@gmail.com', 'c6550818f6c2283e88311273d204b027', 'Arquivos/Perfil/5f2772b0b86b0.jpg'),
+(2, 'Us_2', 'Usuario 2', 'usuario2@gmail.com', '202cb962ac59075b964b07152d234b70', 'Arquivos/Perfil/5fdd497d7bd74.jpg'),
+(3, 'Us_3', 'Usuario 3', 'usuario3@gmail.com', '202cb962ac59075b964b07152d234b70', '');
 
 --
 -- Índices para tabelas despejadas
@@ -261,6 +297,13 @@ ALTER TABLE `artes_comentarios`
   ADD KEY `IdUsuario` (`IdUsuario`) USING BTREE;
 
 --
+-- Índices para tabela `artes_curtidas`
+--
+ALTER TABLE `artes_curtidas`
+  ADD PRIMARY KEY (`IdArte`,`IdUsuario`),
+  ADD KEY `INDEX` (`IdArte`,`IdUsuario`) USING BTREE;
+
+--
 -- Índices para tabela `artes_tipos`
 --
 ALTER TABLE `artes_tipos`
@@ -277,6 +320,7 @@ ALTER TABLE `evento`
 -- Índices para tabela `eventos_usuarios`
 --
 ALTER TABLE `eventos_usuarios`
+  ADD PRIMARY KEY (`IdEvento`,`IdUsuario`),
   ADD KEY `IdEvento` (`IdEvento`,`IdUsuario`),
   ADD KEY `IdUsuario` (`IdUsuario`);
 
@@ -318,13 +362,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de tabela `artes`
 --
 ALTER TABLE `artes`
-  MODIFY `IdArte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `IdArte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de tabela `artes_comentarios`
 --
 ALTER TABLE `artes_comentarios`
-  MODIFY `IdComentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `IdComentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `artes_tipos`
@@ -348,7 +392,7 @@ ALTER TABLE `grupos`
 -- AUTO_INCREMENT de tabela `grupos_mensagens`
 --
 ALTER TABLE `grupos_mensagens`
-  MODIFY `IdMensagem` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `IdMensagem` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de tabela `usuarios`
@@ -375,10 +419,11 @@ ALTER TABLE `artes_comentarios`
   ADD CONSTRAINT `artes_comentarios_ibfk_2` FOREIGN KEY (`IdUsuario`) REFERENCES `usuarios` (`IdUsuario`);
 
 --
--- Limitadores para a tabela `evento`
+-- Limitadores para a tabela `artes_curtidas`
 --
-ALTER TABLE `evento`
-  ADD CONSTRAINT `eventos_ibfk_1` FOREIGN KEY (`IdUsuario`) REFERENCES `usuarios` (`IdUsuario`);
+ALTER TABLE `artes_curtidas`
+  ADD CONSTRAINT `artes_curtidas_ibfk_1` FOREIGN KEY (`IdArte`) REFERENCES `artes` (`IdArte`),
+  ADD CONSTRAINT `artes_curtidas_ibfk_2` FOREIGN KEY (`IdUsuario`) REFERENCES `usuarios` (`IdUsuario`);
 
 --
 -- Limitadores para a tabela `eventos_usuarios`

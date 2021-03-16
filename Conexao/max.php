@@ -2,8 +2,6 @@
     $usuario = $_SESSION['IdUsuario'];
 
     $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
-    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT SUM(Curtidas) AS curt FROM artes WHERE IdUsuario='$usuario'"));
-
     
     $maxUsuarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdUsuario) AS max FROM usuarios"));
     $maxU = (int) $maxUsuarios['max'];
@@ -30,5 +28,4 @@
     $maxE = (int) $maxEventos['max'];      
 
     $pag = basename($_SERVER['PHP_SELF']);
-    $cont = 0;
 ?>

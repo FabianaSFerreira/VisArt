@@ -50,10 +50,32 @@
             
             for ($j=1; $j <= $maxA; $j++) { 
                 if (isset($_POST["botA$j"])) {
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte='$j'")); 
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte='$j'")); 
                     $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                     $_SESSION['IdArte'] = $DadosArte['IdArte'];
                     
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
+                }
+
+                if(isset($_POST["curt$j"])) { 
+                    $curtir = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte FROM artes_curtidas WHERE IdArte='$j' AND IdUsuario='$usuario' AND Curtida='0'"));
+                    $descurtir = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte FROM artes_curtidas WHERE IdArte='$j' AND IdUsuario='$usuario' AND Curtida='1'"));
+        
+                    if ($curtir != "") {
+                        mySqli_query($conexao, "UPDATE artes_curtidas SET Curtida='1' WHERE IdArte='$j' AND IdUsuario='$usuario'");
+                    }
+                    else if ($descurtir != "") {
+                        mySqli_query($conexao, "DELETE FROM artes_curtidas WHERE IdArte='$j' AND IdUsuario='$usuario'");
+                    }
+                    else {
+                        mySqli_query($conexao, "INSERT INTO artes_curtidas (IdArte, IdUsuario, Curtida) VALUES($j, '$usuario', '1')");
+                    }  
+                    
+                    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT COUNT(IdArte) AS curt FROM artes_curtidas WHERE IdArte='$i' AND Curtida='1'"));
+                    mySqli_query($conexao, "UPDATE artes SET Curtidas='".$curtidas['curt']."' WHERE IdArte='$i'");
+                    
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte='$a'")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
                 }
             }
@@ -99,56 +121,76 @@
             }
 
             if(isset($_POST['voltar_arte'])) { 
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
                 $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
             }
-        ?>  
-
-        <?php
+        ?>
+        <?php    
+            if(isset($_POST['add_coment'])){
+                $comentario = $_POST['comentario'];
+        
+                if ($comentario != "") {
+                    mySqli_query($conexao, "INSERT INTO artes_comentarios (IdUsuario, IdArte, texto) VALUES('$usuario', ".$_SESSION['IdArte'].", '$comentario')");
+        
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte=".$_SESSION['IdArte']."")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
+                }
+            }
+        
             for ($l=1; $l <= $maxC; $l++) { 
                 if(isset($_POST["coment$l"])) { 
                     $_SESSION['IdComentario'] = $l;
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#excluir_coment').modal('show'); }); </script>";
                 }
             }
-
-            if(isset($_POST['add_coment'])){
-                $comentario = $_POST['comentario'];
-
-                if ($comentario != "") {
-                    mySqli_query($conexao, "INSERT INTO artes_comentarios (IdUsuario, IdArte, texto) VALUES('$usuario', ".$_SESSION['IdArte'].", '$comentario')");
-
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte']."")); 
-                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
-                }
-            }
-
+        
             if(isset($_POST['excluir_coment'])) { 
                 mySqli_query($conexao, "DELETE FROM artes_comentarios WHERE IdComentario=".$_SESSION['IdComentario']."");
                 
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
             }
-
-            if(isset($_POST['curtir'])){
-                $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
-                $curtidas = (int) $curtidas['curtidas'];
-
-                $curt = $curtidas + 1;
-                $update = mySqli_query($conexao, "UPDATE artes SET curtidas='$curt' WHERE IdArte=".$_SESSION['IdArte']."");
-                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil_artes.php">';
-            }  
-        ?>
+        ?> 
 
         <div class="modal" id="descricao_arte" role="dialog">   
             <?php include('html/modal_artes.php');?>
+        </div>
+
+        <div class="modal fade" id="excluir_coment" role="dialog">
+            <div class="modal-dialog">  
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Excluir Comentario</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <?php echo "<form action='".$pag."' method='post'>"; ?>
+                            <div class='form-group' align="center">
+                                <label> Tem certeza que deseja excluir esse comentario?</label> <br>
+                                <input type='submit' name='excluir_coment' value='Excluir' style='width: 120px;'>
+                                <input type='submit' name='voltar_arte' value='Voltar' style='width: 120px;'>
+                            </div>  
+                        </form>       
+                    </div>
+
+                    <div class="modal-footer"></div>
+                </div>
+            </div>
         </div>
     </section>
 
     <script>
         $(document).ready(function(){
             $(".close").click(function(){ $("#alert").hide(); });
+        });
+
+        $(function(){
+            var scroll = document.getElementById("scroll_coment");
+                scroll.scrollTop = scroll.scrollHeight;
         });
     </script>
     

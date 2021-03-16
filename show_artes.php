@@ -41,175 +41,112 @@
 
         <div class="row" id="filtro" style="padding: 10px;">
             <?php
-                if(isset($_POST['tipo'])) {
+                if (isset($_POST['tipo'])) {
                     $select = $_POST['tipo'];
 
                     if ($select == 0) {
-                        for ($i=1; $i <= $maxA; $i++) { 
-                            $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$i'"));
-                            
-                            if ($arte != "") {
-                                echo "<form class='col-sm-4 bloco' action='show_artes.php' method='post'> <h5> <span>".$arte['TituloArte']."</span>
-                                        <button class='descricao' type='submit' name='desc".$i."' data-title='Descrição'> 
-                                        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-square-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'/></svg>
-                                        </button>";
-
-                                if ($usuario != "") {
-                                   echo "<button class='descricao' type='submit' name='curt".$i."' data-title='Curtir' style='float:left;'> 
-                                            <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-heart-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z'/> </svg>
-                                            <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label> 
-                                        </button>";
-                                } 
-
-                                if ($arte['IdTipo'] == 4) { 
-                                    echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'> </video> </div></form>";
-                                }
-                                else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'> </div></form>";}  
-                            }                                  
-                        }
+                        $Arte = mySqli_query($conexao, "SELECT IdArte, IdTipo, TituloArte, LocalArquivo FROM artes");                                 
                     }
                     else {
-                        for ($j=1; $j <= $maxT; $j++) { 
-                            if ($select == $j) {
-                                for ($l=1; $l <= $maxA; $l++) { 
-                                    $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$l' AND IdTipo='$j'"));
-                                    
-                                    if ($arte != "") {
-                                        echo "<form class='col-sm-4 bloco' action='show_artes.php' method='post'> <h5> <span>".$arte['TituloArte']."<span> 
-                                                <button class='descricao' type='submit' name='desc".$i."' data-title='Descrição'> 
-                                                <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-square-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'/></svg>
-                                                </button>";
-                                        if ($usuario != "") {
-                                           echo "<button class='descricao' type='submit' name='curt".$i."' data-title='Curtir' style='float:left;'> 
-                                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-heart-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z'/> </svg>
-                                                    <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label> 
-                                                </button>";
-                                        } 
-        
-                                        if ($arte['IdTipo'] == 4) { 
-                                            echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'> </video> </div></form>";
-                                        }
-                                        else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'> </div></form>";}  
-                                    }                    
-                                }
-                            }
-                        } 
+                        $Arte = mySqli_query($conexao, "SELECT IdArte, IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdTipo='$select'");                    
                     } 
                 }
-                else if(isset($_POST['buscar'])){
+                else if (isset($_POST['buscar'])){
                     $texto = $_POST['texto'];
-
-                    for ($i=1; $i <= $maxA; $i++) { 
-                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$i' AND TituloArte LIKE '%$texto%'"));
-                        
-                        if ($arte != "") {
-                            echo "<form class='col-sm-4 bloco' action='show_artes.php' method='post'> <h5> <span>".$arte['TituloArte']."<span> 
-                                    <button class='descricao' type='submit' name='desc".$i."' data-title='Descrição'> 
-                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-square-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'/></svg>
-                                    </button>";
-
-                            if ($usuario != "") {
-                               echo "<button class='descricao' type='submit' name='curt".$i."' data-title='Curtir' style='float:left;'> 
-                                        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-heart-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z'/> </svg>
-                                        <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label> 
-                                    </button>";
-                            } 
-
-                            if ($arte['IdTipo'] == 4) { 
-                                echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'> </video> </div></form>";
-                            }
-                            else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'> </div></form>";}    
-                        }                                    
-                    }
+                    $Arte = mySqli_query($conexao, "SELECT IdArte, IdTipo, TituloArte, LocalArquivo FROM artes WHERE TituloArte LIKE '%$texto%'");                                    
                 }
                 else {
-                    for ($i=1; $i <= $maxA; $i++) { 
-                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo, curtidas FROM artes WHERE IdArte='$i'"));
-                        
-                        if ($arte != "") {
-                            echo "<form class='col-sm-4 bloco' action='show_artes.php' method='post'> <h5> <span>".$arte['TituloArte']."</span> 
-                                    <button class='descricao' type='submit' name='desc".$i."' data-title='Descrição'> 
-                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-square-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'/></svg>
-                                    </button>";
-                            
-                            if ($usuario != "") {
-                               echo "<button class='descricao' type='submit' name='curt".$i."' data-title='Curtir' style='float:left;'> 
-                                        <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-heart-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z'/> </svg>
-                                        <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$arte['curtidas']."</label> 
-                                    </button>";
-                            } 
+                    $Arte = mySqli_query($conexao, "SELECT IdArte, IdTipo, TituloArte, LocalArquivo FROM artes");                                   
+                } 
+                
+                while($arte = mysqli_fetch_array($Arte)) {
+                    if ($arte != "") {
+                        $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT COUNT(IdArte) AS curt FROM artes_curtidas WHERE IdArte=".$arte['IdArte']." AND Curtida='1'"));
 
-                            if ($arte['IdTipo'] == 4) { 
-                                echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'></video> </div></form>";
-                            }
-                            else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'> </div></form>";}  
-                        }                                    
+                        echo "<form class='col-sm-4 bloco' action='show_artes.php' method='post'> <h5> <span>".$arte['TituloArte']."</span> 
+                                <button class='descricao' type='submit' name='desc".$arte['IdArte']."' data-title='Descrição'> 
+                                <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-info-square-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM8 5.5a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'/></svg>
+                                </button>";
+                        
+                        if ($usuario != "") {
+                           echo "<button class='descricao' type='submit' name='curtir".$arte['IdArte']."' data-title='Curtir' style='float:left;'> 
+                                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-heart-fill' viewBox='0 0 16 16'> <path fill-rule='evenodd' d='M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z'/> </svg>
+                                    <label style='padding: 0px;font-size: 12px;font-weight: lighter;'>".$curtidas['curt']."</label> 
+                                </button>";
+                        } 
+
+                        if ($arte['IdTipo'] == 4) { 
+                            echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'></video> </div></form>";
+                        }
+                        else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'> </div></form>";}  
                     }
-                }   
+                }
             ?>
         </div>
         
         <?php 
             for ($i=1; $i <= $maxA; $i++) { 
                 if (isset($_POST["desc$i"])) {
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte='$i'")); 
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte='$i'")); 
                     $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                     $_SESSION['IdArte'] = $DadosArte['IdArte'];
                     
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
                 }
 
-                if (isset($_POST["curt$i"])){
-                    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT curtidas FROM artes WHERE IdArte='$i'"));
-                    $curtidas = (int) $curtidas['curtidas'];
-    
-                    $curt = $curtidas + 1;
-                    $update = mySqli_query($conexao, "UPDATE artes SET curtidas='$curt' WHERE IdArte='$i'");
+                if (isset($_POST["curtir$i"]) || isset($_POST["curt$i"])){
+                    $curtir = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte FROM artes_curtidas WHERE IdArte='$i' AND IdUsuario='$usuario' AND Curtida='0'"));
+                    $descurtir = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte FROM artes_curtidas WHERE IdArte='$i' AND IdUsuario='$usuario' AND Curtida='1'"));
+
+                    if ($curtir != "") {
+                        mySqli_query($conexao, "UPDATE artes_curtidas SET Curtida='1' WHERE IdArte='$i' AND IdUsuario='$usuario'");
+                    }
+                    else if ($descurtir != "") {
+                        mySqli_query($conexao, "DELETE FROM artes_curtidas WHERE IdArte='$i' AND IdUsuario='$usuario'");
+                    }
+                    else {
+                        mySqli_query($conexao, "INSERT INTO artes_curtidas (IdArte, IdUsuario, Curtida) VALUES($i, '$usuario', '1')");
+                    }              
+        
+                    $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT COUNT(IdArte) AS curt FROM artes_curtidas WHERE IdArte='$i' AND Curtida='1'"));
+                    mySqli_query($conexao, "UPDATE artes SET Curtidas='".$curtidas['curt']."' WHERE IdArte='$i'");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=show_artes.php">';
                 }
             } 
 
-            for ($j=1; $j <= $maxC; $j++) { 
-                if(isset($_POST["coment$j"])) { 
-                    $_SESSION['IdComentario'] = $j;
-                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#excluir_coment').modal('show'); }); </script>";
-                }
-            }
-
-            if(isset($_POST['add_coment'])){
-                $comentario = $_POST['comentario'];
-
-                if ($comentario != "") {
-                    mySqli_query($conexao, "INSERT INTO artes_comentarios(IdUsuario, IdArte, texto) VALUES('$usuario', ".$_SESSION['IdArte'].", '$comentario')");
-
-                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte']."")); 
-                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
-                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
-                }
-            }
-
-            if(isset($_POST['excluir_coment'])) { 
-                mySqli_query($conexao, "DELETE FROM artes_comentarios WHERE IdComentario=".$_SESSION['IdComentario']."");
-                
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
-                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
-                echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
-            }
-
             if(isset($_POST['voltar'])){
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao, Curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
                 $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
             }
 
-            if(isset($_POST['curtir'])){
-                $curtidas = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT curtidas FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
-                $curtidas = (int) $curtidas['curtidas'];
-
-                $curt = $curtidas + 1;
-                $update = mySqli_query($conexao, "UPDATE artes SET curtidas='$curt' WHERE IdArte=".$_SESSION['IdArte']."");
-                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=show_artes.php">';
-            }  
+            if(isset($_POST['add_coment'])){
+                $comentario = $_POST['comentario'];
+        
+                if ($comentario != "") {
+                    mySqli_query($conexao, "INSERT INTO artes_comentarios (IdUsuario, IdArte, texto) VALUES('$usuario', ".$_SESSION['IdArte'].", '$comentario')");
+        
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte=".$_SESSION['IdArte']."")); 
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
+                }
+            }
+        
+            for ($l=1; $l <= $maxC; $l++) { 
+               
+                if(isset($_POST["coment$l"])) { 
+                    $_SESSION['IdComentario'] = $l;
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#excluir_coment').modal('show'); }); </script>";
+                }
+            }
+        
+            if(isset($_POST['excluir_coment'])) { 
+                mySqli_query($conexao, "DELETE FROM artes_comentarios WHERE IdComentario=".$_SESSION['IdComentario']."");
+                
+                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
+                echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
+            }
         ?>      
 
         <div class="modal" id="descricao_arte" role="dialog">   
@@ -225,11 +162,11 @@
                     </div>
 
                     <div class="modal-body">
-                        <form action='show_artes.php' method='post'>
+                        <?php echo "<form action='".$pag."' method='post'>"; ?>
                             <div class='form-group' align="center">
                                 <label> Tem certeza que deseja excluir esse comentario?</label> <br>
                                 <input type='submit' name='excluir_coment' value='Excluir' style='width: 120px;'>
-                                <input type='submit' name='voltar' value='Voltar' style='width: 120px;'>
+                                <input type='submit' name='voltar_arte' value='Voltar' style='width: 120px;'>
                             </div>  
                         </form>       
                     </div>

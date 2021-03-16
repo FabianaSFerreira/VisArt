@@ -154,7 +154,6 @@ footer {
     margin: 5px;
     height: 400px;
     padding: 20px;
-    display: flex;
     overflow-y: scroll;
     overflow-x: hidden;
     width: -webkit-fill-available;
