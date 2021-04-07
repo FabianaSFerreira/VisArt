@@ -27,5 +27,14 @@
     $maxEventos = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdEvento) AS max FROM evento"));
     $maxE = (int) $maxEventos['max'];      
 
+    
     $pag = basename($_SERVER['PHP_SELF']);
+ 
+    if ($pag == "home.php") $pag = "home/home.php";
+    else 
+    if (($pag == "sign_in.php")) $pag = "sign/sign_in.php";
+    else 
+    if (($pag == "show_artes.php") || ($pag == "show_grupos.php") || ($pag == "show_eventos.php")) $pag = "show/$pag";
+    else
+    if (($pag == "perfil.php") || ($pag == "perfil_artes.php") || ($pag == "perfil_grupos.php") || ($pag == "perfil_eventos.php") || ($pag == "perfil_notificacao.php")) $pag = "perfil/$pag"; 
 ?>
