@@ -73,7 +73,7 @@
                 </a>
             </div>
             
-            <div id="Carousel_Pintura" class="carousel slide col-6" data-ride="carousel">
+            <div id="Carousel_Pintura" class="carousel slide col-sm-6" data-ride="carousel">
                 <h5> Top Pinturas </h5>
                 <ol class="carousel-indicators">
                     <li data-target="#Carousel_Pintura" data-slide-to="0" class="active"></li>
@@ -124,7 +124,7 @@
                 </a>
             </div>
 
-            <div id="Carousel_Fotografia" class="carousel slide col-6" data-ride="carousel">
+            <div id="Carousel_Fotografia" class="carousel slide col-sm-6" data-ride="carousel">
                 <h5> Top Fotografias </h5>
                 <ol class="carousel-indicators">
                     <li data-target="#Carousel_Fotografia" data-slide-to="0" class="active"></li>
