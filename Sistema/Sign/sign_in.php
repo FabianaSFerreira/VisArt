@@ -36,7 +36,8 @@
                         </div>";          
                 }
                 else {   
-                    $_SESSION['IdUsuario'] = $valida['IdUsuario'];
+                    $cookie = $valida['IdUsuario'];
+                    setcookie("usuario", "$cookie", time() + (86400 * 30), "/");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=../home/home.php">'; 
                 }
             }

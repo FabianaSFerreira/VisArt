@@ -49,7 +49,7 @@
                     }
                     else {echo "<div id='descricao'> <img src='../../".$DadosArte['LocalArquivo']."' style='width: -webkit-fill-available;'> </div>";}  
                     
-                    echo "<form action='perfil.php' method='post' style='width: -webkit-fill-available; padding: 0px 15px;'>
+                    echo "<form action='../perfil/perfil.php' method='post' style='width: -webkit-fill-available; padding: 0px 15px;'>
                                 <input id='usuario' type='submit' name='perfil".$DadosArte['IdUsuario']."' value='Autor(a): ".$us['Nome']."' style='width: -webkit-fill-available; padding: 10px;'>
                             </form>";
 

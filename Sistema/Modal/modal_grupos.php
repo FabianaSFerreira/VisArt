@@ -37,7 +37,7 @@
                     }
                     
                     echo "<button type='text'> Descrição: ".$DadosGrupo['descricao']." </button><br>";
-                    echo "<form action='perfil.php' method='post' style='width: -webkit-fill-available; padding: 0px 15px;'>
+                    echo "<form action='../perfil/perfil.php' method='post' style='width: -webkit-fill-available; padding: 0px 15px;'>
                             <input id='usuario' type='submit' name='perfil".$DadosGrupo['administrador']."' value='Administrador(a): ".$admin['Nome']."' style='width: -webkit-fill-available; padding: 10px;'>
                         </form>";
 
@@ -67,7 +67,7 @@
                         
                     }
                     else {
-                        echo "<select id='descricao'> <option> Membros </option>"; 
+                        echo "<select id='descricao'> <option style='display:none;'> Membros </option>"; 
                         while($us = mysqli_fetch_array($UsGrupos)) {
                             $nome = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$us['IdUsuario'].""));
                             echo "<option>". $nome['Nome'] ."</option>"; 

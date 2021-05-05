@@ -21,14 +21,11 @@
 
         <?php
             for ($i=0; $i < $maxU; $i++) { 
-                if (isset($_POST["perfil$i"]) && $i!=$usuario) {
+                if (isset($_POST["perfil$i"]) && $i != $usuario) {
                     $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'")); 
-                    $_SESSION['IdPerfil'] = $i; break;
+                    setcookie("perfil", "$i", "/"); break;
                 }
-                else {
-                    $perfil_usuario = "";
-                    $_SESSION['IdPerfil'] = "";
-                }
+                else {$perfil_usuario = "";}
             }        
             
             if ($perfil_usuario != "") {

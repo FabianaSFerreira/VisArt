@@ -1,7 +1,9 @@
 <?php
-    $usuario = $_SESSION['IdUsuario'];
-
-    $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
+    if(isset($_COOKIE["usuario"])) {
+        $usuario = $_COOKIE["usuario"];
+        $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$usuario'"));
+    } 
+    else { $usuario = "";}
     
     $maxUsuarios = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT MAX(IdUsuario) AS max FROM usuarios"));
     $maxU = (int) $maxUsuarios['max'];
