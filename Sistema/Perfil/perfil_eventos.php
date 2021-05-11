@@ -27,9 +27,7 @@
         <div class="row" style="padding: 10px;">
             <?php
                 for ($i=1; $i <= $maxE; $i++) { 
-                    if($perfil != "") {
-                        $evento = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT E.NomeEvento, E.LocalImagem FROM evento E JOIN eventos_usuarios EU ON E.IdEvento=EU.IdEvento WHERE E.IdEvento='$i' AND EU.IdUsuario='$perfil'"));
-                    }
+                    if($perfil != "") { $evento = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT E.NomeEvento, E.LocalImagem FROM evento E JOIN eventos_usuarios EU ON E.IdEvento=EU.IdEvento WHERE E.IdEvento='$i' AND EU.IdUsuario='$perfil'"));}
                     else { $evento = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT E.NomeEvento, E.LocalImagem FROM evento E JOIN eventos_usuarios EU ON E.IdEvento=EU.IdEvento WHERE E.IdEvento='$i' AND EU.IdUsuario='$usuario'"));}
                     
     

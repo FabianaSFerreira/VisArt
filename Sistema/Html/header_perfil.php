@@ -3,10 +3,9 @@
     //Autor: Fabiana da Silvaira Ferreira
     //Ano: 2020-2021
 
-    $perfil = "";
+    $perfil = $_SESSION['perfil'];
     
-    if (isset($perfil)) {
-        $perfil = $_COOKIE["perfil"];
+    if ($perfil != "") {
         $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario=".$perfil.""));
 
         echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           

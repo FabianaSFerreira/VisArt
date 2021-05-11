@@ -23,9 +23,12 @@
             for ($i=0; $i < $maxU; $i++) { 
                 if (isset($_POST["perfil$i"]) && $i != $usuario) {
                     $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'")); 
-                    setcookie("perfil", "$i", "/"); break;
+                    $_SESSION['perfil'] = $i;
                 }
-                else {$perfil_usuario = "";}
+                else {
+                    $perfil_usuario = "";
+                    $_SESSION['perfil'] = "";
+                }
             }        
             
             if ($perfil_usuario != "") {
@@ -515,16 +518,34 @@
             } 
 
             if(isset($_POST['excluir_perfil'])) { 
-                $_SESSION['IdUsuario'] = "";
+                setcookie("usuario", '', 1, '/');
                 
                 mySqli_query($conexao, "DELETE FROM usuarios WHERE IdUsuario='$usuario';"); 
                 echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=../home/home.php">';
             }
 
             if(isset($_POST['sair'])){
-                $_SESSION['IdUsuario'] = "";
-                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=../home/home.php">'; 
+                setcookie("usuario", time() - 3600);
+
+                
+                //echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=../../index.php">';
+                
+                
+                /*function clearCookies($clearSession = false){
+                    $name = "usuario";
+                    $value = "";
+                    $past = time() - 3600;
+
+                    if ($clearSession === false) $sessionId = session_id();
+
+                    foreach ($_COOKIE as $name => $value) {
+                        if ($clearSession !== false || $value !== $sessionId) setcookie($name, $value, $past, '/');
+                    }
+                }
+
+                clearCookies();*/
             }
+                
         ?>
     </section>
 

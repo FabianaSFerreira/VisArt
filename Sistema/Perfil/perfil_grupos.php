@@ -27,9 +27,7 @@
         <div class="row" style="padding: 10px;">
             <?php
                 for ($i=1; $i <= $maxG; $i++) { 
-                    if($perfil != "") {
-                        $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.TituloGrupo, G.Administrador, G.LocalImagem FROM grupos G JOIN grupos_usuarios GU ON G.IdGrupo = GU.IdGrupo WHERE G.IdGrupo='$i' AND GU.IdUsuario='$perfil' AND GU.solicitacao='0'"));
-                    }
+                    if($perfil != "") { $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.TituloGrupo, G.Administrador, G.LocalImagem FROM grupos G JOIN grupos_usuarios GU ON G.IdGrupo = GU.IdGrupo WHERE G.IdGrupo='$i' AND GU.IdUsuario='$perfil' AND GU.solicitacao='0'"));}
                     else { $grupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT G.TituloGrupo, G.Administrador, G.LocalImagem FROM grupos G JOIN grupos_usuarios GU ON G.IdGrupo = GU.IdGrupo WHERE G.IdGrupo='$i' AND GU.IdUsuario='$usuario' AND GU.solicitacao='0'"));}
     
                     if ($grupo != "") {

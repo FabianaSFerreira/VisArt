@@ -37,7 +37,7 @@
                 }
                 else {   
                     $cookie = $valida['IdUsuario'];
-                    setcookie("usuario", "$cookie", time() + (86400 * 30), "/");
+                    setcookie("usuario", "$cookie", 0, "/");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=../home/home.php">'; 
                 }
             }

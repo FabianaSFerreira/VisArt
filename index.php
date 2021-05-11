@@ -14,6 +14,8 @@
 	
 	$_SESSION['IdEvento'] = "";
 
+	$_SESSION['IdPerfil'] = "";
+
 	$_SESSION['IdUsGrupo'] = "";
 
 	$_SESSION['IdMensagem'] = ""; 

@@ -27,9 +27,7 @@
         <div class="row" style="padding: 10px;">
             <?php
                 for ($i=1; $i <= $maxA; $i++) { 
-                    if($perfil != "") {
-                        $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$perfil'"));
-                    }
+                    if($perfil != "") {$arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$perfil'"));}
                     else { $arte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdTipo, TituloArte, LocalArquivo FROM artes WHERE IdArte='$i' AND IdUsuario='$usuario'"));}
 
                     if ($arte != "") {
