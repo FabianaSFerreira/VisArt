@@ -81,9 +81,9 @@
                         } 
 
                         if ($arte['IdTipo'] == 4) { 
-                            echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='../../".$arte['LocalArquivo']."' type='video/mp4'></video> </div></form>";
+                            echo "</h5> <div id='arte'> <video id='img_arte' controls> <source src='".$arte['LocalArquivo']."' type='video/mp4'></video> </div></form>";
                         }
-                        else {echo "</h5> <div id='arte'><img id='img_arte' src='../../".$arte['LocalArquivo']."'> </div></form>";}  
+                        else {echo "</h5> <div id='arte'><img id='img_arte' src='".$arte['LocalArquivo']."'> </div></form>";}  
                     }
                 }
             ?>
@@ -117,13 +117,13 @@
                     mySqli_query($conexao, "UPDATE artes SET Curtidas='".$curtidas['curt']."' WHERE IdArte='$i'");
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=show_artes.php">';
                 }
+    
+                if(isset($_POST["voltar_arte$i"])){
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte='$i'"));
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
+                }
             } 
-
-            if(isset($_POST['voltar'])){
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
-                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
-                echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>"; 
-            }
 
             if(isset($_POST['add_coment'])){
                 $comentario = $_POST['comentario'];
@@ -138,20 +138,22 @@
             }
         
             for ($l=1; $l <= $maxC; $l++) { 
-               
                 if(isset($_POST["coment$l"])) { 
                     $_SESSION['IdComentario'] = $l;
                     echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#excluir_coment').modal('show'); }); </script>";
                 }
-            }
-        
-            if(isset($_POST['excluir_coment'])) { 
-                mySqli_query($conexao, "DELETE FROM artes_comentarios WHERE IdComentario=".$_SESSION['IdComentario']."");
-                
-                $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte=".$_SESSION['IdArte'].""));
-                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
-                echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
-            }
+
+                if(isset($_POST["excluir_coment$l"])) { 
+                    $IdArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte FROM artes_comentarios WHERE IdComentario='$l'"));
+                    
+                    mySqli_query($conexao, "DELETE FROM artes_comentarios WHERE IdComentario='$l'");
+                    
+                    $DadosArte = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdArte, IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao FROM artes WHERE IdArte=".$IdArte['IdArte'].""));
+                    $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT Nome FROM usuarios WHERE IdUsuario=".$DadosArte['IdUsuario'].""));
+
+                    echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#descricao_arte').modal('show'); }); </script>";
+                }
+            } 
         ?>      
 
         <div class="modal" id="descricao_arte" role="dialog">   
@@ -170,8 +172,10 @@
                         <?php echo "<form action='../".$pag."' method='post'>"; ?>
                             <div class='form-group' align="center">
                                 <label> Tem certeza que deseja excluir esse comentario?</label> <br>
-                                <input type='submit' name='excluir_coment' value='Excluir' style='width: 120px;'>
-                                <input type='submit' name='voltar_arte' value='Voltar' style='width: 120px;'>
+                                <?php
+                                    echo "<input type='submit' name='excluir_coment".$_SESSION['IdComentario']."' value='Excluir' style='width: 120px;'>";
+                                    echo "<input type='submit' name='voltar_arte".$_SESSION['IdArte']."' value='Voltar' style='width: 120px;'>";
+                                ?>
                             </div>  
                         </form>       
                     </div>

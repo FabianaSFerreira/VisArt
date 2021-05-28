@@ -3,10 +3,28 @@
     //Autor: Fabiana da Silvaira Ferreira
     //Ano: 2020-2021
 
-
     include_once("../../Conexao/conexao.php");
     session_start(); 
     include('../../Conexao/max.php');
+
+    
+    if(isset($_POST['sair'])){
+        setcookie('usuario', "", 1, "/");
+        echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">';
+    }
+
+    if(isset($_POST['configuracoes'])) { 
+        echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#configuracoes').modal('show'); }); </script>";
+    }
+
+    if(isset($_POST['excluir_perfil'])) {               
+        $delete = mySqli_query($conexao, "DELETE FROM usuarios WHERE IdUsuario='$usuario';"); 
+        
+        if($delete != "") {
+            setcookie('usuario', "", 1, "/");
+            echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=home.php">';
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -49,7 +67,7 @@
                             echo "<div class='$carousel_item'>
                                     <form action='home.php' method='post'>
                                         <button class='descricao' type='submit' name='desc".$arte['IdArte']."' style='float: none;'>
-                                            <img id='img_hg' src='../../".$arte['LocalArquivo']."'>
+                                            <img id='img_hg' src='".$arte['LocalArquivo']."'>
                                             <div class='carousel-caption' style='text-shadow: 1px 1px 2px #073763;'> 
                                                 <h3>".$arte['TituloArte']."</h3> 
                                                 <p>TOP $cont</p>
@@ -100,7 +118,7 @@
                             echo "<div class='$carousel_item'>
                                     <form action='home.php' method='post'>
                                         <button class='descricao' type='submit' name='desc".$arte['IdArte']."' style='float: none;'>
-                                            <img id='img_hg' src='../../".$arte['LocalArquivo']."'>
+                                            <img id='img_hg' src='".$arte['LocalArquivo']."'>
                                             <div class='carousel-caption' style='text-shadow: 1px 1px 2px #073763;'> 
                                                 <h3>".$arte['TituloArte']."</h3> 
                                                 <p>TOP $cont</p>
@@ -151,7 +169,7 @@
                             echo "<div class='$carousel_item'>
                                     <form action='home.php' method='post'>
                                         <button class='descricao' type='submit' name='desc".$arte['IdArte']."' style='float: none;'>
-                                            <img id='img_hg' src='../../".$arte['LocalArquivo']."'>
+                                            <img id='img_hg' src='".$arte['LocalArquivo']."'>
                                             <div class='carousel-caption' style='text-shadow: 1px 1px 2px #073763;'> 
                                                 <h3>".$arte['TituloArte']."</h3> 
                                                 <p>TOP $cont</p>

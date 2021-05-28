@@ -45,9 +45,9 @@
 
                 <?php
                     if ($DadosArte['IdTipo'] == 4) { 
-                        echo "<div id='descricao'> <video id='img_arte' controls> <source src='../../".$DadosArte['LocalArquivo']."' type='video/mp4' style='width: -webkit-fill-available;'></video> </div>";
+                        echo "<div id='descricao'> <video id='img_arte' controls> <source src='".$DadosArte['LocalArquivo']."' type='video/mp4' style='width: -webkit-fill-available;'></video> </div>";
                     }
-                    else {echo "<div id='descricao'> <img src='../../".$DadosArte['LocalArquivo']."' style='width: -webkit-fill-available;'> </div>";}  
+                    else {echo "<div id='descricao'> <img src='".$DadosArte['LocalArquivo']."' style='width: -webkit-fill-available;'> </div>";}  
                     
                     echo "<form action='../perfil/perfil.php' method='post' style='width: -webkit-fill-available; padding: 0px 15px;'>
                                 <input id='usuario' type='submit' name='perfil".$DadosArte['IdUsuario']."' value='Autor(a): ".$us['Nome']."' style='width: -webkit-fill-available; padding: 10px;'>
@@ -160,8 +160,10 @@
                 <form action='../perfil/perfil_artes.php' method='post'>
                     <div class='form-group' align="center">
                         <label> Tem certeza que deseja excluir essa arte? </label> <br>
-                        <input type='submit' name='excluir_arte' value='Excluir' style='width: 120px;'>
-                        <input type='submit' name='voltar_arte' value='Voltar' style='width: 120px;'>
+                        <?php
+                            echo "<input type='submit' name='excluir_arte".$_SESSION['IdArte']."' value='Excluir' style='width: 120px;'>";
+                            echo "<input type='submit' name='voltar_arte".$_SESSION['IdArte']."' value='Voltar' style='width: 120px;'>";
+                        ?>                        
                     </div>  
                 </form>       
             </div>

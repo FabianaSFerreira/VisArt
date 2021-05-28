@@ -10,7 +10,7 @@
 
         echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
                 <div class="navbar-brand" id="img_perfil"> 
-                    <img src="../../'.$perfil_usuario['LocalFoto'].'" style="width:100%; height:100%;"><br> 
+                    <img src="'.$perfil_usuario['LocalFoto'].'" style="width:100%; height:100%;"><br> 
                     <label style="margin: 0; padding: 10px; float: left;">'.$perfil_usuario['nome'].'</label>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
@@ -29,7 +29,7 @@
     else {
         echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
                 <div class="navbar-brand" id="img_perfil"> 
-                    <img src="../../'.$select['LocalFoto'].'" style="width:100%; height:100%;"><br>
+                    <img src="'.$select['LocalFoto'].'" style="width:100%; height:100%;"><br>
                     <label style="margin: 0; padding: 10px; float: left;">'.$select['nome'].'</label>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>

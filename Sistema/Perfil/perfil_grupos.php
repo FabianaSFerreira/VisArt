@@ -24,6 +24,13 @@
     </header>
     
     <section class="container-fluid">
+        <?php
+            if ($_SESSION['Alert'] != "") { 
+                echo $_SESSION['Alert'];
+                $_SESSION['Alert'] = ""; 
+            }
+        ?>
+
         <div class="row" style="padding: 10px;">
             <?php
                 for ($i=1; $i <= $maxG; $i++) { 
@@ -42,18 +49,13 @@
                                 </button>";
                         }        
                                 
-                        echo "</h5><div id='grupo'> <img id='img_grupo' src='../../".$grupo['LocalImagem']."'> </div></form>"; 
+                        echo "</h5><div id='grupo'> <img id='img_grupo' src='".$grupo['LocalImagem']."'> </div></form>"; 
                     } 
                 }
             ?>
         </div>
 
         <?php
-            if ($_SESSION['Alert'] != "") { 
-                echo $_SESSION['Alert'];
-                $_SESSION['Alert'] = ""; 
-            }
-
             for ($j=1; $j <= $maxG; $j++) { 
                 if (isset($_POST["botG$j"])) {
                     $DadosGrupo = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT IdGrupo, administrador, LocalImagem, TituloGrupo, descricao, status FROM grupos WHERE IdGrupo='$j'")); 
@@ -83,7 +85,7 @@
                     if(in_array($extensao, $formatosPermitidos)) {
                         $arquivo = $_FILES["new_imagem"]["tmp_name"];
                         $novoNome = uniqid().".$extensao";
-                        $pasta = "Arquivos/Grupos/";                
+                        $pasta = "../../Arquivos/Grupos/";                
     
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
                             mySqli_query($conexao, "UPDATE grupos SET LocalImagem='$pasta$novoNome', TituloGrupo='$nome' descricao='$descricao', status='$status' WHERE IdGrupo=".$_SESSION['IdGrupo']."");
@@ -110,6 +112,9 @@
             
 
             if(isset($_POST['excluir_grupo'])) { 
+                mySqli_query($conexao, "DELETE FROM grupos_usuarios WHERE IdGrupo=".$_SESSION['IdGrupo']."");
+                mySqli_query($conexao, "DELETE FROM grupos_mensagens WHERE IdGrupo=".$_SESSION['IdGrupo']."");
+
                 $delete = mySqli_query($conexao, "DELETE FROM grupos WHERE IdGrupo=".$_SESSION['IdGrupo']."");
                 
                 if ($delete != "") {

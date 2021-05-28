@@ -33,7 +33,7 @@
 
                 <?php 
                     if ($DadosEvento['LocalImagem'] != "") {
-                        echo "<div id='descricao'> <img src='../../".$DadosEvento['LocalImagem']."' style='width: -webkit-fill-available;'> </div><br>"; 
+                        echo "<div id='descricao'> <img src='".$DadosEvento['LocalImagem']."' style='width: -webkit-fill-available;'> </div><br>"; 
                     }
                     echo "<button type='text'> Descrição: ".$DadosEvento['Descricao']." </button><br>";
                     echo "<button type='text'> Organizador(es): ".$DadosEvento['Organizador']." </button><br>";

@@ -24,17 +24,18 @@
                 if (isset($_POST["perfil$i"]) && $i != $usuario) {
                     $perfil_usuario = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario, nome, email, LocalFoto FROM usuarios WHERE IdUsuario='$i'")); 
                     $_SESSION['perfil'] = $i;
+                    break;
                 }
                 else {
                     $perfil_usuario = "";
                     $_SESSION['perfil'] = "";
                 }
-            }        
+            }  
             
-            if ($perfil_usuario != "") {
+            if ($_SESSION['perfil'] != "") {
                 echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
                         <div class="navbar-brand" id="img_perfil"> 
-                            <img src="../../'.$perfil_usuario['LocalFoto'].'" style="width:100%; height:100%;"><br> 
+                            <img src="'.$perfil_usuario['LocalFoto'].'" style="width:100%; height:100%;"><br> 
                             <label style="margin: 0; padding: 10px; float: left;">'.$perfil_usuario['nome'].'</label>
                             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
@@ -53,7 +54,7 @@
             else {
                 echo '<nav class="navbar navbar-expand-lg navbar-light bg-light" id="perfil">           
                         <div class="navbar-brand" id="img_perfil"> 
-                            <img src="../../'.$select['LocalFoto'].'" style="width:100%; height:100%;"><br>
+                            <img src="'.$select['LocalFoto'].'" style="width:100%; height:100%;"><br>
                             <label style="margin: 0; padding: 10px; float: left;">'.$select['nome'].'</label>
                             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarPerfil" aria-controls="navbarPerfil" aria-expanded="false" aria-label="Alterna navegação" style="margin: 0; padding: 10px; float: right;">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"> <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/> </svg>
@@ -246,7 +247,7 @@
                         </div> <br> 
 
                         <div class="row" id="campo" style="margin: 0;">
-                            <form action='perfil.php' method='post' style="width: -webkit-fill-available;">
+                            <form action='../Home/home.php' method='post' style="width: -webkit-fill-available;">
                                 <label style="width: 89%; text-align: left;"> Sair </label>
                                 <button class="sair" type="submit" name="sair" style="float: none;"> 
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-power" viewBox="0 0 16 16">
@@ -270,7 +271,7 @@
                     </div>
 
                     <div class="modal-body">
-                        <form action='perfil.php' method='post'>
+                        <form action='../Home/home.php' method='post'>
                             <div class='form-group' align="center">
                                 <label> Tem certeza que deseja excluir seu perfil? <br> Após a exclusão sua conta não poderá ser recuperada </label> <br>
                                 <input type='submit' name='excluir_perfil' value='Excluir' style='width: 120px;'>
@@ -305,8 +306,7 @@
             if(isset($_POST['configuracoes'])) { 
                 echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#configuracoes').modal('show'); }); </script>";
             }
-        ?>
-        <?php    
+  
             if(isset($_POST['add_arte'])){
                 $nome = $_POST["nome"];
                 $tipo = (int) $_POST["tipo"];
@@ -320,7 +320,7 @@
                 if(in_array($extensao, $formatosPermitidos)) {
                     $arquivo = $_FILES["arquivo"]["tmp_name"];
                     $novoNome = uniqid().".$extensao";
-                    $pasta = "Arquivos/".$NomeTipo['nome']."/";
+                    $pasta = "../../Arquivos/".$NomeTipo['nome']."/";
 
                     if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
                         $inserir = mySqli_query($conexao, "INSERT INTO artes(IdTipo, IdUsuario, TituloArte, LocalArquivo, Descricao) values('$tipo', '$usuario', '$nome', '$pasta$novoNome', '$descricao')");
@@ -357,7 +357,7 @@
                     if(in_array($extensao, $formatosPermitidos)) {
                         $arquivo = $_FILES["imagem"]["tmp_name"];
                         $novoNome = uniqid().".$extensao";
-                        $pasta = "Arquivos/Grupos/";               
+                        $pasta = "../../Arquivos/Grupos/";               
 
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
                             $inserir = mySqli_query($conexao, "INSERT INTO grupos(administrador, LocalImagem, TituloGrupo, descricao, status) values('$usuario', '$pasta$novoNome', '$nome', '$descricao', '$status')");
@@ -412,7 +412,7 @@
                     if(in_array($extensao, $formatosPermitidos)) {
                         $arquivo = $_FILES["imagem"]["tmp_name"];
                         $novoNome = uniqid().".$extensao";
-                        $pasta = "Arquivos/Eventos/";               
+                        $pasta = "../../Arquivos/Eventos/";               
 
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
                             $inserir = mySqli_query($conexao, "INSERT INTO evento(IdUsuario, NomeEvento, Organizador, Endereco, Data, Hora, Descricao, LocalImagem) values('$usuario', '$nome', '$org', '$end', '$data', '$hora', '$descricao', '$pasta$novoNome')");
@@ -451,8 +451,7 @@
                     } 
                 }
             }
-        ?>
-        <?php
+
             if(isset($_POST['alt_perfil'])){
                 $alt_nome = $_POST["nome"];
                 $alt_email = $_POST["email"];
@@ -477,7 +476,7 @@
                     if(in_array($extensao, $formatosPermitidos)) {
                         $arquivo = $_FILES["new_imagem"]["tmp_name"];
                         $novoNome = uniqid().".$extensao";
-                        $pasta = "Arquivos/Perfil/";                
+                        $pasta = "../../Arquivos/Perfil/";                
     
                         if (move_uploaded_file($arquivo, $pasta.$novoNome)) {
                             $update = mySqli_query($conexao, "UPDATE usuarios SET LocalFoto='$pasta$novoNome' WHERE IdUsuario='$usuario';");
@@ -515,37 +514,7 @@
                     $_SESSION['Alert'] = "<div id='alert'> <button type='button' class='close'>&times;</button> <strong> Falha ao alterar senha! </strong> </div>"; 
                     echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=perfil.php">';
                 }   
-            } 
-
-            if(isset($_POST['excluir_perfil'])) { 
-                setcookie("usuario", '', 1, '/');
-                
-                mySqli_query($conexao, "DELETE FROM usuarios WHERE IdUsuario='$usuario';"); 
-                echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=../home/home.php">';
-            }
-
-            if(isset($_POST['sair'])){
-                setcookie("usuario", time() - 3600);
-
-                
-                //echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=../../index.php">';
-                
-                
-                /*function clearCookies($clearSession = false){
-                    $name = "usuario";
-                    $value = "";
-                    $past = time() - 3600;
-
-                    if ($clearSession === false) $sessionId = session_id();
-
-                    foreach ($_COOKIE as $name => $value) {
-                        if ($clearSession !== false || $value !== $sessionId) setcookie($name, $value, $past, '/');
-                    }
-                }
-
-                clearCookies();*/
-            }
-                
+            }     
         ?>
     </section>
 

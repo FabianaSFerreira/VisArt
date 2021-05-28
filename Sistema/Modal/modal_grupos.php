@@ -33,7 +33,7 @@
             <div class='row' align="center">  
                 <?php
                     if ($DadosGrupo['LocalImagem'] != ""){
-                        echo "<div id='descricao'> <img src='../../".$DadosGrupo['LocalImagem']."' style='width: -webkit-fill-available;'> </div><br>";
+                        echo "<div id='descricao'> <img src='".$DadosGrupo['LocalImagem']."' style='width: -webkit-fill-available;'> </div><br>";
                     }
                     
                     echo "<button type='text'> Descrição: ".$DadosGrupo['descricao']." </button><br>";
@@ -92,7 +92,7 @@
                             }
                             echo "</form>";
                         } 
-                        else if (($DadosGrupo['administrador'] != $usuario) && ($pag == "perfil_grupos.php")) {
+                        else if (($DadosGrupo['administrador'] != $usuario) && ($pag == "perfil/perfil_grupos.php")) {
                             echo "<button type='button' data-toggle='modal' data-target='#sair_grupo' style='margin: auto;'> Sair do Grupo </button>";
                         }  
                     }

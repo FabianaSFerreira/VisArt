@@ -30,9 +30,9 @@
                 $senha = $_POST["senha"];
                 $con_senha = $_POST["con_senha"];  
                 
-                $select = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM usuarios WHERE usuario='$usuario'")); 
+                $us = mysqli_fetch_assoc(mySqli_query($conexao, "SELECT usuario FROM usuarios WHERE usuario='$usuario'")); 
 
-                if($select["usuario"] != "") {
+                if($us != "") {
                     echo "<div id='alert'>
                             <button type='button' class='close'>&times;</button>
                             <strong>Usuário Inválido! </strong> Esse nome de usuário já esta cadastrado.
@@ -51,8 +51,20 @@
                         </div>";
                 }
                 else {
-                    $inserir = mySqli_query($conexao, "INSERT INTO usuarios(usuario, nome, email, senha) VALUES('$usuario', '$nome', '$email', MD5('$senha'))");
-                    echo '<meta HTTP-EQUIV="Refresh" CONTENT="0; URL=../home/home.php">';
+                    $senha = md5($senha);
+                    $inserir = mySqli_query($conexao, "INSERT INTO usuarios(usuario, nome, email, senha) VALUES('$usuario', '$nome', '$email', '$senha')");
+                    
+                    if ($inserir != "") {
+                        echo "<div id='alert'>
+                                <button type='button' class='close'>&times;</button>
+                                <strong>Usuario cadastrado com sucesso! </strong>
+                            </div>";
+                    } else {
+                        echo "<div id='alert'>
+                                <button type='button' class='close'>&times;</button>
+                                <strong>Erro ao cadastrar! </strong> Por favor, tente novamente.
+                            </div>";
+                    }
                 }
             }
         ?> <br>
