@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 4.9.5
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Tempo de geração: 16-Mar-2021 às 04:23
--- Versão do servidor: 10.4.16-MariaDB
--- versão do PHP: 7.4.12
+-- Host: localhost
+-- Tempo de geração: 29-Maio-2021 às 00:51
+-- Versão do servidor: 10.3.16-MariaDB
+-- versão do PHP: 7.3.23
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -20,17 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `visart`
 --
-
-DELIMITER $$
---
--- Funções
---
-CREATE DEFINER=`root`@`localhost` FUNCTION `fun_valida_usuario` (`p_login` VARCHAR(20), `p_senha` VARCHAR(50)) RETURNS INT(1) BEGIN DECLARE l_ret INT(1) DEFAULT 0;  
-                SET l_ret = IFNULL((SELECT DISTINCT 1 FROM usuarios WHERE usuario = p_usuario AND senha = MD5(p_senha)),0);                           
-                RETURN l_ret; 
-END$$
-
-DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -53,14 +43,14 @@ CREATE TABLE `artes` (
 --
 
 INSERT INTO `artes` (`IdArte`, `IdTipo`, `IdUsuario`, `TituloArte`, `LocalArquivo`, `Descricao`, `Curtidas`) VALUES
-(1, 1, 1, 'Teste Pintura', 'Arquivos/Pintura/5f277114ebf91.jpg', 'Pintura a óleo', 0),
-(2, 2, 2, 'Teste Escultura', 'Arquivos/Escultura/5f277140e6d80.jpg', 'Black Tie 8 cabeças, 2009 – 2011', 0),
-(3, 3, 2, 'Teste Fotografia', 'Arquivos/Fotografia/5f2771569c3bd.jpg', 'Primavera no Japão - O espetáculo da flor de cerejeira', 0),
-(4, 4, 1, 'Teste Video', 'Arquivos/Audiovisual/5f5cfc836699d.mp4', 'Teste - video ', 0),
-(5, 5, 1, 'Teste Artes Graficas', 'Arquivos/Artes Graficas/5f2771876b96e.jpg', 'Hemisférios do cérebro', 1),
-(6, 6, 2, 'Teste WebComic', 'Arquivos/HQs & WebComics/5f2771a5488a0.jpg', 'WebComic - Love Like Cherry Blossoms', 0),
-(7, 3, 1, 'Teste 2 - Fotografia', 'Arquivos/Fotografia/60330d0bda427.jpg', 'teste - fotografia paisagem', 0),
-(8, 1, 2, 'Teste 2 - Desenho', 'Arquivos/Pintura/60330d58e039f.jpg', 'teste - desenho manual', 0);
+(1, 1, 1, 'Pintura a Óleo', '../../Arquivos/Pintura/5f277114ebf91.jpg', 'Imagem Disponível em: https://www.cpt.com.br/artigos/pintura-a-oleo-sobre-tela Acesso em: 12 fev. 2021', 0),
+(2, 2, 2, 'Black Tie 8 cabeças', '../../Arquivos/Escultura/5f277140e6d80.jpg', 'Imagem Disponível em: http://josebechara.com/esculturas-graficas/ Acesso em: 12 fev. 2021', 0),
+(3, 3, 3, 'O espetáculo da flor de cerejeira', '../../Arquivos/Fotografia/5f2771569c3bd.jpg', 'Imagem Disponível em: https://br.pinterest.com/pin/151785449925403874/ Acesso em: 12 fev. 2021', 0),
+(4, 4, 1, 'Audiovisual', '../../Arquivos/Audiovisual/5f5cfc836699d.mp4', 'Autoria própria, 2020', 0),
+(5, 5, 1, 'Áreas do cérebro', '../../Arquivos/Artes Graficas/5f2771876b96e.jpg', 'Imagem Disponível em: http://www.canalbigbag.com.br/2019/12/19/ative-varias-areas-do-seu-cerebro-para-ser-mais-criativo/ Acesso em: 12 fev. 2021', 0),
+(6, 6, 2, 'Love like cherry blossoms', '../../Arquivos/HQs & WebComics/5f2771a5488a0.jpg', 'Imagem Disponível em: https://br.pinterest.com/pin/26106872827867057/ Acesso em: 12 fev. 2021', 0),
+(7, 3, 3, 'My Happy Place', '../../Arquivos/Fotografia/60330d0bda427.jpg', 'Imagem Disponível em: https://br.pinterest.com/pin/765612005377859971/ Acesso em: 12 fev. 2021', 0),
+(8, 1, 2, 'Beleza Natural', '../../Arquivos/Pintura/60330d58e039f.jpg', 'Imagem Disponível em: https://br.pinterest.com/pin/541206080219267826/ Acesso em: 12 fev. 2021', 0);
 
 -- --------------------------------------------------------
 
@@ -80,10 +70,10 @@ CREATE TABLE `artes_comentarios` (
 --
 
 INSERT INTO `artes_comentarios` (`IdComentario`, `IdUsuario`, `IdArte`, `Texto`) VALUES
-(1, 1, 1, 'comentario'),
-(2, 2, 1, 'comentario 2'),
-(3, 1, 1, 'comentario 3'),
-(4, 2, 1, 'comentario 4');
+(1, 1, 1, 'Linda a pintura!!!'),
+(2, 2, 3, 'Que flores mais lindas!!'),
+(3, 1, 6, 'Amoooooo esse webtoon!!!'),
+(4, 2, 1, 'Adorei a escolha de cores!! Simplesmente perfeito!');
 
 -- --------------------------------------------------------
 
@@ -102,8 +92,7 @@ CREATE TABLE `artes_curtidas` (
 --
 
 INSERT INTO `artes_curtidas` (`IdArte`, `IdUsuario`, `Curtida`) VALUES
-(1, 1, 1),
-(5, 1, 1);
+(1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -151,8 +140,8 @@ CREATE TABLE `evento` (
 --
 
 INSERT INTO `evento` (`IdEvento`, `IdUsuario`, `NomeEvento`, `Organizador`, `Endereco`, `Data`, `Hora`, `Descricao`, `LocalImagem`) VALUES
-(1, 1, 'Evento - teste 1', 'Fabiana Ferreira e Sheila Silveira', 'Rua, 000 - Bairro, Cidade - RS, CEP', '2021-04-20', '20:00:00', 'teste teste teste', 'Arquivos/Eventos/5fdd497d7bd74.jpg'),
-(2, 1, 'Evento - teste 2', 'Danielle da Silveira de Souza', 'Rua, 000 - Bairro, Cidade - RS, CEP', '2021-05-03', '18:30:00', 'teste teste teste', 'Arquivos/Eventos/f9441abc32574.jpg');
+(1, 1, 'A simbologia das cores na arte e na vida', 'Fabiana Ferreira e Sheila Silveira', 'Rua, 000 - Bairro, Cidade - RS, CEP', '2021-04-20', '20:00:00', 'Imagem disponível em: https://br.pinterest.com/pin/367887863301247092/ Acesso em: 12 fev. 2021', '../../Arquivos/Eventos/5fdd497d7bd74.jpg'),
+(2, 1, '12º Evento de arte Contemporânea', 'Danielle da Silveira de Souza', 'Rua, 000 - Bairro, Cidade - RS, CEP', '2021-05-03', '18:30:00', 'Imagem Disponível em: https://br.pinterest.com/pin/86835099058489128/ Acesso em: 12 fev. 2021', '../../Arquivos/Eventos/f9441abc32574.jpg');
 
 -- --------------------------------------------------------
 
@@ -170,7 +159,6 @@ CREATE TABLE `eventos_usuarios` (
 --
 
 INSERT INTO `eventos_usuarios` (`IdEvento`, `IdUsuario`) VALUES
-(1, 1),
 (2, 1);
 
 -- --------------------------------------------------------
@@ -181,7 +169,7 @@ INSERT INTO `eventos_usuarios` (`IdEvento`, `IdUsuario`) VALUES
 
 CREATE TABLE `grupos` (
   `IdGrupo` int(11) NOT NULL,
-  `TituloGrupo` varchar(20) NOT NULL,
+  `TituloGrupo` varchar(30) NOT NULL,
   `Administrador` int(11) NOT NULL,
   `Descricao` varchar(500) NOT NULL,
   `Status` varchar(10) NOT NULL,
@@ -193,13 +181,13 @@ CREATE TABLE `grupos` (
 --
 
 INSERT INTO `grupos` (`IdGrupo`, `TituloGrupo`, `Administrador`, `Descricao`, `Status`, `LocalImagem`) VALUES
-(1, 'Grupo 1', 1, 'Teste - grupo 1', 'aberto', 'Arquivos/Grupos/5f2772476e3e3.jpg'),
-(2, 'Grupo 2', 2, 'Teste - grupo 2', 'fechado', 'Arquivos/Grupos/5f27725b357d1.jpg'),
-(3, 'Grupo 3', 1, 'Teste - grupo 3', 'aberto', 'Arquivos/Grupos/5f27726d6930c.jpg'),
-(4, 'Grupo 4', 2, 'Teste - grupo 4', 'fechado', 'Arquivos/Grupos/5f27727f144dd.jpg'),
-(5, 'Grupo 5', 1, 'Teste - grupo 5', 'aberto', 'Arquivos/Grupos/5f2772b0b86b0.jpg'),
-(6, 'Grupo 6', 1, 'Teste - grupo 6', 'fechado', 'Arquivos/Grupos/5f2772c2b1f0a.jpg'),
-(7, 'Grupo 7', 2, 'Teste - grupo 7', 'aberto', 'Arquivos/Grupos/5f277353aed87.jpg');
+(1, 'Fotografia pelo mundo', 1, 'Imagem Disponível em: https://br.pinterest.com/pin/181058847498271320/ Acesso em: 12 fev. 2021', 'aberto', '../../Arquivos/Grupos/5f2772476e3e3.jpg'),
+(2, 'A arte da animação', 2, 'Imagem Disponível em: https://br.pinterest.com/pin/872009546569228905/ Acesso em: 12 fev. 2021', 'fechado', '../../Arquivos/Grupos/5f27725b357d1.jpg'),
+(3, 'Família amarela', 1, 'Imagem Disponível em: https://br.pinterest.com/pin/369084131968488513/ Acesso em: 12 fev. 2021', 'aberto', '../../Arquivos/Grupos/5f27726d6930c.jpg'),
+(4, 'Arte digital', 2, 'Imagem Disponível em: https://br.pinterest.com/pin/616571005227937585/ Acesso em: 12 fev. 2021', 'fechado', '../../Arquivos/Grupos/5f27727f144dd.jpg'),
+(5, 'Amor pela arte', 1, 'Imagem Disponível em: https://br.pinterest.com/pin/625437466996284249/ Acesso em: 12 fev. 2021', 'aberto', '../../Arquivos/Grupos/5f2772b0b86b0.jpg'),
+(6, 'Lugares incríveis', 1, 'Imagem Disponível em: https://br.pinterest.com/pin/617978380093637159/ Acesso em: 12 fev. 2021', 'fechado', '../../Arquivos/Grupos/5f2772c2b1f0a.jpg'),
+(7, 'Lápis, papel, Desenhar!', 2, 'Imagem Disponível em: https://br.pinterest.com/pin/7529524364450842/ Acesso em: 12 fev. 2021', 'aberto', '../../Arquivos/Grupos/5f277353aed87.jpg');
 
 -- --------------------------------------------------------
 
@@ -219,10 +207,10 @@ CREATE TABLE `grupos_mensagens` (
 --
 
 INSERT INTO `grupos_mensagens` (`IdMensagem`, `IdUsuario`, `IdGrupo`, `Texto`) VALUES
-(1, 1, 1, 'mensagem - teste 1'),
-(2, 2, 1, 'mensagem - teste 2'),
-(3, 1, 1, 'mensagem - teste 3'),
-(4, 1, 1, 'mensagem - teste 4');
+(1, 1, 1, 'Oii gente, fazendo tour pela França '),
+(2, 1, 1, 'Recomendações de lugares para tirar fotos??'),
+(3, 2, 1, 'UAU!! Recomendo ir no XX, da pra tirar ótimas fotos'),
+(4, 3, 1, 'Já fui lá também, lugar lindo!! Super recomendo');
 
 -- --------------------------------------------------------
 
@@ -272,9 +260,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`IdUsuario`, `Usuario`, `Nome`, `Email`, `Senha`, `LocalFoto`) VALUES
-(1, 'Fabi_Ferreira', 'Fabiana Ferreira', 'fabiana.ferreira.ti@gmail.com', 'c6550818f6c2283e88311273d204b027', 'Arquivos/Perfil/5f2772b0b86b0.jpg'),
-(2, 'Us_2', 'Usuario 2', 'usuario2@gmail.com', '202cb962ac59075b964b07152d234b70', 'Arquivos/Perfil/5fdd497d7bd74.jpg'),
-(3, 'Us_3', 'Usuario 3', 'usuario3@gmail.com', '202cb962ac59075b964b07152d234b70', '');
+(1, 'Fabi_Ferreira', 'Fabiana Ferreira', 'fabiana.ferreira.ti@gmail.com', 'c6550818f6c2283e88311273d204b027', '../../Arquivos/Perfil/5f2772b0b86b0.jpg'),
+(2, 'Dani_Souza', 'Danielle de Souza', 'dani_souza@gmail.com', '202cb962ac59075b964b07152d234b70', '../../Arquivos/Perfil/5fdd497d7bd74.jpg'),
+(3, 'Sheila_SS', 'Sheila da Silveira', 'sheilass@gmail.com', '202cb962ac59075b964b07152d234b70', '');
 
 --
 -- Índices para tabelas despejadas
@@ -301,7 +289,8 @@ ALTER TABLE `artes_comentarios`
 --
 ALTER TABLE `artes_curtidas`
   ADD PRIMARY KEY (`IdArte`,`IdUsuario`),
-  ADD KEY `INDEX` (`IdArte`,`IdUsuario`) USING BTREE;
+  ADD KEY `INDEX` (`IdArte`,`IdUsuario`) USING BTREE,
+  ADD KEY `artes_curtidas_ibfk_2` (`IdUsuario`);
 
 --
 -- Índices para tabela `artes_tipos`
@@ -444,13 +433,6 @@ ALTER TABLE `grupos`
 ALTER TABLE `grupos_mensagens`
   ADD CONSTRAINT `grupos_mensagens_ibfk_1` FOREIGN KEY (`IdGrupo`) REFERENCES `grupos` (`IdGrupo`),
   ADD CONSTRAINT `grupos_mensagens_ibfk_2` FOREIGN KEY (`IdUsuario`) REFERENCES `usuarios` (`IdUsuario`);
-
---
--- Limitadores para a tabela `grupos_usuarios`
---
-ALTER TABLE `grupos_usuarios`
-  ADD CONSTRAINT `grupos_usuarios_ibfk_1` FOREIGN KEY (`IdGrupo`) REFERENCES `grupos` (`IdGrupo`),
-  ADD CONSTRAINT `grupos_usuarios_ibfk_2` FOREIGN KEY (`IdUsuario`) REFERENCES `usuarios` (`IdUsuario`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
