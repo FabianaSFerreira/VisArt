@@ -17,8 +17,19 @@
         echo "<script> document.addEventListener('DOMContentLoaded', function(){ $('#configuracoes').modal('show'); }); </script>";
     }
 
-    if(isset($_POST['excluir_perfil'])) {               
-        $delete = mySqli_query($conexao, "DELETE FROM usuarios WHERE IdUsuario='$usuario';"); 
+    if(isset($_POST['excluir_perfil'])) {
+        mySqli_query($conexao, "DELETE FROM artes_comentarios WHERE IdUsuario='$usuario';");
+        mySqli_query($conexao, "DELETE FROM artes_curtidas WHERE IdUsuario='$usuario';");
+        mySqli_query($conexao, "DELETE FROM artes WHERE IdUsuario='$usuario';");  
+        
+        mySqli_query($conexao, "DELETE FROM grupos_mensagens WHERE IdUsuario='$usuario';");
+        mySqli_query($conexao, "DELETE FROM grupos_usuarios WHERE IdUsuario='$usuario';");
+        mySqli_query($conexao, "DELETE FROM grupos WHERE IdUsuario='$usuario';");
+
+        mySqli_query($conexao, "DELETE FROM eventos_usuarios WHERE IdUsuario='$usuario';");
+        mySqli_query($conexao, "DELETE FROM evento WHERE IdUsuario='$usuario';");
+        
+        $delete = mySqli_query($conexao, "DELETE FROM usuarios WHERE IdUsuario='$usuario';");       
         
         if($delete != "") {
             setcookie('usuario', "", 1, "/");
