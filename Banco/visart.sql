@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.5
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Tempo de geração: 29-Maio-2021 às 00:51
--- Versão do servidor: 10.3.16-MariaDB
--- versão do PHP: 7.3.23
+-- Host: 127.0.0.1
+-- Tempo de geração: 22-Jun-2021 às 14:07
+-- Versão do servidor: 10.4.16-MariaDB
+-- versão do PHP: 7.4.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -21,6 +20,17 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `visart`
 --
+
+DELIMITER $$
+--
+-- Funções
+--
+CREATE DEFINER=`root`@`localhost` FUNCTION `fun_valida_usuario` (`p_login` VARCHAR(20), `p_senha` VARCHAR(50)) RETURNS INT(1) BEGIN DECLARE l_ret INT(1) DEFAULT 0;  
+                SET l_ret = IFNULL((SELECT DISTINCT 1 FROM usuarios WHERE usuario = p_usuario AND senha = MD5(p_senha)),0);                           
+                RETURN l_ret; 
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -50,7 +60,8 @@ INSERT INTO `artes` (`IdArte`, `IdTipo`, `IdUsuario`, `TituloArte`, `LocalArquiv
 (5, 5, 1, 'Áreas do cérebro', '../../Arquivos/Artes Graficas/5f2771876b96e.jpg', 'Imagem Disponível em: http://www.canalbigbag.com.br/2019/12/19/ative-varias-areas-do-seu-cerebro-para-ser-mais-criativo/ Acesso em: 12 fev. 2021', 0),
 (6, 6, 2, 'Love like cherry blossoms', '../../Arquivos/HQs & WebComics/5f2771a5488a0.jpg', 'Imagem Disponível em: https://br.pinterest.com/pin/26106872827867057/ Acesso em: 12 fev. 2021', 0),
 (7, 3, 3, 'My Happy Place', '../../Arquivos/Fotografia/60330d0bda427.jpg', 'Imagem Disponível em: https://br.pinterest.com/pin/765612005377859971/ Acesso em: 12 fev. 2021', 0),
-(8, 1, 2, 'Beleza Natural', '../../Arquivos/Pintura/60330d58e039f.jpg', 'Imagem Disponível em: https://br.pinterest.com/pin/541206080219267826/ Acesso em: 12 fev. 2021', 0);
+(8, 1, 2, 'Beleza Natural', '../../Arquivos/Pintura/60330d58e039f.jpg', 'Imagem Disponível em: https://br.pinterest.com/pin/541206080219267826/ Acesso em: 12 fev. 2021', 0),
+(10, 1, 6, 'Enrolados', '../../Arquivos/Pintura/60c55849a189e.jpg', 'Desenho rapunzel', 0);
 
 -- --------------------------------------------------------
 
@@ -73,7 +84,8 @@ INSERT INTO `artes_comentarios` (`IdComentario`, `IdUsuario`, `IdArte`, `Texto`)
 (1, 1, 1, 'Linda a pintura!!!'),
 (2, 2, 3, 'Que flores mais lindas!!'),
 (3, 1, 6, 'Amoooooo esse webtoon!!!'),
-(4, 2, 1, 'Adorei a escolha de cores!! Simplesmente perfeito!');
+(4, 2, 1, 'Adorei a escolha de cores!! Simplesmente perfeito!'),
+(6, 6, 1, 'Adorei a pintura');
 
 -- --------------------------------------------------------
 
@@ -159,7 +171,8 @@ CREATE TABLE `eventos_usuarios` (
 --
 
 INSERT INTO `eventos_usuarios` (`IdEvento`, `IdUsuario`) VALUES
-(2, 1);
+(2, 1),
+(2, 6);
 
 -- --------------------------------------------------------
 
@@ -210,7 +223,8 @@ INSERT INTO `grupos_mensagens` (`IdMensagem`, `IdUsuario`, `IdGrupo`, `Texto`) V
 (1, 1, 1, 'Oii gente, fazendo tour pela França '),
 (2, 1, 1, 'Recomendações de lugares para tirar fotos??'),
 (3, 2, 1, 'UAU!! Recomendo ir no XX, da pra tirar ótimas fotos'),
-(4, 3, 1, 'Já fui lá também, lugar lindo!! Super recomendo');
+(4, 3, 1, 'Já fui lá também, lugar lindo!! Super recomendo'),
+(5, 6, 1, 'Ola pessoal!!');
 
 -- --------------------------------------------------------
 
@@ -231,6 +245,7 @@ CREATE TABLE `grupos_usuarios` (
 INSERT INTO `grupos_usuarios` (`IdGrupo`, `IdUsuario`, `Solicitacao`) VALUES
 (1, 1, 0),
 (1, 2, 0),
+(1, 6, 0),
 (2, 1, 0),
 (2, 2, 0),
 (3, 1, 0),
@@ -260,9 +275,11 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`IdUsuario`, `Usuario`, `Nome`, `Email`, `Senha`, `LocalFoto`) VALUES
-(1, 'Fabi_Ferreira', 'Fabiana Ferreira', 'fabiana.ferreira.ti@gmail.com', 'c6550818f6c2283e88311273d204b027', '../../Arquivos/Perfil/5f2772b0b86b0.jpg'),
+(1, 'Fabi_SF', 'Fabiana Silveira', 'fabiana.ferreira.ti@gmail.com', 'c6550818f6c2283e88311273d204b027', '../../Arquivos/Perfil/5f2772b0b86b0.jpg'),
 (2, 'Dani_Souza', 'Danielle de Souza', 'dani_souza@gmail.com', '202cb962ac59075b964b07152d234b70', '../../Arquivos/Perfil/5fdd497d7bd74.jpg'),
-(3, 'Sheila_SS', 'Sheila da Silveira', 'sheilass@gmail.com', '202cb962ac59075b964b07152d234b70', '');
+(3, 'Sheila_SS', 'Sheila da Silveira', 'sheilass@gmail.com', '202cb962ac59075b964b07152d234b70', ''),
+(4, 'MLL', 'Millena Santos', 'mll@gmail.com', '202cb962ac59075b964b07152d234b70', ''),
+(6, 'Fabi_Ferreira', 'Fabiana Ferreira', 'fabi_ferreira@gmail.com', '202cb962ac59075b964b07152d234b70', '../../Arquivos/Perfil/60c558a79f6fa.jpg');
 
 --
 -- Índices para tabelas despejadas
@@ -351,13 +368,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de tabela `artes`
 --
 ALTER TABLE `artes`
-  MODIFY `IdArte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `IdArte` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `artes_comentarios`
 --
 ALTER TABLE `artes_comentarios`
-  MODIFY `IdComentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `IdComentario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `artes_tipos`
@@ -381,13 +398,13 @@ ALTER TABLE `grupos`
 -- AUTO_INCREMENT de tabela `grupos_mensagens`
 --
 ALTER TABLE `grupos_mensagens`
-  MODIFY `IdMensagem` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `IdMensagem` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `IdUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `IdUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restrições para despejos de tabelas
